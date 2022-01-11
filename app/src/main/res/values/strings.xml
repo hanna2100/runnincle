@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">runnincle</string>
+    <string name="notification_channel_id">runnincle_channel</string>
+</resources>

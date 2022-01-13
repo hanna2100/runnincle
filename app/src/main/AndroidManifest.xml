@@ -9,9 +9,9 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Runnincle">
+        android:theme="@style/Theme.AppCompat.Light">
         <service
-            android:name=".IntervalOverlayService"
+            android:name=".FloatingService"
             android:enabled="true"
             android:permission="android.permission.SYSTEM_ALERT_WINDOW">
         </service>
@@ -26,6 +26,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".PermissionActivity" />
     </application>
 
 </manifest>

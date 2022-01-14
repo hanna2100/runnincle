@@ -40,7 +40,8 @@ class FloatingService: Service(){
 
         if (command == INTENT_COMMAND_OPEN) {
             if (drawOverOtherAppsEnabled()) {
-                val window = IntervalOverlayWindow(this)
+                val intervalProgram = IntervalProgram(60,30,20,1,60)
+                val window = IntervalOverlayWindow(this, intervalProgram)
                 if(!window.isServiceRunning()) {
                     window.showOverlay()
                 } else {

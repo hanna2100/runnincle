@@ -13,6 +13,8 @@ import android.util.Log
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.WindowManager
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -20,10 +22,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.AndroidUiDispatcher
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.compositionContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -33,7 +35,19 @@ import com.example.runnincle.FloatingService.Companion.INTENT_COMMAND_CLOSE
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-class IntervalOverlayWindow (private val context: Context){
+enum class ScheduleType {
+    WARMING_UP, SET_BOOST, SET_COOL_DOWN, COOL_DOWN
+}
+
+data class ScheduleData(
+    val setTime: Int,
+    val type: ScheduleType
+)
+
+class IntervalOverlayWindow (
+    private val context: Context,
+    intervalProgram: IntervalProgram
+    ) {
 
     companion object {
         private var isServiceRunning = false
@@ -44,13 +58,38 @@ class IntervalOverlayWindow (private val context: Context){
     private lateinit var viewParams: WindowManager.LayoutParams
     private lateinit var handler: Handler
 
-    private var remainingTime by mutableStateOf(20)
+    private var schedule: List<ScheduleData> = setSchedule(intervalProgram)
+    private var currentScheduleType by mutableStateOf(ScheduleType.WARMING_UP)
+    private var currentIndex = 0
+    private var remainingTime by mutableStateOf(0)
+    private var setTime by mutableStateOf(0)
 
     init {
         initWindowManager()
         initViewParams()
         initComposeView()
         initHandler()
+    }
+
+    private fun setSchedule(intervalProgram: IntervalProgram): List<ScheduleData> {
+        val schedule = mutableListOf<ScheduleData>()
+        if (intervalProgram.warmingUp > 0) {
+            schedule.add(ScheduleData(intervalProgram.warmingUp, ScheduleType.WARMING_UP))
+        }
+        if (intervalProgram.retryTime > 0) {
+            for ( i in 1..intervalProgram.retryTime) {
+                if (intervalProgram.setBoost > 0) {
+                    schedule.add(ScheduleData(intervalProgram.setBoost, ScheduleType.SET_BOOST))
+                }
+                if (intervalProgram.setCoolDown > 0) {
+                    schedule.add(ScheduleData(intervalProgram.setCoolDown, ScheduleType.SET_COOL_DOWN))
+                }
+            }
+        }
+        if (intervalProgram.coolDown > 0) {
+            schedule.add(ScheduleData(intervalProgram.coolDown, ScheduleType.COOL_DOWN))
+        }
+        return schedule
     }
 
     private fun initWindowManager() {
@@ -81,8 +120,6 @@ class IntervalOverlayWindow (private val context: Context){
         params.gravity = Gravity.TOP or Gravity.RIGHT
         params.width = (widthInDp * dm.density).toInt()
         params.height = (heightInDp * dm.density).toInt()
-        println(params.width)
-        println(params.height)
     }
 
     private fun getCurrentDisplayMetrics(): DisplayMetrics {
@@ -103,9 +140,20 @@ class IntervalOverlayWindow (private val context: Context){
             }
             false
         }
-        val setTime = remainingTime
+        if (schedule.isNotEmpty()) {
+            remainingTime = schedule[currentIndex].setTime
+        } else {
+            //TODO schedule 이 비었을 경우 예외처리
+        }
+        setTime = remainingTime
         composeView.setContent {
-            SetComposeViewContent(80.dp, setTime, remainingTime, onCloseBtnClicked = { removeView() })
+            IntervalOverlayComposeView(
+                sizeDp = 80.dp,
+                currentScheduleType = currentScheduleType,
+                totalTime = setTime,
+                remainingTime = remainingTime,
+                onCloseBtnClicked = { removeView() }
+            )
         }
     }
 
@@ -115,13 +163,20 @@ class IntervalOverlayWindow (private val context: Context){
                 super.handleMessage(msg)
                 if(!isServiceRunning) return
                 println("remainingTime: $remainingTime")
-                if (remainingTime < 0) {
-                    println("[타이머 종료]")
-                    return
+                if (remainingTime <= 0) {
+                    if(currentIndex < schedule.lastIndex) { // 프로그램이 끝나지 않은 경우
+                        currentIndex += 1
+                        remainingTime = schedule[currentIndex].setTime
+                        setTime = schedule[currentIndex].setTime
+                        currentScheduleType = schedule[currentIndex].type
+                        sendEmptyMessageDelayed(0, 1000)
+                    } else { // 프로그램이 완전히 끝난 경우
+                        return
+                    }
                 } else {
+                    remainingTime -= 1
                     sendEmptyMessageDelayed(0, 1000)
                 }
-                remainingTime -= 1
                 windowManager.updateViewLayout(composeView, viewParams)
             }
         }
@@ -170,21 +225,28 @@ class IntervalOverlayWindow (private val context: Context){
 }
 
 @Composable
-private fun SetComposeViewContent(
+private fun IntervalOverlayComposeView(
     sizeDp: Dp,
+    currentScheduleType: ScheduleType,
     totalTime: Int,
     remainingTime: Int,
     onCloseBtnClicked: ()-> Unit
 ) {
+    val setTimeProgressBarColor by animateColorAsState(
+        when(currentScheduleType) {
+            ScheduleType.WARMING_UP -> Color.LightGray
+            ScheduleType.SET_BOOST -> Color.Red
+            ScheduleType.SET_COOL_DOWN -> Color.Blue
+            ScheduleType.COOL_DOWN -> Color.LightGray
+        }
+    )
+
     Column(
-        modifier = Modifier.size(sizeDp).wrapContentSize(Center),
+        modifier = Modifier
+            .size(sizeDp)
+            .wrapContentSize(Center),
         horizontalAlignment = CenterHorizontally
     ) {
-        val remainingText = if (remainingTime < 0) {
-            "FIN"
-        } else {
-            remainingTime.toString()
-        }
         val animatedProgress = animateFloatAsState(
             targetValue = if (remainingTime <= 0) 1f else { 1 - remainingTime.toFloat().div(totalTime) },
             animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec
@@ -194,9 +256,10 @@ private fun SetComposeViewContent(
             CircularProgressIndicator(
                 progress = animatedProgress,
                 modifier = Modifier.size(sizeDp.times(0.8f)),
+                color = setTimeProgressBarColor,
                 strokeWidth = 10.dp
             )
-            Text(text = remainingText, fontSize = 20.sp, modifier = Modifier.align(Center))
+            Text(text = remainingTime.toString(), fontSize = 20.sp, modifier = Modifier.align(Center))
         }
         LinearProgressIndicator(progress = 0.5f, modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp))
         OutlinedButton(onClick = { onCloseBtnClicked() }) {
@@ -205,8 +268,8 @@ private fun SetComposeViewContent(
     }
 }
 
-@Preview
-@Composable
-private fun UITest() {
-    SetComposeViewContent(80.dp, totalTime = 60, remainingTime = 40, onCloseBtnClicked = {})
-}
+//@Preview
+//@Composable
+//private fun UITest() {
+//    IntervalOverlayComposeView(80.dp, totalTime = 60, remainingTime = 40, onCloseBtnClicked = {})
+//}

@@ -17,7 +17,7 @@ import android.view.WindowManager
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Text
-import androidx.compose.runtime.Recomposer
+import androidx.compose.runtime.*
 import androidx.compose.ui.platform.AndroidUiDispatcher
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.compositionContext
@@ -50,7 +50,7 @@ class IntervalOverlayWindow private constructor(){
     private lateinit var viewParams: WindowManager.LayoutParams
     private lateinit var handler: Handler
 
-    private var remainingTime = MutableLiveData(50)
+    private var remainingTime by mutableStateOf(60)
     private var isServiceRunning = false
 
     private fun initialize() {
@@ -103,21 +103,22 @@ class IntervalOverlayWindow private constructor(){
             }
             false
         }
-        setComposeViewContent()
+        composeView.setContent {
+            SetComposeViewContent()
+        }
     }
 
-    private fun setComposeViewContent() {
-        composeView.setContent {
-            Column() {
-                val newText = if (remainingTime.value!! < 0) {
-                    "타이머 종료"
-                } else {
-                    remainingTime.value.toString()
-                }
-                Text(text = newText, fontSize = 20.sp)
-                OutlinedButton(onClick = { removeView() }) {
-                    Text(text = "끝내기")
-                }
+    @Composable
+    private fun SetComposeViewContent() {
+        Column() {
+            val newText = if (remainingTime < 0) {
+                "타이머 종료"
+            } else {
+                remainingTime.toString()
+            }
+            Text(text = newText, fontSize = 20.sp)
+            OutlinedButton(onClick = { removeView() }) {
+                Text(text = "끝내기")
             }
         }
     }
@@ -127,15 +128,15 @@ class IntervalOverlayWindow private constructor(){
             override fun handleMessage(msg: Message) {
                 super.handleMessage(msg)
                 if(!isServiceRunning) return
-
-                println(remainingTime.value)
-                if (remainingTime.value!! < 1) {
+                println("remainingTime: $remainingTime")
+                if (remainingTime < 1) {
                     println("[타이머 종료]")
                 } else {
                     sendEmptyMessageDelayed(0, 1000)
                 }
-                remainingTime.postValue(remainingTime.value!!.minus(1))
-                setComposeViewContent()
+
+                remainingTime -= 1
+//                setComposeViewContent(remainingTime)
                 windowManager.updateViewLayout(composeView, viewParams)
             }
         }

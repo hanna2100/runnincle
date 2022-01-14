@@ -3,7 +3,6 @@ package com.example.runnincle
 import android.annotation.SuppressLint
 import android.app.Service
 import android.content.Context
-import android.graphics.Color
 import android.graphics.PixelFormat
 import android.os.Build
 import android.os.Handler
@@ -14,13 +13,19 @@ import android.util.Log
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.WindowManager
-import androidx.compose.foundation.layout.Column
-import androidx.compose.material.OutlinedButton
-import androidx.compose.material.Text
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment.Companion.Center
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.AndroidUiDispatcher
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.compositionContext
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.*
 import androidx.savedstate.ViewTreeSavedStateRegistryOwner
@@ -28,35 +33,28 @@ import com.example.runnincle.FloatingService.Companion.INTENT_COMMAND_CLOSE
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-class IntervalOverlayWindow private constructor(){
+class IntervalOverlayWindow (private val context: Context){
 
     companion object {
-        private var instance: IntervalOverlayWindow? = null
-        private lateinit var context: Context
-        fun getInstance(_context: Context): IntervalOverlayWindow {
-            return instance?: synchronized(this) {
-                instance?: IntervalOverlayWindow().also {
-                    context = _context
-                    instance = it
-                    it.windowManager = context.getSystemService(Service.WINDOW_SERVICE) as WindowManager
-                    it.composeView = ComposeView(context)
-                    it.initialize()
-                }
-            }
-        }
+        private var isServiceRunning = false
     }
+
     private lateinit var windowManager: WindowManager
     private lateinit var composeView: ComposeView
     private lateinit var viewParams: WindowManager.LayoutParams
     private lateinit var handler: Handler
 
-    private var remainingTime by mutableStateOf(60)
-    private var isServiceRunning = false
+    private var remainingTime by mutableStateOf(20)
 
-    private fun initialize() {
+    init {
+        initWindowManager()
         initViewParams()
         initComposeView()
-        setHandler()
+        initHandler()
+    }
+
+    private fun initWindowManager() {
+        windowManager = context.getSystemService(Service.WINDOW_SERVICE) as WindowManager
     }
 
     private fun initViewParams() {
@@ -83,6 +81,8 @@ class IntervalOverlayWindow private constructor(){
         params.gravity = Gravity.TOP or Gravity.RIGHT
         params.width = (widthInDp * dm.density).toInt()
         params.height = (heightInDp * dm.density).toInt()
+        println(params.width)
+        println(params.height)
     }
 
     private fun getCurrentDisplayMetrics(): DisplayMetrics {
@@ -93,8 +93,8 @@ class IntervalOverlayWindow private constructor(){
 
     @SuppressLint("ClickableViewAccessibility")
     private fun initComposeView() {
+        composeView = ComposeView(context)
         composeView.filterTouchesWhenObscured = true
-        composeView.setBackgroundColor(Color.RED)
         composeView.setOnTouchListener { view, motionEvent ->
             when (motionEvent.action) {
                 MotionEvent.ACTION_DOWN -> Log.d("test", "touch DOWN ")
@@ -103,40 +103,25 @@ class IntervalOverlayWindow private constructor(){
             }
             false
         }
+        val setTime = remainingTime
         composeView.setContent {
-            SetComposeViewContent()
+            SetComposeViewContent(80.dp, setTime, remainingTime, onCloseBtnClicked = { removeView() })
         }
     }
 
-    @Composable
-    private fun SetComposeViewContent() {
-        Column() {
-            val newText = if (remainingTime < 0) {
-                "타이머 종료"
-            } else {
-                remainingTime.toString()
-            }
-            Text(text = newText, fontSize = 20.sp)
-            OutlinedButton(onClick = { removeView() }) {
-                Text(text = "끝내기")
-            }
-        }
-    }
-
-    private fun setHandler() {
+    private fun initHandler() {
         handler = object : Handler(Looper.getMainLooper()) {
             override fun handleMessage(msg: Message) {
                 super.handleMessage(msg)
                 if(!isServiceRunning) return
                 println("remainingTime: $remainingTime")
-                if (remainingTime < 1) {
+                if (remainingTime < 0) {
                     println("[타이머 종료]")
+                    return
                 } else {
                     sendEmptyMessageDelayed(0, 1000)
                 }
-
                 remainingTime -= 1
-//                setComposeViewContent(remainingTime)
                 windowManager.updateViewLayout(composeView, viewParams)
             }
         }
@@ -182,4 +167,46 @@ class IntervalOverlayWindow private constructor(){
         return isServiceRunning
     }
 
+}
+
+@Composable
+private fun SetComposeViewContent(
+    sizeDp: Dp,
+    totalTime: Int,
+    remainingTime: Int,
+    onCloseBtnClicked: ()-> Unit
+) {
+    Column(
+        modifier = Modifier.size(sizeDp).wrapContentSize(Center),
+        horizontalAlignment = CenterHorizontally
+    ) {
+        val remainingText = if (remainingTime < 0) {
+            "FIN"
+        } else {
+            remainingTime.toString()
+        }
+        val animatedProgress = animateFloatAsState(
+            targetValue = if (remainingTime <= 0) 1f else { 1 - remainingTime.toFloat().div(totalTime) },
+            animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec
+        ).value
+
+        Box {
+            CircularProgressIndicator(
+                progress = animatedProgress,
+                modifier = Modifier.size(sizeDp.times(0.8f)),
+                strokeWidth = 10.dp
+            )
+            Text(text = remainingText, fontSize = 20.sp, modifier = Modifier.align(Center))
+        }
+        LinearProgressIndicator(progress = 0.5f, modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp))
+        OutlinedButton(onClick = { onCloseBtnClicked() }) {
+            Text(text = "끝내기")
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun UITest() {
+    SetComposeViewContent(80.dp, totalTime = 60, remainingTime = 40, onCloseBtnClicked = {})
 }

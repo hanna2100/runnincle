@@ -40,7 +40,7 @@ class FloatingService: Service(){
 
         if (command == INTENT_COMMAND_OPEN) {
             if (drawOverOtherAppsEnabled()) {
-                val window = IntervalOverlayWindow.getInstance(this)
+                val window = IntervalOverlayWindow(this)
                 if(!window.isServiceRunning()) {
                     window.showOverlay()
                 } else {

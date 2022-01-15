@@ -18,6 +18,7 @@ class FloatingService: Service(){
         const val INTENT_COMMAND = "com.example.runnincle.COMMAND"
         const val INTENT_COMMAND_CLOSE = "CLOSE"
         const val INTENT_COMMAND_OPEN = "OPEN"
+        const val INTENT_INTERVAL_PROGRAM = "INTERVAL_PROGRAM"
     }
 
     override fun onBind(p0: Intent?): IBinder? {

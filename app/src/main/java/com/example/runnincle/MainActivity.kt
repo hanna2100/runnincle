@@ -13,17 +13,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.MutableLiveData
 import com.example.runnincle.FloatingService.Companion.INTENT_COMMAND_OPEN
 import com.example.runnincle.ui.theme.RunnincleTheme
 
 class MainActivity : ComponentActivity() {
 
-    private var warmingUp = MutableLiveData(60)
-    private var setBoost = MutableLiveData(30)
-    private var setCoolDown = MutableLiveData(20)
-    private var retry = MutableLiveData(10)
-    private var coolDown = MutableLiveData(60)
+    private var warmingUp by mutableStateOf(60)
+    private var setBoost by mutableStateOf(60)
+    private var setCoolDown by mutableStateOf(60)
+    private var retryTime by mutableStateOf(60)
+    private var coolDown by mutableStateOf(60)
+    private var skipCoolDownState by mutableStateOf(true)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,12 +35,13 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colors.background
                 ) {
                     MainView(
-                        warmingUp.value!!,
-                        setBoost.value!!,
-                        setCoolDown.value!!,
-                        retry.value!!,
-                        coolDown.value!!,
-                        { onStartBtnClicked() }
+                        warmingUp = warmingUp,
+                        setBoost = setBoost,
+                        setCoolDown = setCoolDown,
+                        retryTime = retryTime,
+                        coolDown = coolDown,
+                        onSkipLastCoolDownCheckedChange = { onSkipLastCoolDownCheckedChange() },
+                        onStartBtnClicked = { onStartBtnClicked() }
                     )
                 }
             }
@@ -48,9 +49,21 @@ class MainActivity : ComponentActivity() {
 
     }
 
+    private fun onSkipLastCoolDownCheckedChange() {
+        skipCoolDownState = !skipCoolDownState
+    }
+
 
     private fun onStartBtnClicked() {
-        startFloatingServiceWithCommand(INTENT_COMMAND_OPEN)
+        val mIntervalProgram = IntervalProgram(
+            warmingUp = warmingUp,
+            setBoost = setBoost,
+            setCoolDown = setCoolDown,
+            retryTime = retryTime,
+            coolDown = coolDown,
+            isSkipLastSetCoolDown = skipCoolDownState
+        )
+        startFloatingServiceWithCommand(INTENT_COMMAND_OPEN, mIntervalProgram)
     }
 
 }
@@ -71,12 +84,15 @@ fun TimeSetting(sec: Int, label: String) {
 }
 
 @Composable
-fun CheckBox(name: String) {
-    val checkedState = remember { mutableStateOf(true) }
+fun CheckBox(name: String, onCheckedChange: ()-> Unit) {
     Row(verticalAlignment = Alignment.CenterVertically) {
+        val checkedState = remember { mutableStateOf(true) }
         Checkbox(
             checked = checkedState.value,
-            onCheckedChange = { checkedState.value = it }
+            onCheckedChange = {
+                checkedState.value = it
+                onCheckedChange.invoke()
+            }
         )
         Text(text = name, fontSize = 12.sp)
     }
@@ -85,20 +101,21 @@ fun CheckBox(name: String) {
 @Composable
 fun MainView(
     warmingUp: Int,
-    boost: Int,
+    setBoost: Int,
     setCoolDown: Int,
-    retry: Int,
+    retryTime: Int,
     coolDown:Int,
+    onSkipLastCoolDownCheckedChange: () -> Unit,
     onStartBtnClicked: () -> Unit
 ) {
     Column {
         Title("워밍업")
         TimeSetting(sec = warmingUp, "워밍업")
         Title("세트반복")
-        TimeSetting(sec = boost, label = "부스트")
+        TimeSetting(sec = setBoost, label = "부스트")
         TimeSetting(sec = setCoolDown, label = "쿨다운")
-        TimeSetting(sec = retry, label = "반복횟수")
-        CheckBox("마지막 쿨다운 생략")
+        TimeSetting(sec = retryTime, label = "반복횟수")
+        CheckBox("마지막 쿨다운 생략", onCheckedChange = onSkipLastCoolDownCheckedChange)
         Title("쿨다운")
         TimeSetting(sec = coolDown, "쿨다운")
         OutlinedButton(onClick = onStartBtnClicked) {
@@ -111,6 +128,6 @@ fun MainView(
 @Composable
 fun PreviewTest() {
     RunnincleTheme {
-        MainView(60,30,20,10,60, {})
+        MainView(60,30,20,10,60, {}, {})
     }
 }

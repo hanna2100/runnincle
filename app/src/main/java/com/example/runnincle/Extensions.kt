@@ -5,12 +5,31 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.provider.Settings
+import android.widget.Toast
 import com.example.runnincle.FloatingService.Companion.INTENT_COMMAND
+import com.example.runnincle.FloatingService.Companion.INTENT_COMMAND_OPEN
+import com.example.runnincle.FloatingService.Companion.INTENT_INTERVAL_PROGRAM
 import kotlin.reflect.KClass
 
-fun Context.startFloatingServiceWithCommand(command: String = "") {
+fun Context.startFloatingServiceWithCommand(
+    command: String = "",
+    intervalProgram: IntervalProgram? = null
+) {
     val intent = Intent(this, FloatingService::class.java)
-    if (command.isNotBlank()) intent.putExtra(INTENT_COMMAND, command)
+    when (command) {
+        "" -> return
+        INTENT_COMMAND_OPEN -> {
+            if (intervalProgram != null) {
+                intent.putExtra(INTENT_INTERVAL_PROGRAM, intervalProgram)
+                intent.putExtra(INTENT_COMMAND, command)
+            } else {
+                Toast.makeText(this, "인터벌 시간 설정이 올바르지 않습니다.", Toast.LENGTH_SHORT).show()
+            }
+        }
+        else -> {
+            intent.putExtra(INTENT_COMMAND, command)
+        }
+    }
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         this.startForegroundService(intent)
     } else {

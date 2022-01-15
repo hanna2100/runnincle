@@ -1,4 +1,4 @@
-package com.example.runnincle
+package com.example.runnincle.util
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -8,8 +8,12 @@ import android.content.Intent
 import android.os.Build
 import android.os.IBinder
 import android.widget.Toast
-import android.widget.Toast.LENGTH_SHORT
 import androidx.core.app.NotificationCompat
+import com.example.runnincle.IntervalOverlayWindow
+import com.example.runnincle.R
+import com.example.runnincle.domain.model.IntervalProgram
+import com.example.runnincle.drawOverOtherAppsEnabled
+import com.example.runnincle.startPermissionActivity
 
 
 class FloatingService: Service(){
@@ -41,8 +45,8 @@ class FloatingService: Service(){
 
         if (command == INTENT_COMMAND_OPEN) {
             if (drawOverOtherAppsEnabled()) {
-                val intervalProgram = IntervalProgram(10,5,3,2,12, true)
-                val window = IntervalOverlayWindow(this, intervalProgram)
+                val mIntervalProgram = intent.getSerializableExtra(INTENT_INTERVAL_PROGRAM) as IntervalProgram
+                val window = IntervalOverlayWindow(this, mIntervalProgram)
                 if(!window.isServiceRunning()) {
                     window.showOverlay()
                 } else {

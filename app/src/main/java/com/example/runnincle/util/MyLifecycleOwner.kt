@@ -1,4 +1,4 @@
-package com.example.runnincle
+package com.example.runnincle.util
 
 import android.os.Bundle
 import androidx.lifecycle.Lifecycle

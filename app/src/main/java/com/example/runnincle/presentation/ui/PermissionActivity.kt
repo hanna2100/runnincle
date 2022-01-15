@@ -1,4 +1,4 @@
-package com.example.runnincle
+package com.example.runnincle.presentation.ui
 
 import android.content.Intent
 import android.net.Uri
@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.runnincle.R
 
 const val ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE = 1
 const val INTENT_TYPE = "INTENT_TYPE"

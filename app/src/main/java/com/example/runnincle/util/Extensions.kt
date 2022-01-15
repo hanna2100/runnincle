@@ -6,9 +6,10 @@ import android.content.Intent
 import android.os.Build
 import android.provider.Settings
 import android.widget.Toast
-import com.example.runnincle.FloatingService.Companion.INTENT_COMMAND
-import com.example.runnincle.FloatingService.Companion.INTENT_COMMAND_OPEN
-import com.example.runnincle.FloatingService.Companion.INTENT_INTERVAL_PROGRAM
+import com.example.runnincle.util.FloatingService.Companion.INTENT_COMMAND
+import com.example.runnincle.util.FloatingService.Companion.INTENT_COMMAND_OPEN
+import com.example.runnincle.util.FloatingService.Companion.INTENT_INTERVAL_PROGRAM
+import com.example.runnincle.domain.model.IntervalProgram
 import kotlin.reflect.KClass
 
 fun Context.startFloatingServiceWithCommand(

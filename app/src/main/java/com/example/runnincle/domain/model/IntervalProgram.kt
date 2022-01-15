@@ -1,4 +1,4 @@
-package com.example.runnincle
+package com.example.runnincle.domain.model
 
 import java.io.Serializable
 

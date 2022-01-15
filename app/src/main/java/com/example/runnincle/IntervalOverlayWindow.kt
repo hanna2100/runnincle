@@ -102,6 +102,10 @@ class IntervalOverlayWindow (
                     schedule.add(ScheduleData(intervalProgram.setBoost, ScheduleType.SET_BOOST))
                 }
                 if (intervalProgram.setCoolDown > 0) {
+                    // 마지막 쿨다운 생략일 경우 스케줄에 추가하지 않음
+                    if (intervalProgram.isSkipLastSetCoolDown && i == intervalProgram.retryTime) {
+                        break
+                    }
                     schedule.add(ScheduleData(intervalProgram.setCoolDown, ScheduleType.SET_COOL_DOWN))
                 }
             }

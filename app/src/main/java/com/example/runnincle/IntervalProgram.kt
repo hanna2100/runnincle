@@ -5,5 +5,6 @@ data class IntervalProgram(
     val setBoost: Int,
     val setCoolDown: Int,
     val retryTime: Int,
-    val coolDown: Int
+    val coolDown: Int,
+    val isSkipLastSetCoolDown: Boolean
 )

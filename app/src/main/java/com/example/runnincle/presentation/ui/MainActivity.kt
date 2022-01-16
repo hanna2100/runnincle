@@ -3,6 +3,7 @@ package com.example.runnincle.presentation.ui
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,12 +14,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import com.example.runnincle.R
 import com.example.runnincle.domain.model.IntervalProgram
 import com.example.runnincle.startFloatingServiceWithCommand
 import com.example.runnincle.util.FloatingService.Companion.INTENT_COMMAND_OPEN
 import com.example.runnincle.ui.theme.RunnincleTheme
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
 
     private var warmingUp by mutableStateOf(60)
     private var setBoost by mutableStateOf(60)
@@ -29,26 +31,26 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            RunnincleTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
-                ) {
-                    MainView(
-                        warmingUp = warmingUp,
-                        setBoost = setBoost,
-                        setCoolDown = setCoolDown,
-                        retryTime = retryTime,
-                        coolDown = coolDown,
-                        onSkipLastCoolDownCheckedChange = { onSkipLastCoolDownCheckedChange() },
-                        onStartBtnClicked = { onStartBtnClicked() }
-                    )
-                }
-            }
-        }
-
+        setContentView(R.layout.activity_main)
+//        setContent {
+//            RunnincleTheme {
+//                // A surface container using the 'background' color from the theme
+//                Surface(
+//                    modifier = Modifier.fillMaxSize(),
+//                    color = MaterialTheme.colors.background
+//                ) {
+//                    MainView(
+//                        warmingUp = warmingUp,
+//                        setBoost = setBoost,
+//                        setCoolDown = setCoolDown,
+//                        retryTime = retryTime,
+//                        coolDown = coolDown,
+//                        onSkipLastCoolDownCheckedChange = { onSkipLastCoolDownCheckedChange() },
+//                        onStartBtnClicked = { onStartBtnClicked() }
+//                    )
+//                }
+//            }
+//        }
     }
 
     private fun onSkipLastCoolDownCheckedChange() {

@@ -1,4 +1,4 @@
-package com.example.runnincle.presentation.ui.workout_list
+package com.example.runnincle.presentation.ui.create_workout
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -17,7 +17,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.example.runnincle.R
 
-class WorkoutListFragment: Fragment() {
+class CreateWorkoutFragment: Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -26,12 +26,12 @@ class WorkoutListFragment: Fragment() {
     ): View? {
         return ComposeView(requireContext()).apply {
             setContent {
-                Text("WorkoutListFragment", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                Text("CreateWorkoutFragment", fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.padding(10.dp))
                 Button(onClick = {
-                    findNavController().navigate(R.id.createWorkoutFragment)
+                    findNavController().navigate(R.id.workoutListFragment)
                 }) {
-                    Text("CreateWorkoutFragment 로 이동")
+                    Text("WorkoutListFragment 로 이동")
                 }
             }
         }

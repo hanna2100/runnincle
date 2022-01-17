@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/workoutListFragment"
-        android:name="com.example.runnincle.presentation.ui.workout_list.WorkoutListFragment"
+        android:name="com.example.runnincle.framework.presentation.workout_list.WorkoutListFragment"
         android:label="WorkoutListFragment">
         <action
             android:id="@+id/action_createWorkoutFragment_to_createWorkoutFragment"
@@ -15,7 +15,7 @@
 
     <fragment
         android:id="@+id/createWorkoutFragment"
-        android:name="com.example.runnincle.presentation.ui.create_workout.CreateWorkoutFragment"
+        android:name="com.example.runnincle.framework.presentation.create_workout.CreateWorkoutFragment"
         android:label="CreateWorkoutFragment"></fragment>
 
 </navigation>

@@ -1,4 +1,4 @@
-package com.example.runnincle.presentation.ui
+package com.example.runnincle.framework.presentation
 
 import android.app.Application
 

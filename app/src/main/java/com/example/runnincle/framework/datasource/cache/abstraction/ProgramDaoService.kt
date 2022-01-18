@@ -1,6 +1,6 @@
 package com.example.runnincle.framework.datasource.cache.abstraction
 
-import com.example.runnincle.domain.model.Program
+import com.example.runnincle.business.domain.model.Program
 
 interface ProgramDaoService {
 

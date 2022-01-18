@@ -11,7 +11,7 @@ import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import com.example.runnincle.IntervalOverlayWindow
 import com.example.runnincle.R
-import com.example.runnincle.domain.model.IntervalProgram
+import com.example.runnincle.business.domain.model.IntervalProgram
 import com.example.runnincle.drawOverOtherAppsEnabled
 import com.example.runnincle.startPermissionActivity
 

@@ -1,15 +1,16 @@
 package com.example.runnincle.framework.datasource.cache.mappers
 
 import com.example.runnincle.framework.datasource.cache.model.ProgramCacheEntity
-import com.example.runnincle.domain.model.Program
-import com.example.runnincle.domain.util.EntityMapper
+import com.example.runnincle.business.domain.model.Program
+import com.example.runnincle.business.domain.util.EntityMapper
 
 class ProgramCacheMapper: EntityMapper<ProgramCacheEntity, Program> {
     override fun mapFromEntity(entity: ProgramCacheEntity): Program {
         return Program(
             id = entity.id,
             name = entity.name,
-            difficulty = entity.difficulty
+            difficulty = entity.difficulty,
+            updatedAt = entity.updated_at
         )
     }
 
@@ -17,7 +18,8 @@ class ProgramCacheMapper: EntityMapper<ProgramCacheEntity, Program> {
         return ProgramCacheEntity(
             id = domainModel.id,
             name = domainModel.name,
-            difficulty = domainModel.difficulty
+            difficulty = domainModel.difficulty,
+            updated_at = domainModel.updatedAt
         )
     }
 

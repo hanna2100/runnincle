@@ -1,7 +1,7 @@
 package com.example.runnincle.framework.datasource.cache.implementation
 
 import com.example.runnincle.framework.datasource.cache.abstraction.ProgramDaoService
-import com.example.runnincle.domain.model.Program
+import com.example.runnincle.business.domain.model.Program
 
 class ProgramDaoImpl: ProgramDaoService {
     override suspend fun insertProgram(program: Program): Long {

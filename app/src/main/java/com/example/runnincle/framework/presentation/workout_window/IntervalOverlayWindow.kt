@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.*
 import androidx.savedstate.ViewTreeSavedStateRegistryOwner
 import com.example.runnincle.util.FloatingService.Companion.INTENT_COMMAND_CLOSE
-import com.example.runnincle.domain.model.IntervalProgram
+import com.example.runnincle.business.domain.model.IntervalProgram
 import com.example.runnincle.util.MyLifecycleOwner
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch

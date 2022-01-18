@@ -2,7 +2,7 @@ package com.example.runnincle.business.data.cache.implementation
 
 import com.example.runnincle.business.data.cache.abstraction.ProgramCacheDataSource
 import com.example.runnincle.framework.datasource.cache.abstraction.ProgramDaoService
-import com.example.runnincle.domain.model.Program
+import com.example.runnincle.business.domain.model.Program
 
 class ProgramCacheDataSourceImpl constructor(
     private val programDaoService: ProgramDaoService
@@ -11,8 +11,8 @@ class ProgramCacheDataSourceImpl constructor(
         return programDaoService.insertProgram(program)
     }
 
-    override suspend fun updateProgram(primaryKey: Int, name: String, difficulty: Int): Int {
-        return programDaoService.updateProgram(primaryKey, name, difficulty)
+    override suspend fun updateProgram(id: Int, name: String, difficulty: Int): Int {
+        return programDaoService.updateProgram(id, name, difficulty)
     }
 
     override suspend fun deleteProgram(primaryKey: Int): Int {

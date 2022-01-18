@@ -1,4 +1,4 @@
-package com.example.runnincle.framework.presentation.workout_list
+package com.example.runnincle.framework.presentation.create_program
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -17,7 +18,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.example.runnincle.R
 
-class WorkoutListFragment: Fragment() {
+class CreateProgramFragment: Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -26,12 +27,16 @@ class WorkoutListFragment: Fragment() {
     ): View? {
         return ComposeView(requireContext()).apply {
             setContent {
-                Text("WorkoutListFragment", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                Text("CreateProgramFragment",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Red
+                )
                 Spacer(modifier = Modifier.padding(10.dp))
                 Button(onClick = {
-                    findNavController().navigate(R.id.createWorkoutFragment)
+                    findNavController().navigate(R.id.workoutListFragment)
                 }) {
-                    Text("CreateWorkoutFragment 로 이동")
+                    Text("WorkoutListFragment 로 이동")
                 }
             }
         }

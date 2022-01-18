@@ -1,12 +1,12 @@
 package com.example.runnincle.business.data.cache.abstraction
 
-import com.example.runnincle.domain.model.Program
+import com.example.runnincle.business.domain.model.Program
 
 interface ProgramCacheDataSource {
     suspend fun insertProgram(program: Program): Long
 
     suspend fun updateProgram(
-        primaryKey: Int,
+        id: Int,
         name: String,
         difficulty: Int
     ): Int

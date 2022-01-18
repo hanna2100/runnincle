@@ -1,8 +1,8 @@
 package com.example.runnincle.framework.datasource.cache.mappers
 
 import com.example.runnincle.framework.datasource.cache.model.WorkoutCacheEntity
-import com.example.runnincle.domain.model.Workout
-import com.example.runnincle.domain.util.EntityMapper
+import com.example.runnincle.business.domain.model.Workout
+import com.example.runnincle.business.domain.util.EntityMapper
 
 class WorkoutCacheMapper: EntityMapper<WorkoutCacheEntity, Workout>{
     override fun mapFromEntity(entity: WorkoutCacheEntity): Workout {

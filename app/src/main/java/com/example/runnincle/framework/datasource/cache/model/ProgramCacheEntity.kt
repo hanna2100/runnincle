@@ -5,8 +5,9 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class ProgramCacheEntity(
-    @PrimaryKey(autoGenerate = true)
-    var id: Int,
+    @PrimaryKey(autoGenerate = false)
+    var id: String,
     var name: String,
-    var difficulty: Int
+    var difficulty: Int,
+    var updated_at: String
 )

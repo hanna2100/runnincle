@@ -1,14 +1,8 @@
-package com.example.runnincle.domain.model
-
-data class Program(
-    var id: Int,
-    var name: String,
-    var difficulty: Int
-)
+package com.example.runnincle.business.domain.model
 
 data class Workout(
-    var id: Int,
-    var programId: Int,
+    var id: String,
+    var programId: String,
     var name: String,
     var set: Int = 1,
     var work: Int,

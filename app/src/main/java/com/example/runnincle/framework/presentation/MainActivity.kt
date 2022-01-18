@@ -11,7 +11,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.example.runnincle.R
-import com.example.runnincle.domain.model.IntervalProgram
+import com.example.runnincle.business.domain.model.IntervalProgram
 import com.example.runnincle.startFloatingServiceWithCommand
 import com.example.runnincle.util.FloatingService.Companion.INTENT_COMMAND_OPEN
 import com.example.runnincle.ui.theme.RunnincleTheme

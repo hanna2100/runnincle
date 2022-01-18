@@ -5,9 +5,9 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class WorkoutCacheEntity(
-    @PrimaryKey(autoGenerate = true)
-    var id: Int,
-    var programId: Int,
+    @PrimaryKey(autoGenerate = false)
+    var id: String,
+    var programId: String,
     var name: String,
     var set: Int = 1,
     var work: Int,

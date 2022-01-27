@@ -46,6 +46,7 @@ import com.example.runnincle.framework.presentation.composable.*
 import com.example.runnincle.toTimeClock
 import com.example.runnincle.toTimeLetters
 import com.example.runnincle.ui.theme.RunnincleTheme
+import com.example.runnincle.ui.theme.infinitySansFamily
 import com.vanpra.composematerialdialogs.*
 import com.vanpra.composematerialdialogs.color.ColorPalette
 import com.vanpra.composematerialdialogs.color.colorChooser
@@ -279,20 +280,23 @@ fun WorkoutCircle(workouts: List<Workout>) {
                 }
             }
             Box ( modifier = Modifier
-                .fillMaxSize(0.75f)
+                .fillMaxSize(0.8f)
                 .align(Alignment.TopCenter)
             ) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(50.dp)
+                        .padding(20.dp),
+                    contentAlignment = Alignment.Center
                 ) {
-//                    Image(
-//                        ImageVector.vectorResource(id = R.drawable.ic_test_workout_img),
-//                        "운동 이미지",
-//                        colorFilter = ColorFilter.tint(Color.DarkGray),
-//                        modifier = Modifier.fillMaxSize()
-//                    )
+                    Text(
+                        text = "40:00",
+                        fontSize = 42.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colors.primaryVariant,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(bottom = 20.dp)
+                    )
                 }
             }
             Column ( modifier = Modifier
@@ -304,8 +308,9 @@ fun WorkoutCircle(workouts: List<Workout>) {
                 AutoSizeText(
                     text = "자전거타기",
                     textStyle = TextStyle(
+                        fontFamily = infinitySansFamily,
                         fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = FontWeight.Medium,
                         color = MaterialTheme.colors.onSurface,
                         textAlign = TextAlign.Center
                     ),
@@ -313,32 +318,6 @@ fun WorkoutCircle(workouts: List<Workout>) {
                         .fillMaxWidth()
                         .padding(bottom = 5.dp)
                 )
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth(0.4f)
-                        .height(5.dp)
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(Color.LightGray),
-                )
-                Row(
-                    modifier = Modifier.padding(3.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-//                    Image(
-//                        ImageVector.vectorResource(id = R.drawable.ic_clock),
-//                        "총 시간",
-//                        colorFilter = ColorFilter.tint(MaterialTheme.colors.primaryVariant),
-//                        modifier = Modifier.padding(end = 3.dp)
-//                    )
-                    Text(
-                        text = "10:00",
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colors.primaryVariant,
-                        textAlign = TextAlign.Center,
-                    )
-
-                }
             }
         }
     }

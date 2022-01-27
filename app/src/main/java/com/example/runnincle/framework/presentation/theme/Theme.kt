@@ -47,7 +47,7 @@ fun RunnincleTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composa
 
     MaterialTheme(
         colors = colors,
-        typography = Typography,
+        typography = InfinitySansTypography,
         shapes = Shapes,
         content = content
     )

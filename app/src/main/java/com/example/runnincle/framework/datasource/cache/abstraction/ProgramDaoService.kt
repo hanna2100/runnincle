@@ -7,9 +7,10 @@ interface ProgramDaoService {
     suspend fun insertProgram(program: Program): Long
 
     suspend fun updateProgram(
-        primaryKey: Int,
+        id: String,
         name: String,
-        difficulty: Int
+        difficulty: Int,
+        updateAt: String?
     ): Int
 
     suspend fun deleteProgram(primaryKey: Int): Int

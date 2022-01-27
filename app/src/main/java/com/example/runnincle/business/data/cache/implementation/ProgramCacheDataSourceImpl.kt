@@ -11,8 +11,13 @@ class ProgramCacheDataSourceImpl constructor(
         return programDaoService.insertProgram(program)
     }
 
-    override suspend fun updateProgram(id: Int, name: String, difficulty: Int): Int {
-        return programDaoService.updateProgram(id, name, difficulty)
+    override suspend fun updateProgram(
+        id: String,
+        name: String,
+        difficulty: Int,
+        updatedAt: String
+    ): Int {
+        return programDaoService.updateProgram(id, name, difficulty, updatedAt)
     }
 
     override suspend fun deleteProgram(primaryKey: Int): Int {

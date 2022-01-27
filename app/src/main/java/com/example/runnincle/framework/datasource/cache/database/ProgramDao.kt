@@ -6,12 +6,24 @@ import com.example.runnincle.framework.datasource.cache.model.ProgramCacheEntity
 @Dao
 interface ProgramDao {
     @Insert
-    suspend fun insertProgram(program: ProgramCacheEntity)
+    suspend fun insertProgram(program: ProgramCacheEntity): Long
 
-    @Update
-    suspend fun updateProgram(program: ProgramCacheEntity)
+    @Query("""
+        UPDATE programs 
+        SET 
+        name = :name, 
+        difficulty = :difficulty,
+        updated_at = :updatedAt
+        WHERE id = :id
+        """)
+    suspend fun updateProgram(
+        id: String,
+        name: String,
+        difficulty: Int,
+        updatedAt: String
+    ): Int
 
-    @Delete
-    suspend fun deleteProgram(program: ProgramCacheEntity)
+    @Query("DELETE FROM programs WHERE id = :id")
+    suspend fun deleteProgram(id: String): Int
 
 }

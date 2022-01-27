@@ -3,7 +3,7 @@ package com.example.runnincle.framework.datasource.cache.implementation
 import com.example.runnincle.business.domain.model.Workout
 import com.example.runnincle.framework.datasource.cache.abstraction.WorkoutDaoService
 
-class WorkoutDaoImpl : WorkoutDaoService{
+class WorkoutDaoServiceImpl : WorkoutDaoService{
     override suspend fun insertWorkout(workout: Workout): Long {
         TODO("Not yet implemented")
     }

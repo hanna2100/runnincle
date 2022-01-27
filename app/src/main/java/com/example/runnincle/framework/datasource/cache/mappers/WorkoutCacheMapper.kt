@@ -12,7 +12,7 @@ class WorkoutCacheMapper: EntityMapper<WorkoutCacheEntity, Workout>{
             name = entity.name,
             set = entity.set,
             work = entity.work,
-            rest = entity.rest,
+            coolDown = entity.coolDown,
             order = entity.order
         )
     }
@@ -24,7 +24,7 @@ class WorkoutCacheMapper: EntityMapper<WorkoutCacheEntity, Workout>{
             name = domainModel.name,
             set = domainModel.set,
             work = domainModel.work,
-            rest = domainModel.rest,
+            coolDown = domainModel.coolDown,
             order = domainModel.order
         )
     }

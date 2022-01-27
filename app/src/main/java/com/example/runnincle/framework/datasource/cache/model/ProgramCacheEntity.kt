@@ -3,7 +3,7 @@ package com.example.runnincle.framework.datasource.cache.model
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity
+@Entity(tableName = "programs")
 data class ProgramCacheEntity(
     @PrimaryKey(autoGenerate = false)
     var id: String,

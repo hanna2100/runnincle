@@ -6,6 +6,9 @@ import android.content.Intent
 import android.os.Build
 import android.provider.Settings
 import android.widget.Toast
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
 import com.example.runnincle.util.FloatingService.Companion.INTENT_COMMAND
 import com.example.runnincle.util.FloatingService.Companion.INTENT_COMMAND_OPEN
 import com.example.runnincle.util.FloatingService.Companion.INTENT_INTERVAL_PROGRAM
@@ -58,4 +61,32 @@ fun Context.startActivity(kclass: KClass<out Activity>) {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK
         }
     )
+}
+
+fun Int.toTimeLetters(context: Context): String {
+    return if (this <= 60) {
+        "$this${context.getString(R.string.seconds)}"
+    } else {
+        val min: Int = this/60
+        val sec: Int = this - (min * 60)
+        if(sec > 0) {
+            "$min${context.getString(R.string.minutes)} $sec${context.getString(R.string.seconds)}"
+        } else {
+            "$min${context.getString(R.string.minutes)}"
+        }
+    }
+}
+
+fun Int.toTimeClock(context: Context): String {
+    return if (this <= 59) {
+        "00:$this"
+    } else {
+        val min: Int = this/60
+        val sec: Int = this - (min * 60)
+        if(sec > 0) {
+            "$min:$sec"
+        } else {
+            "$min:00"
+        }
+    }
 }

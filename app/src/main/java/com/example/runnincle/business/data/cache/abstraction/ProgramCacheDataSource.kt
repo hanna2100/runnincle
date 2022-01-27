@@ -6,9 +6,10 @@ interface ProgramCacheDataSource {
     suspend fun insertProgram(program: Program): Long
 
     suspend fun updateProgram(
-        id: Int,
+        id: String,
         name: String,
-        difficulty: Int
+        difficulty: Int,
+        updatedAt: String
     ): Int
 
     suspend fun deleteProgram(primaryKey: Int): Int

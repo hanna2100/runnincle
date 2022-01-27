@@ -1,8 +1,21 @@
 package com.example.runnincle.ui.theme
 
+import android.graphics.ColorSpace
 import androidx.compose.ui.graphics.Color
 
-val Purple200 = Color(0xFFBB86FC)
-val Purple500 = Color(0xFF6200EE)
-val Purple700 = Color(0xFF3700B3)
-val Teal200 = Color(0xFF03DAC5)
+val Cultured = Color(0xFFF6F6F6)
+val AeroBlue = Color(0xFF4ECCA3)
+val MintGreen = Color(0xFF4ECCA3)
+val PaleEggBlue = Color(0xFF98DED9)
+val SkyBlue = Color(0xFF77E4DC)
+val PatrickBlue= Color(0xFF161D6F)
+val Jasper= Color(0xFFDF4343)
+
+val Gunmetal = Color(0xFF2E3136)
+
+val CharlestonGreen = Color(0xFF232931)
+val OldSilver = Color(0xFF808386)
+val Arsenic = Color(0xFF393E46)
+val Aquamarine = Color(0xFF82ECCA)
+val Eucalyptus = Color(0xFF4ECCA3)
+val BrightGray = Color(0xFFEEEEEE)

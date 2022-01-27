@@ -6,7 +6,7 @@ data class Workout(
     var name: String,
     var set: Int = 1,
     var work: Int,
-    var rest: Int = 0,
+    var coolDown: Int = 0,
     var order: Int
 ) {
     companion object {
@@ -14,7 +14,7 @@ data class Workout(
             var totalWorkoutTime = 0
             for(i in 1 .. this.set) {
                 totalWorkoutTime += work
-                totalWorkoutTime += rest
+                totalWorkoutTime += coolDown
             }
             return totalWorkoutTime
         }

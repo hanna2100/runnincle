@@ -2,21 +2,38 @@ package com.example.runnincle.framework.datasource.cache.implementation
 
 import com.example.runnincle.business.domain.model.Workout
 import com.example.runnincle.framework.datasource.cache.abstraction.WorkoutDaoService
+import com.example.runnincle.framework.datasource.cache.database.WorkoutDao
+import com.example.runnincle.framework.datasource.cache.mappers.WorkoutCacheMapper
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class WorkoutDaoServiceImpl : WorkoutDaoService{
+@Singleton
+class WorkoutDaoServiceImpl
+@Inject
+constructor(
+    private val workoutDao: WorkoutDao,
+    private val workoutCacheMapper: WorkoutCacheMapper
+): WorkoutDaoService{
     override suspend fun insertWorkout(workout: Workout): Long {
-        TODO("Not yet implemented")
+        return workoutDao.insertWorkout(workoutCacheMapper.mapFromDomainModel(workout))
     }
 
     override suspend fun updateWorkout(
-        id: Int,
+        id: String,
         name: String,
         set: Int,
         work: Int,
-        rest: Int,
+        coolDown: Int,
         order: Int
     ): Int {
-        TODO("Not yet implemented")
+        return workoutDao.updateWorkout(
+            id = id,
+            name = name,
+            set = set,
+            work = work,
+            coolDown = coolDown,
+            order = order
+        )
     }
 
     override suspend fun deleteWorkout(id: Int): Int {

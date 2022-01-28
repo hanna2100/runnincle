@@ -1,4 +1,4 @@
-package com.example.runnincle.business.interactors.program_list
+package com.example.runnincle.business.interactors.create_program
 
 import com.example.runnincle.business.data.cache.abstraction.ProgramCacheDataSource
 import com.example.runnincle.business.data.cache.abstraction.WorkoutCacheDataSource

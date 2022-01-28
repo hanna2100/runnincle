@@ -7,7 +7,7 @@ interface WorkoutDaoService {
     suspend fun insertWorkout(workout: Workout): Long
 
     suspend fun updateWorkout(
-        id: Int,
+        id: String,
         name: String,
         set: Int,
         work: Int,

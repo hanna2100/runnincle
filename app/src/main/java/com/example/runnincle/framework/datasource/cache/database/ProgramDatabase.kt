@@ -1,8 +1,6 @@
 package com.example.runnincle.framework.datasource.cache.database
 
-import android.content.Context
 import androidx.room.Database
-import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.runnincle.framework.datasource.cache.model.ProgramCacheEntity
 
@@ -10,22 +8,7 @@ import com.example.runnincle.framework.datasource.cache.model.ProgramCacheEntity
 abstract class ProgramDatabase: RoomDatabase() {
 
     companion object {
-        private const val DATABASE_NAME = "program_db"
-        private var instance: ProgramDatabase? = null
-
-        @Synchronized
-        fun getInstance(context: Context): ProgramDatabase? {
-            if (instance == null) {
-                synchronized(ProgramDatabase::class) {
-                    instance = Room.databaseBuilder(
-                        context.applicationContext,
-                        ProgramDatabase::class.java,
-                        DATABASE_NAME
-                    ).build()
-                }
-            }
-            return instance
-        }
+        const val DATABASE_NAME = "program_db"
     }
 
     abstract fun programDao(): ProgramDao

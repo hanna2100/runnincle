@@ -3,8 +3,13 @@ package com.example.runnincle.business.data.cache.implementation
 import com.example.runnincle.business.data.cache.abstraction.WorkoutCacheDataSource
 import com.example.runnincle.business.domain.model.Workout
 import com.example.runnincle.framework.datasource.cache.abstraction.WorkoutDaoService
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class WorkoutCacheDataSourceImpl constructor (
+@Singleton
+class WorkoutCacheDataSourceImpl
+@Inject
+constructor (
     private val workoutDaoService: WorkoutDaoService
 ): WorkoutCacheDataSource {
     override suspend fun insertWorkout(workout: Workout): Long {
@@ -12,7 +17,7 @@ class WorkoutCacheDataSourceImpl constructor (
     }
 
     override suspend fun updateWorkout(
-        id: Int,
+        id: String,
         name: String,
         set: Int,
         work: Int,

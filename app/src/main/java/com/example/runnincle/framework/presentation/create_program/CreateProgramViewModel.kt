@@ -8,7 +8,6 @@ import javax.inject.Inject
 class CreateProgramViewModel
 @Inject
 constructor(
-    private val randomString: String
 ): ViewModel(){
 
 }

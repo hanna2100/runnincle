@@ -1,18 +1,31 @@
 package com.example.runnincle.framework.datasource.cache.database
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Update
+import androidx.room.*
 import com.example.runnincle.framework.datasource.cache.model.WorkoutCacheEntity
 
 @Dao
 interface WorkoutDao {
     @Insert
-    suspend fun insertWorkout(workout: WorkoutCacheEntity)
+    suspend fun insertWorkout(workout: WorkoutCacheEntity): Long
 
-    @Update
-    suspend fun updateWorkout(workout: WorkoutCacheEntity)
+    @Query("""
+        UPDATE workouts 
+        SET 
+        name = :name,
+        workout_set = :set,
+        work = :work,
+        coolDown = :coolDown,
+        workout_order = :order
+        WHERE id = :id
+    """)
+    suspend fun updateWorkout(
+        id: String,
+        name: String,
+        set: Int,
+        work: Int,
+        coolDown: Int,
+        order: Int,
+    ): Int
 
     @Delete
     suspend fun deleteWorkout(workout: WorkoutCacheEntity)

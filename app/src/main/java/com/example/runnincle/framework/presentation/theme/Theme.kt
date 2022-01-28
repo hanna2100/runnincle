@@ -18,7 +18,7 @@ private val DarkColorPalette = darkColors(
     onError = BrightGray,
     background = BrightGray,
     onBackground = CharlestonGreen,
-    surface = BrightGray,
+    surface = Color.Black,
     onSurface = CharlestonGreen,
 )
 
@@ -33,7 +33,7 @@ private val LightColorPalette = lightColors(
     onError = Cultured,
     background = Cultured,
     onBackground = Gunmetal,
-    surface = Cultured,
+    surface = Color.White,
     onSurface = Gunmetal,
 )
 

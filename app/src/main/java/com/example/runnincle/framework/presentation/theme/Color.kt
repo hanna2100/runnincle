@@ -1,11 +1,10 @@
 package com.example.runnincle.ui.theme
 
-import android.graphics.ColorSpace
 import androidx.compose.ui.graphics.Color
 
-val Cultured = Color(0xFFF6F6F6)
-val AeroBlue = Color(0xFF4ECCA3)
-val MintGreen = Color(0xFF4ECCA3)
+val Cultured = Color(0xFFeff0f5)
+val AeroBlue = Color(0xFF4d358b)
+val MintGreen = Color(0xFFe236a9)
 val PaleEggBlue = Color(0xFF98DED9)
 val SkyBlue = Color(0xFF77E4DC)
 val PatrickBlue= Color(0xFF161D6F)

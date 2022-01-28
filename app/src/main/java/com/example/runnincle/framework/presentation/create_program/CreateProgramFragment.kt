@@ -14,21 +14,27 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.example.runnincle.business.domain.model.Workout
 import com.example.runnincle.framework.presentation.composable.*
 import com.example.runnincle.framework.presentation.create_program.composable.CreateProgramTopAppBar
 import com.example.runnincle.framework.presentation.create_program.composable.CreateProgramWorkoutCircle
 import com.example.runnincle.framework.presentation.create_program.composable.CreateProgramWorkoutList
 import com.example.runnincle.ui.theme.RunnincleTheme
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class CreateProgramFragment: Fragment() {
+
+    private val createProgramViewModel: CreateProgramViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        println("test $createProgramViewModel")
         return ComposeView(requireContext()).apply {
             setContent {
                 val workouts = mutableListOf<Workout>()

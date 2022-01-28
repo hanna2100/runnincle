@@ -15,7 +15,10 @@ import com.example.runnincle.business.domain.model.IntervalProgram
 import com.example.runnincle.startFloatingServiceWithCommand
 import com.example.runnincle.util.FloatingService.Companion.INTENT_COMMAND_OPEN
 import com.example.runnincle.ui.theme.RunnincleTheme
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint // 생명주기에 맞춰 컨테이너를 만들어 의존성 주입을 받을 수 있음.
 class MainActivity : AppCompatActivity() {
 
     private var warmingUp by mutableStateOf(60)
@@ -24,6 +27,9 @@ class MainActivity : AppCompatActivity() {
     private var retryTime by mutableStateOf(60)
     private var coolDown by mutableStateOf(60)
     private var skipCoolDownState by mutableStateOf(true)
+
+    @Inject
+    lateinit var app: BaseApplication
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

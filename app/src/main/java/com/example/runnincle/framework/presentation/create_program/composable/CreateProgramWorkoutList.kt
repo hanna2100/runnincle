@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -32,7 +33,10 @@ import java.lang.StringBuilder
 
 
 @Composable
-fun CreateProgramWorkoutList(workouts: List<Workout>) {
+fun CreateProgramWorkoutList(
+    workouts: List<Workout>,
+    onItemClick: (workout: Workout)->Unit
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -49,7 +53,7 @@ fun CreateProgramWorkoutList(workouts: List<Workout>) {
             contentPadding = PaddingValues(10.dp, 0.dp)
         ) {
             itemsIndexed(items = workouts) { index, item ->
-                WorkoutItem(workout = item, index, workouts.size)
+                WorkoutItem(workout = item, index, workouts.size, onItemClick)
             }
         }
         Box(
@@ -65,8 +69,14 @@ fun CreateProgramWorkoutList(workouts: List<Workout>) {
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun WorkoutItem(workout: Workout, index: Int, size: Int) {
+fun WorkoutItem(
+    workout: Workout,
+    index: Int,
+    size: Int,
+    onItemClick: (workout: Workout)->Unit
+) {
     Card(
         modifier = Modifier
             .padding(
@@ -80,7 +90,10 @@ fun WorkoutItem(workout: Workout, index: Int, size: Int) {
             .height(110.dp),
         shape = RoundedCornerShape(0.dp),
         elevation = 0.dp,
-        backgroundColor = Color.Transparent
+        backgroundColor = Color.Transparent,
+        onClick = {
+            onItemClick(workout)
+        }
     ) {
         Row( Modifier.fillMaxSize()) {
             Box(

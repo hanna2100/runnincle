@@ -22,5 +22,21 @@ data class Workout(
             }
             return totalWorkoutTime
         }
+
+        fun Workout.getMinValueAndIgnoreSecValue(time: Int): Int {
+            return if(time < 60) {
+                0
+            } else {
+                time / 60
+            }
+        }
+
+        fun Workout.getSecValueAndIgnoreMinValue(time: Int): Int {
+            return if(time < 60) {
+                time
+            } else {
+                time % 60
+            }
+        }
     }
 }

@@ -2,6 +2,7 @@
     <string name="app_name">runnincle</string>
     <string name="notification_channel_id">runnincle_channel</string>
     <string name="confirm">확인</string>
+    <string name="cancel">취소</string>
     <string name="permission_error_title">권한설정 오류</string>
     <string name="permission_error_text">권한이 없어 실행할 수 없습니다.</string>
     <string name="permission_required_title">권한설정이 필요합니다</string>
@@ -12,4 +13,18 @@
     <string name="seconds">초</string>
     <string name="work">운동</string>
     <string name="cool_down">쿨다운</string>
+    <string name="save">저장하기</string>
+    <string name="edit">수정하기</string>
+    <string name="enter_number_to_work_time">운동 시간에 숫자를 입력해 주세요.</string>
+    <string name="set_must_be_at_least_1">SET는 1 이상이어야 합니다.</string>
+    <string name="work_time_must_be_at_least_1">운동시간은 최소 1초 이상이어야 합니다.</string>
+    <string name="enter_program_name">이름을 입력하세요</string>
+    <string name="program_name">프로그램 이름</string>
+    <string name="name">이름</string>
+    <string name="work_time">운동시간</string>
+    <string name="cool_down_time">쿨다운시간</string>
+    <string name="skip_last_cool_down">마지막 쿨다운 생략</string>
+    <string name="set">세트</string>
+    <string name="pick_color">색상 선택하기</string>
+    <string name="timer_color">타이머 색상</string>
 </resources>

@@ -6,6 +6,8 @@ import com.example.runnincle.business.data.cache.abstraction.WorkoutCacheDataSou
 import com.example.runnincle.business.data.cache.implementation.ProgramCacheDataSourceImpl
 import com.example.runnincle.business.data.cache.implementation.WorkoutCacheDataSourceImpl
 import com.example.runnincle.business.domain.util.DateUtil
+import com.example.runnincle.business.domain.util.ResourcesProvider
+import com.example.runnincle.business.domain.util.ResourcesProviderImpl
 import com.example.runnincle.business.interactors.create_program.CreateProgramInteractors
 import com.example.runnincle.framework.datasource.cache.abstraction.ProgramDaoService
 import com.example.runnincle.framework.datasource.cache.abstraction.WorkoutDaoService
@@ -121,5 +123,10 @@ object AppModule {
         return WorkoutCacheMapper()
     }
 
+    @Singleton
+    @Provides
+    fun provideResourcesProvider(@ApplicationContext app: Context): ResourcesProvider {
+        return ResourcesProviderImpl(app)
+    }
 
 }

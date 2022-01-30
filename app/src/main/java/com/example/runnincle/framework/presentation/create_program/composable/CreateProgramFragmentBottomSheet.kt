@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.example.runnincle.R
@@ -33,6 +34,7 @@ fun CreateProgramFragmentBottomSheet(
     isSkipLastCoolDown: MutableState<Boolean>,
     set: MutableState<String>,
     timerColor: MutableState<Color>,
+    buttonText: String,
     onSaveClick: ()->Unit,
     onCollapsedSheetClick: ()->Unit
 ) {
@@ -65,7 +67,8 @@ fun CreateProgramFragmentBottomSheet(
                     .fillMaxWidth()
                     .height(55.dp)
                     .align(Alignment.BottomEnd),
-                onSaveClick = onSaveClick
+                onSaveClick = onSaveClick,
+                buttonText = buttonText
             )
         }
         SheetCollapsed(
@@ -76,7 +79,7 @@ fun CreateProgramFragmentBottomSheet(
         ) {
             Image(
                 ImageVector.vectorResource(id = R.drawable.ic_baseline_library_add),
-                "추가하기",
+                stringResource(id = R.string.add_new_workout),
                 colorFilter = ColorFilter.tint(MaterialTheme.colors.background),
                 modifier = Modifier.align(Alignment.Center)
             )

@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -43,7 +44,7 @@ fun AddWorkLayout(
     ) {
 
         Text(
-            text = "이름",
+            text = stringResource(id = R.string.name),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 5.dp),
@@ -62,7 +63,7 @@ fun AddWorkLayout(
         )
         Column {
             Text(
-                text = "운동시간",
+                text = stringResource(id = R.string.work_time),
                 modifier = Modifier
                     .width(132.dp)
                     .padding(bottom = 5.dp),
@@ -117,7 +118,7 @@ fun AddWorkLayout(
         ) {
             Column {
                 Text(
-                    text = "쿨다운 시간",
+                    text = stringResource(id = R.string.cool_down_time),
                     modifier = Modifier
                         .width(132.dp)
                         .padding(bottom = 5.dp),
@@ -178,7 +179,7 @@ fun AddWorkLayout(
                     onClick = { isSkipLastCoolDown.value = !isSkipLastCoolDown.value },
                 )
                 Text(
-                    text = "마지막 쿨다운 생략",
+                    text = stringResource(id = R.string.skip_last_cool_down),
                     modifier = Modifier
                         .wrapContentSize(),
                     textAlign = TextAlign.Start,
@@ -197,7 +198,7 @@ fun AddWorkLayout(
                 modifier = Modifier.padding(bottom = 10.dp)
             ){
                 Text(
-                    text = "세트",
+                    text = stringResource(id = R.string.set),
                     modifier = Modifier.padding(bottom = 5.dp),
                     textAlign = TextAlign.Start,
                     color = MaterialTheme.colors.onPrimary
@@ -222,7 +223,7 @@ fun AddWorkLayout(
                 DialogAndShowButton(
                     selectedColor = timerColor.value
                 ) {
-                    title("색상 선택하기")
+                    title(stringResource(id = R.string.pick_color))
                     colorChooser(
                         colors = ColorPalette.Primary,
                         initialSelection = ColorPalette.Primary.indexOf(timerColor.value),
@@ -235,11 +236,13 @@ fun AddWorkLayout(
                         }
                     )
                     customView {
-                        Spacer(modifier = Modifier.height(20.dp).fillMaxWidth())
+                        Spacer(modifier = Modifier
+                            .height(20.dp)
+                            .fillMaxWidth())
                     }
                 }
                 Text(
-                    text = "타이머 색상",
+                    text = stringResource(id = R.string.timer_color),
                     modifier = Modifier
                         .wrapContentSize()
                         .padding(start = 10.dp),
@@ -285,7 +288,8 @@ fun DialogAndShowButton(
 @Composable
 fun ButtonAddWork(
     modifier: Modifier,
-    onSaveClick: ()-> Unit
+    onSaveClick: ()-> Unit,
+    buttonText: String
 ) {
     Button(
         onClick = {
@@ -298,14 +302,8 @@ fun ButtonAddWork(
         shape = RoundedCornerShape(20.dp),
         modifier = modifier
     ) {
-        Image(
-            ImageVector.vectorResource(id = R.drawable.ic_baseline_add),
-            "저장",
-            colorFilter = ColorFilter.tint(MaterialTheme.colors.primary),
-            modifier = Modifier.padding(end = 4.dp)
-        )
         Text(
-            text = "저장하기",
+            text = buttonText,
             style = MaterialTheme.typography.h6.copy(fontWeight = FontWeight.Medium)
         )
     }

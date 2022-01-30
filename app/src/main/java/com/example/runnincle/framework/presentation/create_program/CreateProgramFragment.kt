@@ -12,17 +12,19 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.example.runnincle.R
 import com.example.runnincle.framework.presentation.composable.*
 import com.example.runnincle.framework.presentation.create_program.composable.CreateProgramTopAppBar
 import com.example.runnincle.framework.presentation.create_program.composable.CreateProgramWorkoutCircle
 import com.example.runnincle.framework.presentation.create_program.composable.CreateProgramWorkoutList
-import com.example.runnincle.framework.presentation.create_program.composable.ShowEditProgramNameDialog
 import com.example.runnincle.showToastMessage
 import com.example.runnincle.ui.theme.RunnincleTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @ExperimentalMaterialApi
@@ -42,7 +44,6 @@ class CreateProgramFragment: Fragment() {
 
         val workouts = viewModel.workouts
         val programName = viewModel.programName
-        val isShowingEditProgramNameDialog = viewModel.isShowingEditProgramNameDialog
 
         val name = viewModel.name
         val workMin = viewModel.workMin
@@ -59,44 +60,11 @@ class CreateProgramFragment: Fragment() {
             setContent {
                 RunnincleTheme {
                     val scope = rememberCoroutineScope()
-                    scaffoldState = rememberBottomSheetScaffoldState(
-                        bottomSheetState = rememberBottomSheetState(BottomSheetValue.Collapsed)
-                    )
-                    val radius = (70 * (1f - scaffoldState.currentFraction)).dp + 30.dp
-                    val onSaveClick: () -> Unit = {
-                        scope.launch {
-                            viewModel.addWorkoutToTheList(
-                                name = name.value,
-                                workoutMin = workMin.value,
-                                workoutSec = workSec.value,
-                                coolDownMin = coolDownMin.value,
-                                coolDownSec = coolDownSec.value,
-                                isSkipLastCoolDown = isSkipLastCoolDown.value,
-                                set = set.value,
-                                timerColor = timerColor.value
-                            )
-                            scaffoldState.bottomSheetState.collapse()
-                            viewModel.clearBottomSheet()
-                        }
-                    }
 
-                    val onCollapsedSheetClick: () -> Unit = {
-                        scope.launch {
-                            scaffoldState.bottomSheetState.expand()
-                        }
-                    }
-                    callback = object : OnBackPressedCallback(true) {
-                        override fun handleOnBackPressed() {
-                            if (scaffoldState.bottomSheetState.isExpanded) {
-                                scope.launch {
-                                    scaffoldState.bottomSheetState.collapse()
-                                }
-                            } else {
-                                // 프로그램 리스트 화면으로 돌아가기
-                            }
-                        }
-                    }
-                    requireActivity().onBackPressedDispatcher.addCallback(this@CreateProgramFragment.viewLifecycleOwner, callback)
+                    scaffoldState = setBottomSheetScaffoldState()
+                    val radius = setDefaultBottomSheetCornerRadius()
+                    setOnBackPressedCallback(scope)
+                    viewModel.setUpEditProgramNameDialog()
 
                     BottomSheetScaffold(
                         modifier = Modifier.fillMaxWidth(),
@@ -106,8 +74,18 @@ class CreateProgramFragment: Fragment() {
                         sheetContent = {
                             CreateProgramFragmentBottomSheet(
                                 scaffoldState = scaffoldState,
-                                onSaveClick = onSaveClick,
-                                onCollapsedSheetClick = onCollapsedSheetClick,
+                                buttonText = when (viewModel.bottomSheetSaveButtonStatus.value) {
+                                    BottomSheetSaveButtonStatus.EDIT -> getString(R.string.edit)
+                                    else -> getString(R.string.save)
+                                },
+                                onSaveClick = {
+                                    scope.launch {
+                                        viewModel.onBottomSheetSaveButtonClick(scaffoldState)
+                                    }
+                                },
+                                onCollapsedSheetClick = {
+                                    onCollapsedSheetClick(scope)
+                                },
                                 name = name,
                                 workMin = workMin,
                                 workSec = workSec,
@@ -133,28 +111,57 @@ class CreateProgramFragment: Fragment() {
                                     workouts = workouts,
                                     programName = programName.value,
                                     onProgramNameClick = {
-                                        isShowingEditProgramNameDialog.value = true
+                                        viewModel.isShowingEditProgramNameDialog.value = true
                                     }
                                 )
-                                CreateProgramWorkoutList(workouts)
+                                CreateProgramWorkoutList(
+                                    workouts = workouts,
+                                    onItemClick = { workout ->
+                                        viewModel.setUpBottomSheetForEdit(workout)
+                                        onCollapsedSheetClick(scope)
+                                    }
+                                )
                             }
                         }
-                    }
-
-                    if(isShowingEditProgramNameDialog.value) {
-                        ShowEditProgramNameDialog(
-                            onDismissRequest = {
-                                isShowingEditProgramNameDialog.value = false
-                            },
-                            onSetProgramName = { newName ->
-                                programName.value = newName
-                                isShowingEditProgramNameDialog.value = false
-                            }
-                        )
                     }
                 }
             }
         }
+    }
+
+    private fun onCollapsedSheetClick(scope: CoroutineScope) {
+        scope.launch {
+            scaffoldState.bottomSheetState.expand()
+        }
+    }
+
+    private fun setDefaultBottomSheetCornerRadius(): Dp {
+       return (70 * (1f - scaffoldState.currentFraction)).dp + 30.dp
+    }
+
+    @Composable
+    private fun setBottomSheetScaffoldState(): BottomSheetScaffoldState {
+        return rememberBottomSheetScaffoldState(
+            bottomSheetState = rememberBottomSheetState(BottomSheetValue.Collapsed)
+        )
+    }
+
+    private fun setOnBackPressedCallback(scope: CoroutineScope) {
+        callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (scaffoldState.bottomSheetState.isExpanded) {
+                    scope.launch {
+                        scaffoldState.bottomSheetState.collapse()
+                    }
+                } else {
+                    // 프로그램 리스트 화면으로 돌아가기
+                }
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(
+            this@CreateProgramFragment.viewLifecycleOwner,
+            callback
+        )
     }
 
     override fun onDetach() {
@@ -167,13 +174,13 @@ class CreateProgramFragment: Fragment() {
             status?.let {
                 when (status) {
                     CreateProgramErrorStatus.NUMBER_FORMAT -> {
-                        context?.showToastMessage("운동 시간에 숫자를 입력해 주세요.")
+                        context?.showToastMessage(getString(R.string.enter_number_to_work_time))
                     }
                     CreateProgramErrorStatus.SET_FORMAT -> {
-                        context?.showToastMessage("SET는 1 이상이어야 합니다.")
+                        context?.showToastMessage(getString(R.string.set_must_be_at_least_1))
                     }
                     CreateProgramErrorStatus.WORK_FORMAT -> {
-                        context?.showToastMessage("운동시간은 최소 1초 이상이어야 합니다.")
+                        context?.showToastMessage(getString(R.string.work_time_must_be_at_least_1))
                     }
                 }
             }

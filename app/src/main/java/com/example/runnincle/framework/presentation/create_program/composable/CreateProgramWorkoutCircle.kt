@@ -18,10 +18,12 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.runnincle.R
 import com.example.runnincle.business.domain.model.Workout
 import com.example.runnincle.business.domain.model.Workout.Companion.getTotalWorkoutTime
 import com.example.runnincle.framework.presentation.composable.AutoSizeText
@@ -136,11 +138,11 @@ fun ShowEditProgramNameDialog(
             TextButton(onClick = {
                 onSetProgramName(newName)
             })
-            { Text(text = "확인") }
+            { Text(text = stringResource(id = R.string.confirm)) }
         },
         dismissButton = {
             TextButton(onClick = onDismissRequest)
-            { Text(text = "취소") }
+            { Text(text = stringResource(id = R.string.cancel)) }
         },
         title = { },
         text = {
@@ -148,7 +150,7 @@ fun ShowEditProgramNameDialog(
                 value = newName,
                 modifier = Modifier.fillMaxWidth(),
                 label = {
-                    Text("프로그램 이름")
+                    Text(stringResource(id = R.string.program_name))
                 },
                 onValueChange = {
                     newName = it

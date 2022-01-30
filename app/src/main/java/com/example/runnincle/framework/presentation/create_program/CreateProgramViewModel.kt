@@ -6,8 +6,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.runnincle.R
 import com.example.runnincle.business.domain.model.Workout
 import com.example.runnincle.business.domain.model.Workout.Companion.getMinValueAndIgnoreSecValue
@@ -19,8 +17,6 @@ import com.example.runnincle.framework.presentation.create_program.composable.Sh
 import com.example.runnincle.util.BaseViewModel
 import com.vanpra.composematerialdialogs.color.ColorPalette
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import java.lang.NumberFormatException
 import javax.inject.Inject
 
@@ -40,13 +36,14 @@ constructor(
     private val resourcesProvider: ResourcesProvider
 ): BaseViewModel() {
 
-    val workouts = mutableListOf<Workout>()
+    val workouts = mutableStateOf<MutableList<Workout>>(mutableListOf())
+
     val programName = mutableStateOf(resourcesProvider.getString(R.string.enter_program_name))
     val isShowingEditProgramNameDialog = mutableStateOf(false)
 
     val errorStatus = MutableLiveData<CreateProgramErrorStatus?>()
-    val bottomSheetSaveButtonStatus = MutableLiveData(BottomSheetSaveButtonStatus.SAVE)
-    var editingTarget: Workout? = null
+    val bottomSheetSaveButtonStatus = mutableStateOf(BottomSheetSaveButtonStatus.SAVE)
+    var editingTargetIndex: Int? = null
 
     val name = mutableStateOf("")
     val workMin = mutableStateOf("")
@@ -112,14 +109,13 @@ constructor(
             set = st,
             work = (wm * 60) + ws,
             coolDown = (cdm * 60) + cds,
-            order = workouts.size,
             isSkipLastCoolDown = isSkipLastCoolDown,
             timerColor = timerColor
         )
-        workouts.add(newWorkout)
+        workouts.value.add(newWorkout)
     }
 
-    fun editWorkoutToTheList(
+    private fun editWorkoutToTheList(
         name: String,
         workoutMin: String,
         workoutSec: String,
@@ -128,7 +124,7 @@ constructor(
         isSkipLastCoolDown: Boolean,
         set: String,
         timerColor: Color,
-        order: Int
+        index: Int
     ) {
         val wm: Int
         val ws: Int
@@ -175,15 +171,14 @@ constructor(
             set = st,
             work = (wm * 60) + ws,
             coolDown = (cdm * 60) + cds,
-            order = order,
             isSkipLastCoolDown = isSkipLastCoolDown,
             timerColor = timerColor
         )
-        workouts.removeAt(order)
-        workouts.add(order, newWorkout)
+        workouts.value.removeAt(index)
+        workouts.value.add(index, newWorkout)
     }
 
-    private fun clearBottomSheet() {
+    fun clearBottomSheet() {
         name.value = ""
         workMin.value = ""
         workSec.value = ""
@@ -207,7 +202,7 @@ constructor(
         timerColor.value = workout.timerColor
 
         bottomSheetSaveButtonStatus.value = BottomSheetSaveButtonStatus.EDIT
-        editingTarget = workout
+        editingTargetIndex = workouts.value.indexOf(workout)
     }
 
     @OptIn(ExperimentalMaterialApi::class)
@@ -237,12 +232,19 @@ constructor(
                     isSkipLastCoolDown = isSkipLastCoolDown.value,
                     set = set.value,
                     timerColor = timerColor.value,
-                    order = editingTarget?.order?: return
+                    index = editingTargetIndex?: return
                 )
                 scaffoldState.bottomSheetState.collapse()
                 clearBottomSheet()
             }
         }
+    }
+
+    @OptIn(ExperimentalMaterialApi::class)
+    suspend fun onBottomSheetDeleteButtonClick(scaffoldState: BottomSheetScaffoldState) {
+        workouts.value.removeAt(editingTargetIndex?: return)
+        scaffoldState.bottomSheetState.collapse()
+        clearBottomSheet()
     }
 
     @Composable

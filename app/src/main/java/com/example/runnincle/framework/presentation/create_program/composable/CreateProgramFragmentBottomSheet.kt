@@ -19,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.example.runnincle.R
+import com.example.runnincle.framework.presentation.create_program.BottomSheetSaveButtonStatus
 import com.example.runnincle.framework.presentation.create_program.composable.AddWorkLayout
 import com.example.runnincle.framework.presentation.create_program.composable.ButtonAddWork
 
@@ -34,8 +35,9 @@ fun CreateProgramFragmentBottomSheet(
     isSkipLastCoolDown: MutableState<Boolean>,
     set: MutableState<String>,
     timerColor: MutableState<Color>,
-    buttonText: String,
+    buttonStatus: BottomSheetSaveButtonStatus,
     onSaveClick: ()->Unit,
+    onDeleteClick: ()->Unit,
     onCollapsedSheetClick: ()->Unit
 ) {
     Box(
@@ -66,9 +68,11 @@ fun CreateProgramFragmentBottomSheet(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(55.dp)
-                    .align(Alignment.BottomEnd),
+                    .align(Alignment.BottomEnd)
+                    .padding(0.dp),
                 onSaveClick = onSaveClick,
-                buttonText = buttonText
+                onDeleteClick = onDeleteClick,
+                buttonStatus = buttonStatus
             )
         }
         SheetCollapsed(

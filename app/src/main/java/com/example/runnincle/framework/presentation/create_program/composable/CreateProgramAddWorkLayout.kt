@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.text.isDigitsOnly
 import com.example.runnincle.R
 import com.example.runnincle.framework.presentation.composable.OutlineTextField
+import com.example.runnincle.framework.presentation.create_program.BottomSheetSaveButtonStatus
 import com.vanpra.composematerialdialogs.*
 import com.vanpra.composematerialdialogs.color.ColorPalette
 import com.vanpra.composematerialdialogs.color.colorChooser
@@ -289,22 +290,55 @@ fun DialogAndShowButton(
 fun ButtonAddWork(
     modifier: Modifier,
     onSaveClick: ()-> Unit,
-    buttonText: String
+    onDeleteClick: (()->Unit)? = null,
+    buttonStatus: BottomSheetSaveButtonStatus
 ) {
-    Button(
-        onClick = {
-            onSaveClick()
-        },
-        colors = ButtonDefaults.textButtonColors(
-            backgroundColor = MaterialTheme.colors.onPrimary,
-            contentColor = MaterialTheme.colors.primary
-        ),
-        shape = RoundedCornerShape(20.dp),
-        modifier = modifier
-    ) {
-        Text(
-            text = buttonText,
-            style = MaterialTheme.typography.h6.copy(fontWeight = FontWeight.Medium)
-        )
+    Row(modifier = modifier) {
+        if (buttonStatus == BottomSheetSaveButtonStatus.EDIT) {
+            Button(
+                onClick = {
+                    onDeleteClick?.let { it() }
+                },
+                colors = ButtonDefaults.textButtonColors(
+                    backgroundColor = MaterialTheme.colors.onPrimary,
+                    contentColor = MaterialTheme.colors.primary
+                ),
+                shape = RoundedCornerShape(10.dp),
+                modifier = Modifier
+                    .weight(0.3f)
+                    .fillMaxHeight()
+            ) {
+                Text(
+                    text = stringResource(id = R.string.delete),
+                    style = MaterialTheme.typography.h6.copy(fontWeight = FontWeight.Medium)
+                )
+            }
+        }
+        Button(
+            onClick = {
+                onSaveClick()
+            },
+            colors = ButtonDefaults.textButtonColors(
+                backgroundColor = MaterialTheme.colors.onPrimary,
+                contentColor = MaterialTheme.colors.primary
+            ),
+            shape = RoundedCornerShape(10.dp),
+            modifier = if (buttonStatus == BottomSheetSaveButtonStatus.EDIT) {
+                Modifier
+                    .weight(0.7f)
+                    .fillMaxHeight()
+                    .padding(start = 10.dp)
+            } else {
+                Modifier
+                    .weight(1.0f)
+                    .fillMaxHeight()
+            }
+        ) {
+            Text(
+                text = stringResource(id = R.string.save),
+                style = MaterialTheme.typography.h6.copy(fontWeight = FontWeight.Medium)
+            )
+        }
     }
+
 }

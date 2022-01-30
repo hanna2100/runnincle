@@ -9,7 +9,7 @@ data class Workout(
     var set: Int = 1,
     var work: Int,
     var coolDown: Int = 0,
-    var order: Int,
+    var order: Int? = null,
     var isSkipLastCoolDown: Boolean = false,
     var timerColor: Color
 ) {
@@ -18,6 +18,9 @@ data class Workout(
             var totalWorkoutTime = 0
             for(i in 1 .. this.set) {
                 totalWorkoutTime += work
+                if (i == this.set && this.isSkipLastCoolDown) {
+                    break
+                }
                 totalWorkoutTime += coolDown
             }
             return totalWorkoutTime

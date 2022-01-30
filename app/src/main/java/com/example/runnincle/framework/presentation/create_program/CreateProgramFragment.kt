@@ -42,7 +42,7 @@ class CreateProgramFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        val workouts = viewModel.workouts
+        val workouts = viewModel.workouts.value
         val programName = viewModel.programName
 
         val name = viewModel.name
@@ -74,13 +74,15 @@ class CreateProgramFragment: Fragment() {
                         sheetContent = {
                             CreateProgramFragmentBottomSheet(
                                 scaffoldState = scaffoldState,
-                                buttonText = when (viewModel.bottomSheetSaveButtonStatus.value) {
-                                    BottomSheetSaveButtonStatus.EDIT -> getString(R.string.edit)
-                                    else -> getString(R.string.save)
-                                },
+                                buttonStatus = viewModel.bottomSheetSaveButtonStatus.value,
                                 onSaveClick = {
                                     scope.launch {
                                         viewModel.onBottomSheetSaveButtonClick(scaffoldState)
+                                    }
+                                },
+                                onDeleteClick = {
+                                    scope.launch {
+                                        viewModel.onBottomSheetDeleteButtonClick(scaffoldState)
                                     }
                                 },
                                 onCollapsedSheetClick = {
@@ -118,7 +120,9 @@ class CreateProgramFragment: Fragment() {
                                     workouts = workouts,
                                     onItemClick = { workout ->
                                         viewModel.setUpBottomSheetForEdit(workout)
-                                        onCollapsedSheetClick(scope)
+                                        scope.launch {
+                                            scaffoldState.bottomSheetState.expand()
+                                        }
                                     }
                                 )
                             }
@@ -131,6 +135,8 @@ class CreateProgramFragment: Fragment() {
 
     private fun onCollapsedSheetClick(scope: CoroutineScope) {
         scope.launch {
+            viewModel.clearBottomSheet()
+            viewModel.bottomSheetSaveButtonStatus.value = BottomSheetSaveButtonStatus.SAVE
             scaffoldState.bottomSheetState.expand()
         }
     }
@@ -166,7 +172,7 @@ class CreateProgramFragment: Fragment() {
 
     override fun onDetach() {
         super.onDetach()
-        callback.remove()
+//        callback.remove()
     }
 
     private fun observeData() {

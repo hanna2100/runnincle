@@ -27,7 +27,7 @@ class WorkoutCacheMapper: EntityMapper<WorkoutCacheEntity, Workout>{
             set = domainModel.set,
             work = domainModel.work,
             coolDown = domainModel.coolDown,
-            order = domainModel.order,
+            order = domainModel.order!!,
             timerColor = domainModel.timerColor.value.toString()
         )
     }

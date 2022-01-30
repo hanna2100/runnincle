@@ -27,4 +27,5 @@
     <string name="set">세트</string>
     <string name="pick_color">색상 선택하기</string>
     <string name="timer_color">타이머 색상</string>
+    <string name="delete">삭제</string>
 </resources>

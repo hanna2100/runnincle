@@ -13,6 +13,8 @@ import com.example.runnincle.util.FloatingService.Companion.INTENT_COMMAND
 import com.example.runnincle.util.FloatingService.Companion.INTENT_COMMAND_OPEN
 import com.example.runnincle.util.FloatingService.Companion.INTENT_INTERVAL_PROGRAM
 import com.example.runnincle.business.domain.model.IntervalProgram
+import com.example.runnincle.business.domain.model.Workout
+import com.example.runnincle.business.domain.model.Workout.Companion.getTotalWorkoutTime
 import com.example.runnincle.framework.presentation.PermissionActivity
 import com.example.runnincle.util.FloatingService
 import kotlin.reflect.KClass
@@ -101,4 +103,12 @@ fun Int.toTimeClock(context: Context): String {
 
 fun Context.showToastMessage(message:String){
     Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+}
+
+fun List<Workout>.getTotalWorkoutListTime(): Int {
+    var totalWorkoutsTime = 0
+    this.forEach {
+        totalWorkoutsTime += it.getTotalWorkoutTime()
+    }
+    return totalWorkoutsTime
 }

@@ -172,7 +172,7 @@ class CreateProgramFragment: Fragment() {
 
     override fun onDetach() {
         super.onDetach()
-//        callback.remove()
+        callback.remove()
     }
 
     private fun observeData() {

@@ -79,7 +79,7 @@ fun Int.toTimeLetters(context: Context): String {
     }
 }
 
-fun Int.toTimeClock(context: Context): String {
+fun Int.toTimeClock(): String {
     return if (this <= 59) {
         if(this < 10) {
             "00:0$this"

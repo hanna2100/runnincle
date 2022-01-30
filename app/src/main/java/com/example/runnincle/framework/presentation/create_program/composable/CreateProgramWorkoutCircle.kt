@@ -14,12 +14,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.runnincle.R
 import com.example.runnincle.business.domain.model.Workout
@@ -35,6 +33,7 @@ fun CreateProgramWorkoutCircle(
     programName: String,
     onProgramNameClick: ()-> Unit,
 ) {
+
     BoxWithConstraints (
         modifier = Modifier
             .fillMaxWidth()
@@ -62,7 +61,7 @@ fun CreateProgramWorkoutCircle(
                     contentAlignment = Alignment.Center
                 ) {
                     AutoSizeText(
-                        text = getTotalWorkoutTime(LocalContext.current, workouts),
+                        text = workouts.getTotalWorkoutListTime().toTimeClock(),
                         textStyle = MaterialTheme.typography.h3.plus(
                             TextStyle(
                                 fontWeight = FontWeight.Medium,
@@ -103,31 +102,22 @@ fun CreateProgramWorkoutCircle(
 
 @Composable
 fun WorkoutScheduleBar(workouts: List<Workout>) {
-    var animationPlayed by remember {
-        mutableStateOf(false)
-    }
-
-    var totalWorkoutListTime = workouts.getTotalWorkoutListTime()
-    var stateList = mutableListOf<State<Float>>()
-    var animDuration = 1000
-    var animDelay = 0
+    val totalWorkoutListTime = workouts.getTotalWorkoutListTime()
+    val stateList = mutableListOf<State<Float>>()
     var workTimeFloatValue = 0f
+
     workouts.forEach {
-         workTimeFloatValue += it.getTotalWorkoutTime().toFloat().div(totalWorkoutListTime)
+        workTimeFloatValue += it.getTotalWorkoutTime().toFloat().div(totalWorkoutListTime)
         val drawPercentage = animateFloatAsState(
-            targetValue = if (animationPlayed) workTimeFloatValue else 0f,
+            targetValue = workTimeFloatValue,
             animationSpec = tween(
-                delayMillis = animDelay,
-                durationMillis = animDuration
+                delayMillis = 0,
+                durationMillis = 1000
             )
         )
         stateList.add(drawPercentage)
     }
-
-
     Box {
-//        Text(text = drawPercentage.value.toString(), color = Color.White)
-
         Canvas(
             modifier = Modifier
                 .fillMaxSize()
@@ -162,20 +152,6 @@ fun WorkoutScheduleBar(workouts: List<Workout>) {
             }
         }
     }
-    LaunchedEffect(key1 = true) {
-        animationPlayed = true
-    }
-}
-
-fun getTotalWorkoutTime(
-    context: Context,
-    workouts: List<Workout>
-): String {
-    var totalTime = 0
-    workouts.forEach {
-        totalTime += it.getTotalWorkoutTime()
-    }
-    return totalTime.toTimeClock(context)
 }
 
 @Composable

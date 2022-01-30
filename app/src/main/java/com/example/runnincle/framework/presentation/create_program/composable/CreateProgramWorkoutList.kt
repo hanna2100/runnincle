@@ -162,7 +162,7 @@ fun WorkoutItem(
                     .padding(horizontal = 20.dp)
             ) {
                 Text(
-                    text = workout.getTotalWorkoutTime().toTimeClock(LocalContext.current),
+                    text = workout.getTotalWorkoutTime().toTimeClock(),
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sp,
                     textAlign = TextAlign.End,

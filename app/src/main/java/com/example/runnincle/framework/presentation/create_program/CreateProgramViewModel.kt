@@ -54,7 +54,7 @@ constructor(
     val set = mutableStateOf("")
     val timerColor = mutableStateOf(ColorPalette.Primary[0])
 
-    fun addWorkoutToTheList(
+    private fun addWorkoutToTheList(
         name: String,
         workoutMin: String,
         workoutSec: String,

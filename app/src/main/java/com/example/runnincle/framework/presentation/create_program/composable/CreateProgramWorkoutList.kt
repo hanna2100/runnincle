@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import com.example.runnincle.R
 import com.example.runnincle.business.domain.model.Workout
 import com.example.runnincle.business.domain.model.Workout.Companion.getTotalWorkoutTime
+import com.example.runnincle.framework.presentation.composable.AutoSizeText
 import com.example.runnincle.toTimeClock
 import com.example.runnincle.toTimeLetters
 import java.lang.StringBuilder
@@ -42,7 +43,9 @@ fun CreateProgramWorkoutList(workouts: List<Workout>) {
             .padding(10.dp, 20.dp, 10.dp, 30.dp)
     ) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize().background(Color.Transparent),
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Transparent),
             contentPadding = PaddingValues(10.dp, 0.dp)
         ) {
             itemsIndexed(items = workouts) { index, item ->
@@ -55,8 +58,9 @@ fun CreateProgramWorkoutList(workouts: List<Workout>) {
                 .height(40.dp)
                 .background(
                     Brush.verticalGradient(
-                    listOf(Color.White, Color.White, Color.Transparent)
-                ))
+                        listOf(Color.White, Color.White, Color.Transparent)
+                    )
+                )
         )
     }
 }
@@ -66,7 +70,7 @@ fun WorkoutItem(workout: Workout, index: Int, size: Int) {
     Card(
         modifier = Modifier
             .padding(
-                bottom = if (index == size -1) {
+                bottom = if (index == size - 1) {
                     40.dp
                 } else {
                     0.dp
@@ -82,35 +86,37 @@ fun WorkoutItem(workout: Workout, index: Int, size: Int) {
             Box(
                 modifier = Modifier
                     .padding(0.dp)
+                    .width(60.dp)
                     .fillMaxHeight()
-                    .weight(0.2f)
             ) {
                 if (index == 0) {
-                    Box(modifier = Modifier
-                        .fillMaxHeight(0.5f)
-                        .width(2.dp)
-                        .background(Color.LightGray)
-                        .align(Alignment.BottomCenter)
-                    )
+                    if (size > 1) {
+                        Box(modifier = Modifier
+                            .fillMaxHeight(0.5f)
+                            .width(2.dp)
+                            .background(MaterialTheme.colors.background)
+                            .align(Alignment.BottomCenter)
+                        )
+                    }
                 } else if(index == size -1){
                     Box(modifier = Modifier
                         .fillMaxHeight(0.5f)
                         .width(2.dp)
-                        .background(Color.LightGray)
+                        .background(MaterialTheme.colors.background)
                         .align(Alignment.TopCenter)
                     )
                 } else {
                     Box(modifier = Modifier
                         .fillMaxHeight()
                         .width(2.dp)
-                        .background(Color.LightGray)
+                        .background(MaterialTheme.colors.background)
                         .align(Alignment.BottomCenter)
                     )
                 }
                 Box(modifier = Modifier
                     .size(20.dp)
                     .clip(CircleShape)
-                    .background(MaterialTheme.colors.primary)
+                    .background(workout.timerColor)
                     .align(Alignment.Center)
                 )
             }
@@ -119,8 +125,8 @@ fun WorkoutItem(workout: Workout, index: Int, size: Int) {
                 verticalArrangement = Arrangement.Center,
                 modifier = Modifier
                     .padding(4.dp)
+                    .weight(1f)
                     .fillMaxHeight()
-                    .weight(0.8f)
             ) {
                 Text(
                     text = "${workout.name} ${workout.set}set",
@@ -128,9 +134,9 @@ fun WorkoutItem(workout: Workout, index: Int, size: Int) {
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp
                 )
-                Text(
+                AutoSizeText(
                     text = getWorkAndRestTime(workout),
-                    style = MaterialTheme.typography.body1,
+                    textStyle = MaterialTheme.typography.body1
                 )
             }
 
@@ -138,7 +144,7 @@ fun WorkoutItem(workout: Workout, index: Int, size: Int) {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.End,
                 modifier = Modifier
-                    .weight(0.3f)
+                    .width(110.dp)
                     .fillMaxHeight()
                     .padding(horizontal = 20.dp)
             ) {

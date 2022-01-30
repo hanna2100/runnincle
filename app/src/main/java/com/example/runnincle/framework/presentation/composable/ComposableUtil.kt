@@ -1,14 +1,11 @@
 package com.example.runnincle.framework.presentation.composable
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.material.BottomSheetScaffoldState
 import androidx.compose.material.BottomSheetValue.*
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.text.TextStyle
@@ -29,6 +26,7 @@ fun AutoSizeText(
         return
     }
 
+    var isScaled by remember { mutableStateOf(false) }
     var scaledTextStyle by remember { mutableStateOf(textStyle) }
     var readyToDraw by remember { mutableStateOf(false) }
 
@@ -45,22 +43,17 @@ fun AutoSizeText(
             if (textLayoutResult.didOverflowWidth) {
                 scaledTextStyle =
                     scaledTextStyle.copy(fontSize = scaledTextStyle.fontSize * 0.9)
+                isScaled = true
             } else {
-                readyToDraw = true
+                if (isScaled) {
+                    readyToDraw = true
+                    isScaled = false
+                } else {
+                    readyToDraw = true
+                    scaledTextStyle = textStyle
+                }
             }
         }
-    )
-}
-
-inline fun Modifier.noRippleClickable(
-    enabled: Boolean = true,
-    noinline onClick: () -> Unit
-): Modifier = composed {
-    clickable(
-        enabled = enabled,
-        indication = null,
-        interactionSource = remember { MutableInteractionSource() },
-        onClick = onClick
     )
 }
 

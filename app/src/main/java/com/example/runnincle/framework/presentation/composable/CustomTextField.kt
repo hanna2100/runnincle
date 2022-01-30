@@ -7,7 +7,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
@@ -16,7 +21,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun BottomOutlineTextField(
+fun OutlineTextField(
     modifier: Modifier,
     fontSize: TextUnit,
     value: String,
@@ -27,7 +32,9 @@ fun BottomOutlineTextField(
     BasicTextField(
         modifier = modifier,
         value = value,
-        onValueChange = onValueChange,
+        onValueChange = {
+            onValueChange(it)
+        },
         textStyle = TextStyle(
             color = Color.White,
             fontSize = fontSize,
@@ -44,6 +51,6 @@ fun BottomOutlineTextField(
             }
         },
         cursorBrush = SolidColor(Color.White),
-        keyboardOptions = keyboardOptions
+        keyboardOptions = keyboardOptions,
     )
 }

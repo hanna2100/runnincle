@@ -1,25 +1,39 @@
 package com.example.runnincle.framework.presentation.create_program.composable
 
+import android.content.Context
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.runnincle.business.domain.model.Workout
+import com.example.runnincle.business.domain.model.Workout.Companion.getTotalWorkoutTime
 import com.example.runnincle.framework.presentation.composable.AutoSizeText
+import com.example.runnincle.toTimeClock
 
 
 @Composable
-fun CreateProgramWorkoutCircle(workouts: List<Workout>) {
+fun CreateProgramWorkoutCircle(
+    workouts: List<Workout>,
+    programName: String,
+    onProgramNameClick: ()-> Unit,
+) {
     BoxWithConstraints (
         modifier = Modifier
             .fillMaxWidth()
@@ -59,7 +73,7 @@ fun CreateProgramWorkoutCircle(workouts: List<Workout>) {
                     contentAlignment = Alignment.Center
                 ) {
                     AutoSizeText(
-                        text = "90:00",
+                        text = getTotalWorkoutTime(LocalContext.current, workouts),
                         textStyle = MaterialTheme.typography.h3.plus(
                             TextStyle(
                                 fontWeight = FontWeight.Medium,
@@ -80,7 +94,7 @@ fun CreateProgramWorkoutCircle(workouts: List<Workout>) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 AutoSizeText(
-                    text = "자전거타기",
+                    text = programName,
                     textStyle = MaterialTheme.typography.h4.plus(
                         TextStyle(
                             fontWeight = FontWeight.Medium,
@@ -91,8 +105,55 @@ fun CreateProgramWorkoutCircle(workouts: List<Workout>) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 5.dp)
+                        .clickable { onProgramNameClick() }
                 )
             }
         }
     }
+}
+
+fun getTotalWorkoutTime(
+    context: Context,
+    workouts: List<Workout>
+): String {
+    var totalTime = 0
+    workouts.forEach {
+        totalTime += it.getTotalWorkoutTime()
+    }
+    return totalTime.toTimeClock(context)
+}
+
+@Composable
+fun ShowEditProgramNameDialog(
+    onSetProgramName: (String) -> Unit,
+    onDismissRequest: ()-> Unit,
+) {
+    var newName: String by remember { mutableStateOf("")}
+
+    AlertDialog(
+        onDismissRequest = onDismissRequest,
+        confirmButton = {
+            TextButton(onClick = {
+                onSetProgramName(newName)
+            })
+            { Text(text = "확인") }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismissRequest)
+            { Text(text = "취소") }
+        },
+        title = { },
+        text = {
+            OutlinedTextField(
+                value = newName,
+                modifier = Modifier.fillMaxWidth(),
+                label = {
+                    Text("프로그램 이름")
+                },
+                onValueChange = {
+                    newName = it
+                }
+            )
+        }
+    )
 }

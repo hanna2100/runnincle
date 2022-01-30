@@ -9,8 +9,10 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
@@ -23,7 +25,16 @@ import com.example.runnincle.framework.presentation.create_program.composable.Bu
 @Composable
 fun CreateProgramFragmentBottomSheet(
     scaffoldState: BottomSheetScaffoldState,
-    onSheetClick: ()->Unit
+    name: MutableState<String>,
+    workMin: MutableState<String>,
+    workSec: MutableState<String>,
+    coolDownMin: MutableState<String>,
+    coolDownSec: MutableState<String>,
+    isSkipLastCoolDown: MutableState<Boolean>,
+    set: MutableState<String>,
+    timerColor: MutableState<Color>,
+    onSaveClick: ()->Unit,
+    onCollapsedSheetClick: ()->Unit
 ) {
     Box(
         modifier = Modifier
@@ -39,19 +50,29 @@ fun CreateProgramFragmentBottomSheet(
                     .fillMaxWidth()
                     .fillMaxHeight()
                     .align(Alignment.TopCenter)
-                    .verticalScroll(scrollState)
+                    .verticalScroll(scrollState),
+                name = name,
+                workMin = workMin,
+                workSec = workSec,
+                coolDownMin = coolDownMin,
+                coolDownSec = coolDownSec,
+                isSkipLastCoolDown= isSkipLastCoolDown,
+                set = set,
+                timerColor = timerColor
             )
             ButtonAddWork(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(55.dp)
-                    .align(Alignment.BottomEnd)
+                    .align(Alignment.BottomEnd),
+                onSaveClick = onSaveClick
             )
         }
         SheetCollapsed(
-            isCollapsed = scaffoldState.bottomSheetState.isCollapsed,
             currentFraction = scaffoldState.currentFraction,
-            onSheetClick = onSheetClick
+            onSheetClick = {
+                onCollapsedSheetClick()
+            }
         ) {
             Image(
                 ImageVector.vectorResource(id = R.drawable.ic_baseline_library_add),

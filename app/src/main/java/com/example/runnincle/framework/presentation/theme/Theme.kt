@@ -8,18 +8,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 private val DarkColorPalette = darkColors(
-    primary = Aquamarine,
-    primaryVariant = Eucalyptus,
-    onPrimary = BrightGray,
-    secondary = OldSilver,
-    secondaryVariant = Arsenic,
-    onSecondary = CharlestonGreen,
+    primary = AeroBlue,
+    primaryVariant = MintGreen,
+    onPrimary = Cultured,
+    secondary = PaleEggBlue,
+    secondaryVariant = SkyBlue,
+    onSecondary = PatrickBlue,
     error = Jasper,
-    onError = BrightGray,
-    background = BrightGray,
-    onBackground = CharlestonGreen,
-    surface = Color.Black,
-    onSurface = CharlestonGreen,
+    onError = Cultured,
+    background = Cultured,
+    onBackground = Gunmetal,
+    surface = Color.White,
+    onSurface = Gunmetal,
 )
 
 private val LightColorPalette = lightColors(

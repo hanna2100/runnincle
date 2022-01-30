@@ -7,6 +7,7 @@ buildscript {
         room_version = '2.4.0'
         hilt_version = '2.38.1'
         vanpra_dialog_version = '0.6.3'
+        room_compiler_version = '2.4.1'
     }
 
     dependencies {

@@ -20,27 +20,27 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.text.isDigitsOnly
 import com.example.runnincle.R
-import com.example.runnincle.framework.presentation.composable.BottomOutlineTextField
+import com.example.runnincle.framework.presentation.composable.OutlineTextField
 import com.vanpra.composematerialdialogs.*
 import com.vanpra.composematerialdialogs.color.ColorPalette
 import com.vanpra.composematerialdialogs.color.colorChooser
 
 
 @Composable
-fun AddWorkLayout(modifier: Modifier) {
+fun AddWorkLayout(
+    modifier: Modifier,
+    name: MutableState<String>,
+    workMin: MutableState<String>,
+    workSec: MutableState<String>,
+    coolDownMin: MutableState<String>,
+    coolDownSec: MutableState<String>,
+    isSkipLastCoolDown: MutableState<Boolean>,
+    set: MutableState<String>,
+    timerColor: MutableState<Color>
+) {
     Column(
         modifier = modifier
     ) {
-        var name by remember { mutableStateOf("") }
-        var workMin by remember { mutableStateOf("") }
-        var workSec by remember { mutableStateOf("") }
-        var coolDownMin by remember { mutableStateOf("") }
-        var coolDownSec by remember { mutableStateOf("") }
-        var isNoCoolDown by remember { mutableStateOf(false) }
-        var isSkipLastCoolDown by remember { mutableStateOf(false) }
-        var set by remember { mutableStateOf("") }
-
-        var timerColor: Color by remember { mutableStateOf(Color.Black) }
 
         Text(
             text = "이름",
@@ -50,14 +50,14 @@ fun AddWorkLayout(modifier: Modifier) {
             textAlign = TextAlign.Start,
             color = MaterialTheme.colors.onPrimary
         )
-        BottomOutlineTextField(
+        OutlineTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 10.dp),
             fontSize = 20.sp,
-            value = name,
+            value = name.value,
             onValueChange = {
-                name = it
+                name.value = it
             }
         )
         Column {
@@ -70,15 +70,15 @@ fun AddWorkLayout(modifier: Modifier) {
                 color = MaterialTheme.colors.onPrimary
             )
             Row {
-                BottomOutlineTextField(
+                OutlineTextField(
                     modifier = Modifier
-                        .width(60.dp)
+                        .width(50.dp)
                         .padding(bottom = 10.dp),
                     fontSize = 20.sp,
-                    value = workMin,
+                    value = workMin.value,
                     onValueChange = {
-                        if (it.isDigitsOnly() && it.length <= 3) {
-                            workMin = it
+                        if (it.isDigitsOnly() && it.length <= 2) {
+                            workMin.value = it
                         }
                     },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
@@ -89,18 +89,18 @@ fun AddWorkLayout(modifier: Modifier) {
                     fontSize = 40.sp,
                     color = MaterialTheme.colors.onPrimary
                 )
-                BottomOutlineTextField(
+                OutlineTextField(
                     modifier = Modifier
-                        .width(60.dp)
+                        .width(50.dp)
                         .padding(bottom = 10.dp),
                     fontSize = 20.sp,
-                    value = workSec,
+                    value = workSec.value,
                     onValueChange = {
                         if (it.isDigitsOnly() && it.length <= 2) {
                             if(it.isBlank()) {
-                                workSec = ""
+                                workSec.value = ""
                             } else if(it.toInt() <= 60) {
-                                workSec = it
+                                workSec.value= it
                             }
                         }
                     },
@@ -125,16 +125,15 @@ fun AddWorkLayout(modifier: Modifier) {
                     color = MaterialTheme.colors.onPrimary
                 )
                 Row {
-                    BottomOutlineTextField(
-                        enabled = !isNoCoolDown,
+                    OutlineTextField(
                         modifier = Modifier
-                            .width(60.dp)
+                            .width(50.dp)
                             .padding(bottom = 10.dp),
                         fontSize = 20.sp,
-                        value = coolDownMin,
+                        value = coolDownMin.value,
                         onValueChange = {
-                            if (it.isDigitsOnly() && it.length <= 3) {
-                                coolDownMin = it
+                            if (it.isDigitsOnly() && it.length <= 2) {
+                                coolDownMin.value = it
                             }
                         },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
@@ -145,19 +144,18 @@ fun AddWorkLayout(modifier: Modifier) {
                         fontSize = 40.sp,
                         color = MaterialTheme.colors.onPrimary
                     )
-                    BottomOutlineTextField(
-                        enabled = !isNoCoolDown,
+                    OutlineTextField(
                         modifier = Modifier
-                            .width(60.dp)
+                            .width(50.dp)
                             .padding(bottom = 10.dp),
                         fontSize = 20.sp,
-                        value = coolDownSec,
+                        value = coolDownSec.value,
                         onValueChange = {
                             if (it.isDigitsOnly() && it.length <= 2) {
                                 if(it.isBlank()) {
-                                    coolDownSec = ""
+                                    coolDownSec.value= ""
                                 } else if(it.toInt() <= 60) {
-                                    coolDownSec = it
+                                    coolDownSec.value = it
                                 }
                             }
                         },
@@ -165,63 +163,27 @@ fun AddWorkLayout(modifier: Modifier) {
                     )
                 }
             }
-            Column(modifier = Modifier.padding(bottom = 10.dp)) {
-                Row(
-                    verticalAlignment = Alignment.Top,
-                    modifier = Modifier.height(24.dp)
-                ) {
-                    RadioButton(
-                        selected = isNoCoolDown,
-                        colors = RadioButtonDefaults.colors(
-                            selectedColor = Color.White,
-                            unselectedColor = Color.White.copy(alpha = 0.6f),
-                            disabledColor = Color.White.copy(alpha = 0.3f)
-                        ),
-                        onClick = {
-                            isNoCoolDown = !isNoCoolDown
-                            if(isNoCoolDown) {
-                                isSkipLastCoolDown = false
-                                coolDownMin = ""
-                                coolDownSec = ""
-                            }
-                        }
-                    )
-                    Text(
-                        text = "쿨다운 없음",
-                        modifier = Modifier
-                            .wrapContentSize()
-                            .padding(bottom = 5.dp),
-                        textAlign = TextAlign.Start,
-                        color = MaterialTheme.colors.onPrimary
-                    )
-                }
-                Row(
-                    verticalAlignment = Alignment.Top,
-                    modifier = Modifier.height(24.dp)
-                ) {
-                    RadioButton(
-                        selected = isSkipLastCoolDown,
-                        colors = RadioButtonDefaults.colors(
-                            selectedColor = Color.White,
-                            unselectedColor = Color.White.copy(alpha = 0.6f),
-                            disabledColor = Color.White.copy(alpha = 0.3f)
-                        ),
-                        onClick = { isSkipLastCoolDown = !isSkipLastCoolDown },
-                        enabled = !isNoCoolDown
-                    )
-                    Text(
-                        text = "마지막 쿨다운 생략",
-                        modifier = Modifier
-                            .wrapContentSize()
-                            .padding(bottom = 5.dp),
-                        textAlign = TextAlign.Start,
-                        color = if (!isNoCoolDown) {
-                            MaterialTheme.colors.onPrimary
-                        } else {
-                            MaterialTheme.colors.onPrimary.copy(alpha = 0.3f)
-                        }
-                    )
-                }
+            Row(
+                modifier = Modifier.padding(bottom = 10.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                RadioButton(
+                    selected = isSkipLastCoolDown.value,
+                    colors = RadioButtonDefaults.colors(
+                        selectedColor = Color.White,
+                        unselectedColor = Color.White.copy(alpha = 0.6f),
+                        disabledColor = Color.White.copy(alpha = 0.3f)
+                    ),
+                    onClick = { isSkipLastCoolDown.value = !isSkipLastCoolDown.value },
+                )
+                Text(
+                    text = "마지막 쿨다운 생략",
+                    modifier = Modifier
+                        .wrapContentSize(),
+                    textAlign = TextAlign.Start,
+                    color = MaterialTheme.colors.onPrimary
+                )
             }
         }
         Row (
@@ -240,15 +202,15 @@ fun AddWorkLayout(modifier: Modifier) {
                     textAlign = TextAlign.Start,
                     color = MaterialTheme.colors.onPrimary
                 )
-                BottomOutlineTextField(
+                OutlineTextField(
                     modifier = Modifier
-                        .width(60.dp)
+                        .width(50.dp)
                         .padding(bottom = 10.dp),
                     fontSize = 20.sp,
-                    value = set,
+                    value = set.value,
                     onValueChange = {
                         if (it.isDigitsOnly() && it.length <= 2) {
-                            set = it
+                            set.value = it
                         }
                     },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
@@ -258,15 +220,22 @@ fun AddWorkLayout(modifier: Modifier) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 DialogAndShowButton(
-                    selectedColor = timerColor,
-                    buttons = {
-                        positiveButton("선택")
-                        negativeButton("취소")
-                    }
+                    selectedColor = timerColor.value
                 ) {
                     title("색상 선택하기")
-                    colorChooser(colors = ColorPalette.Primary) {
-                        timerColor = it
+                    colorChooser(
+                        colors = ColorPalette.Primary,
+                        initialSelection = ColorPalette.Primary.indexOf(timerColor.value),
+                        waitForPositiveButton = false,
+                        onColorSelected = {
+                            if (timerColor.value != it) {
+                                timerColor.value = it
+                                this.dialogState.hide()
+                            }
+                        }
+                    )
+                    customView {
+                        Spacer(modifier = Modifier.height(20.dp).fillMaxWidth())
                     }
                 }
                 Text(
@@ -314,10 +283,13 @@ fun DialogAndShowButton(
 
 
 @Composable
-fun ButtonAddWork(modifier: Modifier) {
+fun ButtonAddWork(
+    modifier: Modifier,
+    onSaveClick: ()-> Unit
+) {
     Button(
         onClick = {
-
+            onSaveClick()
         },
         colors = ButtonDefaults.textButtonColors(
             backgroundColor = MaterialTheme.colors.onPrimary,

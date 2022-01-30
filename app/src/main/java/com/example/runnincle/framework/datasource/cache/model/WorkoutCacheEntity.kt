@@ -15,5 +15,6 @@ data class WorkoutCacheEntity(
     var work: Int,
     var coolDown: Int = 0,
     @ColumnInfo(name = "workout_order")
-    var order: Int
+    var order: Int,
+    var timerColor: String
 )

@@ -64,7 +64,7 @@ fun Context.startActivity(kclass: KClass<out Activity>) {
 }
 
 fun Int.toTimeLetters(context: Context): String {
-    return if (this <= 60) {
+    return if (this < 60) {
         "$this${context.getString(R.string.seconds)}"
     } else {
         val min: Int = this/60
@@ -79,14 +79,26 @@ fun Int.toTimeLetters(context: Context): String {
 
 fun Int.toTimeClock(context: Context): String {
     return if (this <= 59) {
-        "00:$this"
+        if(this < 10) {
+            "00:0$this"
+        } else {
+            "00:$this"
+        }
     } else {
         val min: Int = this/60
         val sec: Int = this - (min * 60)
         if(sec > 0) {
-            "$min:$sec"
+            if(sec < 10) {
+                "$min:0$sec"
+            } else {
+                "$min:$sec"
+            }
         } else {
             "$min:00"
         }
     }
+}
+
+fun Context.showToastMessage(message:String){
+    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
 }

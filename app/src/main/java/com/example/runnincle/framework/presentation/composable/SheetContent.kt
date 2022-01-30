@@ -1,6 +1,7 @@
 package com.example.runnincle.framework.presentation.composable
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -46,9 +47,8 @@ fun SheetExpanded(
 
 @Composable
 fun SheetCollapsed(
-    isCollapsed: Boolean,
-    currentFraction: Float,
     onSheetClick: () -> Unit,
+    currentFraction: Float,
     content: @Composable BoxScope.() -> Unit
 ) {
     Box(
@@ -64,10 +64,9 @@ fun SheetCollapsed(
                 )
             )
             .graphicsLayer(alpha = 1f - currentFraction)
-            .noRippleClickable(
-                onClick = onSheetClick,
-                enabled = isCollapsed
-            )
+            .clickable {
+                onSheetClick()
+            }
     ) {
         content()
     }

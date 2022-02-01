@@ -75,10 +75,7 @@ class CreateProgramFragment: Fragment() {
                                 viewModel.moveToProgramListFragment(this)
                             },
                             onProgramSaveClick = {
-                                scope.launch {
-                                    var result = viewModel.insertNewProgram()
-                                    println("insert result: $result ")
-                                }
+                                viewModel.insertNewProgram(this)
                             }
                         ) },
                         sheetContent = {
@@ -197,6 +194,12 @@ class CreateProgramFragment: Fragment() {
                     }
                     CreateProgramErrorStatus.WORK_FORMAT -> {
                         context?.showToastMessage(getString(R.string.work_time_must_be_at_least_1))
+                    }
+                    CreateProgramErrorStatus.PROGRAM_NAME_EMPTY -> {
+                        context?.showToastMessage(getString(R.string.program_name_must_be_entered))
+                    }
+                    CreateProgramErrorStatus.WORKOUTS_EMPTY -> {
+                        context?.showToastMessage(getString(R.string.workout_must_be_exist))
                     }
                 }
             }

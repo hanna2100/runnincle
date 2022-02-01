@@ -28,4 +28,7 @@
     <string name="pick_color">색상 선택하기</string>
     <string name="timer_color">타이머 색상</string>
     <string name="delete">삭제</string>
+    <string name="program_name_must_be_entered">프로그램 이름을 입력해 주세요.</string>
+    <string name="workout_must_be_exist">하단의 + 버튼을 눌러 프로그램을 구성해주세요.</string>
+
 </resources>

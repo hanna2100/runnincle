@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.example.runnincle.R
+import com.example.runnincle.ui.theme.RunnincleTheme
 
 class ProgramListFragment: Fragment() {
 
@@ -28,6 +29,11 @@ class ProgramListFragment: Fragment() {
     ): View? {
         return ComposeView(requireContext()).apply {
             setContent {
+                RunnincleTheme {
+
+                }
+
+
                 Column(modifier = Modifier.fillMaxSize()) {
                     Text("WorkoutListFragment", fontSize = 20.sp, fontWeight = FontWeight.Bold)
                     Spacer(modifier = Modifier.padding(10.dp))

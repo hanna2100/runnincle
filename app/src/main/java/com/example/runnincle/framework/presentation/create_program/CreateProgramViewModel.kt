@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.findNavController
 import com.example.runnincle.R
 import com.example.runnincle.business.domain.model.Workout
@@ -19,13 +20,12 @@ import com.example.runnincle.framework.presentation.create_program.composable.Sh
 import com.example.runnincle.util.BaseViewModel
 import com.vanpra.composematerialdialogs.color.ColorPalette
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.launch
 import java.lang.NumberFormatException
 import javax.inject.Inject
 
 enum class CreateProgramErrorStatus{
-    NUMBER_FORMAT, SET_FORMAT, WORK_FORMAT
+    NUMBER_FORMAT, SET_FORMAT, WORK_FORMAT, WORKOUTS_EMPTY, PROGRAM_NAME_EMPTY,
 }
 
 enum class BottomSheetSaveButtonStatus {
@@ -37,7 +37,7 @@ class CreateProgramViewModel
 @Inject
 constructor(
     private val createProgramInteractors: CreateProgramInteractors,
-    resourcesProvider: ResourcesProvider
+    private val resourcesProvider: ResourcesProvider
 ): BaseViewModel() {
 
     val workouts = mutableStateOf<MutableList<Workout>>(mutableListOf())
@@ -266,11 +266,32 @@ constructor(
         }
     }
 
-    suspend fun insertNewProgram(): Long = withContext(Dispatchers.IO) {
-        createProgramInteractors.insertNewProgram(
-            name = name.value,
-            workouts = workouts.value
-        )
+    fun insertNewProgram(view: View) {
+        val valid = validateProgramData()
+        if (!valid) {
+            return
+        }
+        viewModelScope.launch {
+            createProgramInteractors.insertNewProgram(
+                name = name.value,
+                workouts = workouts.value
+            )
+        }
+        moveToProgramListFragment(view)
+    }
+
+    private fun validateProgramData(): Boolean {
+        return if (workouts.value.isEmpty()) {
+            errorStatus.value = WORKOUTS_EMPTY
+            false
+        } else if (programName.value.isEmpty() ||
+            programName.value == resourcesProvider.getString(R.string.enter_program_name)
+        ) {
+            errorStatus.value = PROGRAM_NAME_EMPTY
+            false
+        } else {
+            true
+        }
     }
 
     fun moveToProgramListFragment(view: View) {

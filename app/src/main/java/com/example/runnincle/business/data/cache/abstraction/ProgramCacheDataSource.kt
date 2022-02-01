@@ -8,7 +8,6 @@ interface ProgramCacheDataSource {
     suspend fun updateProgram(
         id: String,
         name: String,
-        difficulty: Int,
         updatedAt: String
     ): Int
 

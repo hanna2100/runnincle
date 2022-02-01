@@ -15,27 +15,27 @@ class CreateProgramInteractors(
 ) {
     suspend fun insertNewProgram (
         name: String,
-        difficulty: Int,
         workouts: List<Workout>
     ): Long {
 
         val programId = getRandomUUID()
 
-        workouts.forEach { workout ->
-            val workoutId = getRandomUUID()
-            val mWorkout = workout.copy(
-                id = workoutId,
-                programId = programId
-            )
-            workoutCacheDataSource.insertWorkout(mWorkout)
-        }
-
         val program = Program(
             id = programId,
             name = name,
-            difficulty = difficulty,
             updatedAt = dateUtil.getCurrentTimestamp()
         )
+
+        for(i in 0..workouts.lastIndex) {
+            val workoutId = getRandomUUID()
+            val w = workouts[i].copy(
+                id = workoutId,
+                programId = programId,
+                order = i
+            )
+            workoutCacheDataSource.insertWorkout(w)
+        }
+
         return programCacheDataSource.insertProgram(program)
     }
 }

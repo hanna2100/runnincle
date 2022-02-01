@@ -8,6 +8,5 @@ data class ProgramCacheEntity(
     @PrimaryKey(autoGenerate = false)
     var id: String,
     var name: String,
-    var difficulty: Int,
     var updated_at: String
 )

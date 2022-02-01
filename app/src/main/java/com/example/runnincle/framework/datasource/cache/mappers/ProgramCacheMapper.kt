@@ -9,7 +9,6 @@ class ProgramCacheMapper: EntityMapper<ProgramCacheEntity, Program> {
         return Program(
             id = entity.id,
             name = entity.name,
-            difficulty = entity.difficulty,
             updatedAt = entity.updated_at
         )
     }
@@ -18,7 +17,6 @@ class ProgramCacheMapper: EntityMapper<ProgramCacheEntity, Program> {
         return ProgramCacheEntity(
             id = domainModel.id,
             name = domainModel.name,
-            difficulty = domainModel.difficulty,
             updated_at = domainModel.updatedAt
         )
     }

@@ -9,7 +9,6 @@ interface ProgramDaoService {
     suspend fun updateProgram(
         id: String,
         name: String,
-        difficulty: Int,
         updateAt: String?
     ): Int
 

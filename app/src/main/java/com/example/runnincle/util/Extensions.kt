@@ -4,11 +4,16 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.os.Bundle
 import android.provider.Settings
 import android.widget.Toast
+import androidx.annotation.IdRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
+import androidx.navigation.NavController
+import androidx.navigation.NavOptions
+import androidx.navigation.Navigator
 import com.example.runnincle.util.FloatingService.Companion.INTENT_COMMAND
 import com.example.runnincle.util.FloatingService.Companion.INTENT_COMMAND_OPEN
 import com.example.runnincle.util.FloatingService.Companion.INTENT_INTERVAL_PROGRAM
@@ -112,3 +117,21 @@ fun List<Workout>.getTotalWorkoutListTime(): Int {
     }
     return totalWorkoutsTime
 }
+
+//fun NavController.navigateSafe(
+//    @IdRes resId: Int,
+//    args: Bundle? = null,
+//    navOptions: NavOptions? = null,
+//    navExtras: Navigator.Extras? = null
+//) {
+//    val action = currentDestination?.getAction(resId) ?: graph.getAction(resId)
+//    if (action != null && currentDestination?.id != action.destinationId) {
+//        navigate(resId, args, navOptions, navExtras)
+//    }
+//}
+//
+//fun NavController.navigateSafeUp(@IdRes currentFragmentResId: Int) {
+//    if (currentDestination?.id == currentFragmentResId) {
+//        navigateUp()
+//    }
+//}

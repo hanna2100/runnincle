@@ -18,21 +18,18 @@ class ProgramDaoServiceImpl(
     override suspend fun updateProgram(
         id: String,
         name: String,
-        difficulty: Int,
         updateAt: String?
     ): Int {
         return if (updateAt.isNullOrEmpty()) {
             programDao.updateProgram(
                 id = id,
                 name = name,
-                difficulty = difficulty,
                 updatedAt = dateUtil.getCurrentTimestamp()
             )
         } else {
             programDao.updateProgram(
                 id = id,
                 name = name,
-                difficulty = difficulty,
                 updatedAt = updateAt
             )
         }

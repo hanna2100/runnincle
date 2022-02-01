@@ -19,10 +19,9 @@ constructor(
     override suspend fun updateProgram(
         id: String,
         name: String,
-        difficulty: Int,
         updatedAt: String
     ): Int {
-        return programDaoService.updateProgram(id, name, difficulty, updatedAt)
+        return programDaoService.updateProgram(id, name, updatedAt)
     }
 
     override suspend fun deleteProgram(primaryKey: Int): Int {

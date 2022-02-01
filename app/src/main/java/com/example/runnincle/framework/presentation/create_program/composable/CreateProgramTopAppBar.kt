@@ -12,7 +12,10 @@ import com.example.runnincle.R
 
 
 @Composable
-fun CreateProgramTopAppBar() {
+fun CreateProgramTopAppBar(
+    onBackClick: ()->Unit,
+    onProgramSaveClick: ()->Unit,
+) {
     TopAppBar(
         title = {
             Text(
@@ -23,7 +26,7 @@ fun CreateProgramTopAppBar() {
         },
         navigationIcon = {
             IconButton(onClick = {
-                // 뒤로가기
+                onBackClick()
             }) {
                 Icon(
                     Icons.Filled.KeyboardArrowLeft,
@@ -34,7 +37,7 @@ fun CreateProgramTopAppBar() {
         },
         actions = {
             IconButton(onClick = {
-                // program 추가
+                onProgramSaveClick()
             }) {
                 Icon(
                     Icons.Filled.Done,

@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
 import androidx.compose.material.Text
@@ -26,12 +28,15 @@ class ProgramListFragment: Fragment() {
     ): View? {
         return ComposeView(requireContext()).apply {
             setContent {
-                Text("WorkoutListFragment", fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                Spacer(modifier = Modifier.padding(10.dp))
-                Button(onClick = {
-                    findNavController().navigate(R.id.createWorkoutFragment)
-                }) {
-                    Text("CreateWorkoutFragment 로 이동")
+                Column(modifier = Modifier.fillMaxSize()) {
+                    Text("WorkoutListFragment", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                    Spacer(modifier = Modifier.padding(10.dp))
+                    Button(onClick = {
+                        val action = ProgramListFragmentDirections.actionProgramListFragmentToCreateProgramFragment()
+                        findNavController().navigate(action)
+                    }) {
+                        Text("CreateWorkoutFragment 로 이동")
+                    }
                 }
             }
         }

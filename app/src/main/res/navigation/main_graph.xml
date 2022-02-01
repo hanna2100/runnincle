@@ -2,20 +2,28 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_graph"
-    app:startDestination="@id/workoutListFragment">
+    app:startDestination="@id/programListFragment">
 
     <fragment
-        android:id="@+id/workoutListFragment"
+        android:id="@+id/programListFragment"
         android:name="com.example.runnincle.framework.presentation.program_list.ProgramListFragment"
         android:label="WorkoutListFragment">
         <action
-            android:id="@+id/action_createWorkoutFragment_to_createWorkoutFragment"
-            app:destination="@+id/createWorkoutFragment"/>
+            android:id="@+id/action_programListFragment_to_createProgramFragment"
+            app:destination="@+id/createProgramFragment"
+            app:enterAnim="@anim/slide_out_right"
+            app:exitAnim="@anim/slide_in_right" />
     </fragment>
 
     <fragment
-        android:id="@+id/createWorkoutFragment"
+        android:id="@+id/createProgramFragment"
         android:name="com.example.runnincle.framework.presentation.create_program.CreateProgramFragment"
-        android:label="CreateWorkoutFragment"></fragment>
+        android:label="CreateWorkoutFragment">
+        <action
+            android:id="@+id/action_createProgramFragment_to_programListFragment"
+            app:destination="@+id/programListFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_left"/>
+    </fragment>
 
 </navigation>

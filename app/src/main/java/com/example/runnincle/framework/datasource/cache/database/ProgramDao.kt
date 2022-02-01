@@ -12,14 +12,12 @@ interface ProgramDao {
         UPDATE programs 
         SET 
         name = :name, 
-        difficulty = :difficulty,
         updated_at = :updatedAt
         WHERE id = :id
         """)
     suspend fun updateProgram(
         id: String,
         name: String,
-        difficulty: Int,
         updatedAt: String
     ): Int
 

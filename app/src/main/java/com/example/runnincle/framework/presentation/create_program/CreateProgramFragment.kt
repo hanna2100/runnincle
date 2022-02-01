@@ -70,7 +70,17 @@ class CreateProgramFragment: Fragment() {
                         modifier = Modifier.fillMaxWidth(),
                         scaffoldState = scaffoldState,
                         sheetShape = RoundedCornerShape(topStart = radius, topEnd = radius),
-                        topBar = { CreateProgramTopAppBar() },
+                        topBar = { CreateProgramTopAppBar(
+                            onBackClick = {
+                                viewModel.moveToProgramListFragment(this)
+                            },
+                            onProgramSaveClick = {
+                                scope.launch {
+                                    var result = viewModel.insertNewProgram()
+                                    println("insert result: $result ")
+                                }
+                            }
+                        ) },
                         sheetContent = {
                             CreateProgramFragmentBottomSheet(
                                 scaffoldState = scaffoldState,

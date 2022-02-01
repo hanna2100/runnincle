@@ -1,11 +1,13 @@
 package com.example.runnincle.framework.presentation.create_program
 
+import android.view.View
 import androidx.compose.material.BottomSheetScaffoldState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.MutableLiveData
+import androidx.navigation.findNavController
 import com.example.runnincle.R
 import com.example.runnincle.business.domain.model.Workout
 import com.example.runnincle.business.domain.model.Workout.Companion.getMinValueAndIgnoreSecValue
@@ -17,6 +19,8 @@ import com.example.runnincle.framework.presentation.create_program.composable.Sh
 import com.example.runnincle.util.BaseViewModel
 import com.vanpra.composematerialdialogs.color.ColorPalette
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.lang.NumberFormatException
 import javax.inject.Inject
 
@@ -33,7 +37,7 @@ class CreateProgramViewModel
 @Inject
 constructor(
     private val createProgramInteractors: CreateProgramInteractors,
-    private val resourcesProvider: ResourcesProvider
+    resourcesProvider: ResourcesProvider
 ): BaseViewModel() {
 
     val workouts = mutableStateOf<MutableList<Workout>>(mutableListOf())
@@ -260,5 +264,17 @@ constructor(
                 }
             )
         }
+    }
+
+    suspend fun insertNewProgram(): Long = withContext(Dispatchers.IO) {
+        createProgramInteractors.insertNewProgram(
+            name = name.value,
+            workouts = workouts.value
+        )
+    }
+
+    fun moveToProgramListFragment(view: View) {
+        val action = CreateProgramFragmentDirections.actionCreateProgramFragmentToProgramListFragment()
+        view.findNavController().navigate(action)
     }
 }

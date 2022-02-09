@@ -18,10 +18,15 @@ import com.example.runnincle.util.FloatingService.Companion.INTENT_COMMAND
 import com.example.runnincle.util.FloatingService.Companion.INTENT_COMMAND_OPEN
 import com.example.runnincle.util.FloatingService.Companion.INTENT_INTERVAL_PROGRAM
 import com.example.runnincle.business.domain.model.IntervalProgram
+import com.example.runnincle.business.domain.model.Program
 import com.example.runnincle.business.domain.model.Workout
 import com.example.runnincle.business.domain.model.Workout.Companion.getTotalWorkoutTime
+import com.example.runnincle.business.domain.util.TimeAgo
 import com.example.runnincle.framework.presentation.PermissionActivity
 import com.example.runnincle.util.FloatingService
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.*
 import kotlin.reflect.KClass
 
 fun Context.startFloatingServiceWithCommand(
@@ -116,6 +121,20 @@ fun List<Workout>.getTotalWorkoutListTime(): Int {
         totalWorkoutsTime += it.getTotalWorkoutTime()
     }
     return totalWorkoutsTime
+}
+
+fun String.toTimeAgo(): String {
+    // 형식검사
+    return try {
+        val sdf = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
+        sdf.isLenient = false
+        val past = sdf.parse(this)
+        val now = Date()
+
+        TimeAgo.toDuration(now.time - past.time)
+    } catch (e: ParseException) {
+        this
+    }
 }
 
 //fun NavController.navigateSafe(

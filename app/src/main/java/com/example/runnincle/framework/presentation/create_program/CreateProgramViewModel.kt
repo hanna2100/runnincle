@@ -273,7 +273,7 @@ constructor(
         }
         viewModelScope.launch {
             createProgramInteractors.insertNewProgram(
-                name = name.value,
+                name = programName.value,
                 workouts = workouts.value
             )
         }

@@ -9,6 +9,7 @@ import com.example.runnincle.business.domain.util.DateUtil
 import com.example.runnincle.business.domain.util.ResourcesProvider
 import com.example.runnincle.business.domain.util.ResourcesProviderImpl
 import com.example.runnincle.business.interactors.create_program.CreateProgramInteractors
+import com.example.runnincle.business.interactors.program_list.ProgramListInteractors
 import com.example.runnincle.framework.datasource.cache.abstraction.ProgramDaoService
 import com.example.runnincle.framework.datasource.cache.abstraction.WorkoutDaoService
 import com.example.runnincle.framework.datasource.cache.database.ProgramDao
@@ -72,6 +73,15 @@ object AppModule {
         dateUtil: DateUtil
     ): CreateProgramInteractors {
         return CreateProgramInteractors (programCacheDataSource, workoutCacheDataSource, dateUtil)
+    }
+
+    @Singleton
+    @Provides
+    fun provideProgramListInteractors(
+        programCacheDataSource: ProgramCacheDataSource,
+        workoutCacheDataSource: WorkoutCacheDataSource,
+    ): ProgramListInteractors {
+        return ProgramListInteractors (programCacheDataSource, workoutCacheDataSource)
     }
 
     @Singleton

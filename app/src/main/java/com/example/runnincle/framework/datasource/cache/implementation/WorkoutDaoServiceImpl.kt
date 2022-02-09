@@ -40,7 +40,13 @@ constructor(
         TODO("Not yet implemented")
     }
 
-    override suspend fun getWorkoutsWithProgramId(programId: Int): List<Workout> {
-        TODO("Not yet implemented")
+    override suspend fun getWorkoutsOfProgram(programId: String): List<Workout> {
+        val entityWorkouts = workoutDao.getWorkoutsOfProgram(programId)
+        val domainWorkouts = mutableListOf<Workout>()
+        entityWorkouts.forEach { entity->
+            val domain = workoutCacheMapper.mapFromEntity(entity)
+            domainWorkouts.add(domain)
+        }
+        return domainWorkouts
     }
 }

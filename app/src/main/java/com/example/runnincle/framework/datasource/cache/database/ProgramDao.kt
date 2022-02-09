@@ -24,4 +24,9 @@ interface ProgramDao {
     @Query("DELETE FROM programs WHERE id = :id")
     suspend fun deleteProgram(id: String): Int
 
+    @Query("""
+        SELECT * FROM programs ORDER BY updated_at DESC
+        """)
+    suspend fun getAllProgram(): Array<ProgramCacheEntity>
+
 }

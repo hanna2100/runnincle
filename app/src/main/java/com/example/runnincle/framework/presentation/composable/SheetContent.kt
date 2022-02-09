@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
@@ -24,7 +25,7 @@ fun SheetExpanded(
                         MaterialTheme.colors.primary,
                         MaterialTheme.colors.primaryVariant
                     )
-                )
+                ),
             )
             .padding(top = 30.dp, start = 40.dp, end = 40.dp, bottom = 20.dp)
     ) {

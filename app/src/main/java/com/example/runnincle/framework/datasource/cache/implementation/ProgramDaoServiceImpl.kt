@@ -40,6 +40,12 @@ class ProgramDaoServiceImpl(
     }
 
     override suspend fun getAllPrograms(): List<Program> {
-        TODO("Not yet implemented")
+        val entityPrograms = programDao.getAllProgram()
+        val domainPrograms = mutableListOf<Program>()
+        entityPrograms.forEach { entity ->
+            val domain = programCacheMapper.mapFromEntity(entity)
+            domainPrograms.add(domain)
+        }
+        return domainPrograms
     }
 }

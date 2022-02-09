@@ -1,5 +1,6 @@
 package com.example.runnincle.business.domain.util
 
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -15,5 +16,4 @@ class DateUtil constructor(
     fun getCurrentTimestamp(): String {
         return dateFormat.format(Date())
     }
-
 }

@@ -31,7 +31,7 @@ constructor (
         return workoutDaoService.deleteWorkout(id)
     }
 
-    override suspend fun getWorkoutsWithProgramId(programId: Int): List<Workout> {
-        return workoutDaoService.getWorkoutsWithProgramId(programId)
+    override suspend fun getWorkoutsOfProgram(programId: String): List<Workout> {
+        return workoutDaoService.getWorkoutsOfProgram(programId)
     }
 }

@@ -1,7 +1,8 @@
 package com.example.runnincle.framework.presentation.create_program.composable
 
-import android.content.Context
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
@@ -32,6 +33,7 @@ fun CreateProgramWorkoutCircle(
     workouts: List<Workout>,
     programName: String,
     onProgramNameClick: ()-> Unit,
+    isFired: Boolean
 ) {
 
     BoxWithConstraints (
@@ -48,7 +50,7 @@ fun CreateProgramWorkoutCircle(
                 .fillMaxSize(0.75f)
                 .align(Alignment.TopCenter)
             ) {
-                WorkoutScheduleBar(workouts)
+                WorkoutScheduleBar(workouts, isFired)
             }
             Box ( modifier = Modifier
                 .fillMaxSize(0.8f)
@@ -101,22 +103,42 @@ fun CreateProgramWorkoutCircle(
 }
 
 @Composable
-fun WorkoutScheduleBar(workouts: List<Workout>) {
+fun WorkoutScheduleBar(workouts: List<Workout>, isFired: Boolean) {
     val totalWorkoutListTime = workouts.getTotalWorkoutListTime()
-    val stateList = mutableListOf<State<Float>>()
+    val workoutTimePercentages =  mutableListOf<State<Float>>()
     var workTimeFloatValue = 0f
 
     workouts.forEach {
         workTimeFloatValue += it.getTotalWorkoutTime().toFloat().div(totalWorkoutListTime)
         val drawPercentage = animateFloatAsState(
-            targetValue = workTimeFloatValue,
+            targetValue = if (isFired) workTimeFloatValue else 0f,
             animationSpec = tween(
                 delayMillis = 0,
                 durationMillis = 1000
             )
         )
-        stateList.add(drawPercentage)
+        workoutTimePercentages.add(drawPercentage)
     }
+
+
+//    LaunchedEffect(isFired) {
+//        stateList.clear()
+//
+//        workouts.forEach {
+//            workTimeFloatValue += it.getTotalWorkoutTime().toFloat().div(totalWorkoutListTime)
+//            val drawPercentage = animateFloatAsState(
+//                targetValue = if()workTimeFloatValue,
+//                animationSpec = tween(
+//                    delayMillis = 0,
+//                    durationMillis = 1000
+//                )
+//            )
+//            stateList.add(drawPercentage)
+//        }
+//        println("stateList size = ${stateList.size}")
+//        onComplete()
+//    }
+
     Box {
         Canvas(
             modifier = Modifier
@@ -136,22 +158,22 @@ fun WorkoutScheduleBar(workouts: List<Workout>) {
                 .fillMaxSize()
                 .padding(10.dp)
         ) {
-            if(workouts.isEmpty()) {
-                return@Canvas
-            }
             var stroke = 35f
             for (i in workouts.lastIndex downTo 0) {
                 drawArc(
                     brush = SolidColor(workouts[i].timerColor),
                     startAngle = 130f,
-                    sweepAngle = 280f * stateList[i].value,
+                    sweepAngle = 280f * workoutTimePercentages[i].value,
                     useCenter = false,
                     style = Stroke(stroke, cap = StrokeCap.Round)
                 )
                 stroke += 1f
             }
         }
+
+
     }
+
 }
 
 @Composable

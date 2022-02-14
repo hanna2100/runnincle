@@ -25,6 +25,7 @@ import com.example.runnincle.showToastMessage
 import com.example.runnincle.ui.theme.RunnincleTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @ExperimentalMaterialApi
@@ -66,6 +67,8 @@ class CreateProgramFragment: Fragment() {
                     setOnBackPressedCallback(scope)
                     viewModel.setUpEditProgramNameDialog()
 
+                    val isFired = remember { mutableStateOf(false) }
+
                     BottomSheetScaffold(
                         modifier = Modifier.fillMaxWidth(),
                         scaffoldState = scaffoldState,
@@ -75,7 +78,14 @@ class CreateProgramFragment: Fragment() {
                                 viewModel.moveToProgramListFragment(this)
                             },
                             onProgramSaveClick = {
-                                viewModel.insertNewProgram(this)
+                                val view = this@CreateProgramFragment.requireView()
+                                scope.launch {
+                                    val isValid = viewModel.insertNewProgram()
+                                    if (isValid) {
+                                        delay(100)
+                                        viewModel.moveToProgramListFragment(view)
+                                    }
+                                }
                             }
                         ) },
                         sheetContent = {
@@ -85,6 +95,8 @@ class CreateProgramFragment: Fragment() {
                                 onSaveClick = {
                                     scope.launch {
                                         viewModel.onBottomSheetSaveButtonClick(scaffoldState)
+                                        isFired.value = false
+                                        isFired.value = true
                                     }
                                 },
                                 onDeleteClick = {
@@ -121,7 +133,8 @@ class CreateProgramFragment: Fragment() {
                                     programName = programName.value,
                                     onProgramNameClick = {
                                         viewModel.isShowingEditProgramNameDialog.value = true
-                                    }
+                                    },
+                                    isFired = isFired.value
                                 )
                                 CreateProgramWorkoutList(
                                     workouts = workouts,
@@ -167,7 +180,7 @@ class CreateProgramFragment: Fragment() {
                         scaffoldState.bottomSheetState.collapse()
                     }
                 } else {
-                    // 프로그램 리스트 화면으로 돌아가기
+                    viewModel.moveToProgramListFragment(this@CreateProgramFragment.requireView())
                 }
             }
         }

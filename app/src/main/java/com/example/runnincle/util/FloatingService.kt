@@ -8,21 +8,27 @@ import android.content.Intent
 import android.os.Build
 import android.os.IBinder
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
-import com.example.runnincle.IntervalOverlayWindow
+import com.example.runnincle.OverlayWindow
 import com.example.runnincle.R
-import com.example.runnincle.business.domain.model.IntervalProgram
+import com.example.runnincle.business.domain.model.ParcelableWorkout
+import com.example.runnincle.business.domain.model.Program
+import com.example.runnincle.business.domain.model.Workout
+import com.example.runnincle.business.domain.model.Workout.Companion.toWorkout
 import com.example.runnincle.drawOverOtherAppsEnabled
 import com.example.runnincle.startPermissionActivity
 
+enum class FloatingServiceCommand {
+    CLOSE, OPEN
+}
 
-class FloatingService: Service(){
+class FloatingService: Service() {
     companion object {
         const val NOTIFICATION_ID = 10
-        const val INTENT_COMMAND = "com.example.runnincle.COMMAND"
-        const val INTENT_COMMAND_CLOSE = "CLOSE"
-        const val INTENT_COMMAND_OPEN = "OPEN"
-        const val INTENT_INTERVAL_PROGRAM = "INTERVAL_PROGRAM"
+        const val COMMAND_NAME = "COMMAND"
+        const val INTENT_ARGS_PROGRAM = "INTENT_ARGS_PROGRAM"
+        const val INTENT_ARGS_WORKOUTS = "INTENT_ARGS_WORKOUTS"
     }
 
     override fun onBind(p0: Intent?): IBinder? {
@@ -33,27 +39,44 @@ class FloatingService: Service(){
         super.onCreate()
         setNotificationChannel()
         setTheme(R.style.Theme_Runnincle)
+
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        val command = intent.getStringExtra(INTENT_COMMAND)
+        val command = intent.getStringExtra(COMMAND_NAME)
 
-        if (command == INTENT_COMMAND_CLOSE) {
+        if (command == FloatingServiceCommand.CLOSE.name) {
             stopService()
             return START_NOT_STICKY // 강제종료시 시스템이 서비스를 재시작시키지 않음
         }
 
-        if (command == INTENT_COMMAND_OPEN) {
+        if (command == FloatingServiceCommand.OPEN.name) {
             if (drawOverOtherAppsEnabled()) {
-                val mIntervalProgram = intent.getSerializableExtra(INTENT_INTERVAL_PROGRAM) as IntervalProgram
-                val window = IntervalOverlayWindow(this, mIntervalProgram)
+                val program = intent.getParcelableExtra<Program>(INTENT_ARGS_PROGRAM)
+                val parcelableWorkouts = intent.getParcelableArrayListExtra<ParcelableWorkout>(INTENT_ARGS_WORKOUTS)
+
+                if(program == null || parcelableWorkouts == null) {
+                    stopService()
+                    //TODO 예외처리
+                    return START_STICKY
+                }
+
+                val workouts = mutableListOf<Workout>()
+                parcelableWorkouts.forEach {
+                    workouts.add(it.toWorkout())
+                }
+
+                val window = OverlayWindow(context = this, program = program, workouts = workouts)
                 if(!window.isServiceRunning()) {
                     window.showOverlay()
                 } else {
                     Toast.makeText(this, "이미 실행중이에요", Toast.LENGTH_SHORT).show()
                 }
             } else {
+                println("debug startPermissionActivity")
                 startPermissionActivity()
+                stopService()
             }
         }
 

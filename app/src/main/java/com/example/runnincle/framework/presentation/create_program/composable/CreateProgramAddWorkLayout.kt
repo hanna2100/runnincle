@@ -315,9 +315,7 @@ fun ButtonAddWork(
             }
         }
         Button(
-            onClick = {
-                onSaveClick()
-            },
+            onClick = onSaveClick,
             colors = ButtonDefaults.textButtonColors(
                 backgroundColor = MaterialTheme.colors.onPrimary,
                 contentColor = MaterialTheme.colors.primary

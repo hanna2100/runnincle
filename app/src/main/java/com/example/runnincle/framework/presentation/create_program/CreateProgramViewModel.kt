@@ -266,10 +266,10 @@ constructor(
         }
     }
 
-    fun insertNewProgram(view: View) {
+    fun insertNewProgram(): Boolean {
         val valid = validateProgramData()
         if (!valid) {
-            return
+            return false
         }
         viewModelScope.launch {
             createProgramInteractors.insertNewProgram(
@@ -277,7 +277,7 @@ constructor(
                 workouts = workouts.value
             )
         }
-        moveToProgramListFragment(view)
+        return true
     }
 
     private fun validateProgramData(): Boolean {

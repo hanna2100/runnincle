@@ -5,8 +5,8 @@
     <string name="cancel">취소</string>
     <string name="permission_error_title">권한설정 오류</string>
     <string name="permission_error_text">권한이 없어 실행할 수 없습니다.</string>
-    <string name="permission_required_title">권한설정이 필요합니다</string>
-    <string name="permission_required_text">다른 앱 위에 그리기 옵션을 활성화 해주세요.</string>
+    <string name="permission_required_title">앱 접근권한 안내</string>
+    <string name="permission_required_text">타이머 사용을 위해 다른 앱 위에 그리기 옵션을 활성화 해주세요.</string>
     <string name="permission_required_open">권한설정 옵션 열기</string>
     <string name="add_new_workout">새로운 운동 추가</string>
     <string name="minutes">분</string>

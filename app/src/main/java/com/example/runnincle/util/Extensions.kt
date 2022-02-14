@@ -4,48 +4,58 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.os.Bundle
 import android.provider.Settings
 import android.widget.Toast
-import androidx.annotation.IdRes
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.TextStyle
-import androidx.navigation.NavController
-import androidx.navigation.NavOptions
-import androidx.navigation.Navigator
-import com.example.runnincle.util.FloatingService.Companion.INTENT_COMMAND
-import com.example.runnincle.util.FloatingService.Companion.INTENT_COMMAND_OPEN
-import com.example.runnincle.util.FloatingService.Companion.INTENT_INTERVAL_PROGRAM
-import com.example.runnincle.business.domain.model.IntervalProgram
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.dp
+import com.example.runnincle.business.domain.model.ParcelableWorkout
+import com.example.runnincle.util.FloatingService.Companion.COMMAND_NAME
+import com.example.runnincle.util.FloatingService.Companion.INTENT_ARGS_PROGRAM
 import com.example.runnincle.business.domain.model.Program
 import com.example.runnincle.business.domain.model.Workout
 import com.example.runnincle.business.domain.model.Workout.Companion.getTotalWorkoutTime
 import com.example.runnincle.business.domain.util.TimeAgo
 import com.example.runnincle.framework.presentation.PermissionActivity
 import com.example.runnincle.util.FloatingService
+import com.example.runnincle.util.FloatingService.Companion.INTENT_ARGS_WORKOUTS
+import com.example.runnincle.util.FloatingServiceCommand
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.reflect.KClass
 
 fun Context.startFloatingServiceWithCommand(
-    command: String = "",
-    intervalProgram: IntervalProgram? = null
+    command: FloatingServiceCommand,
+    program: Program? = null,
+    workouts: ArrayList<ParcelableWorkout>? = null
 ) {
+    println("debug startFloatingServiceWithCommand in fragment")
     val intent = Intent(this, FloatingService::class.java)
+
     when (command) {
-        "" -> return
-        INTENT_COMMAND_OPEN -> {
-            if (intervalProgram != null) {
-                intent.putExtra(INTENT_INTERVAL_PROGRAM, intervalProgram)
-                intent.putExtra(INTENT_COMMAND, command)
+        FloatingServiceCommand.OPEN -> {
+            if (program != null && workouts!= null) {
+                intent.putExtra(INTENT_ARGS_PROGRAM, program)
+                intent.putExtra(INTENT_ARGS_WORKOUTS, workouts)
+                intent.putExtra(COMMAND_NAME, command.name)
             } else {
-                Toast.makeText(this, "인터벌 시간 설정이 올바르지 않습니다.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "프로그램을 불러올 수 없습니다.", Toast.LENGTH_SHORT).show()
             }
         }
-        else -> {
-            intent.putExtra(INTENT_COMMAND, command)
+        FloatingServiceCommand.CLOSE -> {
+            // service 닫기
         }
     }
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -126,7 +136,7 @@ fun List<Workout>.getTotalWorkoutListTime(): Int {
 fun String.toTimeAgo(): String {
     // 형식검사
     return try {
-        val sdf = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
+        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
         sdf.isLenient = false
         val past = sdf.parse(this)
         val now = Date()
@@ -136,6 +146,9 @@ fun String.toTimeAgo(): String {
         this
     }
 }
+@Composable
+fun Float.dp() = with(LocalDensity.current) {  Dp(this@dp).toSp() }
+
 
 //fun NavController.navigateSafe(
 //    @IdRes resId: Int,

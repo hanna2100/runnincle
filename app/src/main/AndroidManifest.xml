@@ -12,9 +12,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         <service
-            android:name=".util.FloatingService"
-            android:enabled="true"
-            android:permission="android.permission.SYSTEM_ALERT_WINDOW">
+            android:name="com.example.runnincle.util.FloatingService"
+            android:enabled="true">
         </service>
         <activity
             android:name="com.example.runnincle.framework.presentation.MainActivity"

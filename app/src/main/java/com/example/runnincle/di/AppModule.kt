@@ -61,7 +61,7 @@ object AppModule {
     @Singleton
     @Provides
     fun provideDateFormat(): SimpleDateFormat {
-        val sdf = SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault())
+        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         return sdf
     }
 

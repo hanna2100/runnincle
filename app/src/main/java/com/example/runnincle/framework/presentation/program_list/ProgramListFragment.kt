@@ -60,7 +60,7 @@ import kotlinx.coroutines.launch
 class ProgramListFragment: Fragment() {
 
     private val viewModel:ProgramListViewModel by viewModels()
-    private lateinit var callback: OnBackPressedCallback
+    private var callback: OnBackPressedCallback? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -119,12 +119,12 @@ class ProgramListFragment: Fragment() {
         }
         requireActivity().onBackPressedDispatcher.addCallback(
             this.viewLifecycleOwner,
-            callback
+            callback!!
         )
     }
 
     override fun onDetach() {
         super.onDetach()
-        callback.remove()
+        callback?.remove()
     }
 }

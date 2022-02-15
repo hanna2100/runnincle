@@ -1,5 +1,6 @@
 package com.example.runnincle
 
+import android.R.attr
 import android.annotation.SuppressLint
 import android.app.Service
 import android.content.Context
@@ -9,14 +10,14 @@ import android.os.Handler
 import android.os.Looper
 import android.os.Message
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.WindowManager
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.*
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -29,7 +30,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
-import androidx.compose.ui.Alignment.Companion.TopCenter
 import androidx.compose.ui.Alignment.Companion.TopEnd
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -48,7 +48,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.*
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.ViewTreeLifecycleOwner
+import androidx.lifecycle.ViewTreeViewModelStoreOwner
 import androidx.savedstate.ViewTreeSavedStateRegistryOwner
 import com.example.runnincle.business.domain.model.Program
 import com.example.runnincle.business.domain.model.Workout
@@ -57,9 +60,8 @@ import com.example.runnincle.util.FloatingServiceCommand
 import com.example.runnincle.util.MyLifecycleOwner
 import com.siddroid.holi.colors.MaterialColor
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+
 
 enum class ScheduleType {
     WORK, COOL_DOWN
@@ -90,6 +92,8 @@ class OverlayWindow (
     private lateinit var windowManager: WindowManager
     private lateinit var composeView: ComposeView
     private lateinit var viewParams: WindowManager.LayoutParams
+    private var prevX = 0f
+    private var prevY = 0f
     private lateinit var handler: Handler
     private var overlayStatus by mutableStateOf(OverlayWindowStatus.PAUSE)
 
@@ -197,9 +201,29 @@ class OverlayWindow (
         composeView.filterTouchesWhenObscured = true
         composeView.setOnTouchListener { view, motionEvent ->
             when (motionEvent.action) {
-                MotionEvent.ACTION_DOWN -> Log.d("test", "touch DOWN ")
-                MotionEvent.ACTION_UP -> Log.d("test", "touch UP")
-                MotionEvent.ACTION_MOVE -> Log.d("test", "touch move ")
+                MotionEvent.ACTION_DOWN ->{
+                    prevX = motionEvent.rawX
+                    prevY = motionEvent.rawY
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    val rawX = motionEvent.rawX
+                    val rawY = motionEvent.rawY
+
+                    val x = prevX - rawX
+                    val y = rawY - prevY
+
+                    viewParams.x += x.toInt()
+                    viewParams.y += y.toInt()
+
+                    prevX = rawX
+                    prevY = rawY
+
+                    windowManager.updateViewLayout(view, viewParams)
+
+                }
+                MotionEvent.ACTION_UP -> {
+
+                }
             }
             false
         }
@@ -289,9 +313,9 @@ class OverlayWindow (
     private fun removeView() {
         handler.removeMessages(0)
         isServiceRunning = false
+        context.startFloatingServiceWithCommand(FloatingServiceCommand.CLOSE)
         composeView.setContent {  } // composeView를 비워주지 않으면 돌아가던 애니메이션이 remove 된 view 를 찾지 못해서 크래쉬가 남
         windowManager.removeView(composeView)
-        context.startFloatingServiceWithCommand(FloatingServiceCommand.CLOSE)
     }
 
     fun isServiceRunning(): Boolean {
@@ -430,11 +454,10 @@ fun TimerCircle(
             modifier = Modifier
                 .size(sizeDp.times(0.5f))
                 .align(Center)
-                .alpha(if (isPaused) 1f else 0f)
-            ,
+                .alpha(if (isPaused) 1f else 0f),
             onClick = {
                 isPaused = !isPaused
-                val overlayStatus = if(isPaused) {
+                val overlayStatus = if (isPaused) {
                     OverlayWindowStatus.PAUSE
                 } else {
                     OverlayWindowStatus.PLAY

@@ -55,7 +55,7 @@ fun Context.startFloatingServiceWithCommand(
             }
         }
         FloatingServiceCommand.CLOSE -> {
-            // service 닫기
+            intent.putExtra(COMMAND_NAME, command.name)
         }
     }
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

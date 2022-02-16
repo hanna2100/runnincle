@@ -33,7 +33,7 @@ import com.example.runnincle.business.domain.model.Program
 import com.example.runnincle.business.domain.model.Workout
 import com.example.runnincle.business.domain.model.Workout.Companion.getTotalWorkoutTime
 import com.example.runnincle.framework.presentation.composable.AutoSizeText
-import com.example.runnincle.ui.theme.infinitySansFamily
+import com.example.runnincle.ui.theme.NanumSquareFamily
 import com.google.accompanist.flowlayout.FlowColumn
 import com.google.accompanist.flowlayout.SizeMode
 import com.siddroid.holi.colors.MaterialColor
@@ -286,7 +286,7 @@ fun WorkoutItem(
             ) {
                 Text(
                     text = "${workout.name} ${workout.set}set",
-                    fontFamily = infinitySansFamily,
+                    fontFamily = NanumSquareFamily,
                     fontSize = 16.sp,
                 )
                 AutoSizeText(

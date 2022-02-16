@@ -30,7 +30,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.runnincle.ui.theme.infinitySansFamily
+import com.example.runnincle.ui.theme.NanumSquareFamily
 import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.flowlayout.SizeMode
 
@@ -195,7 +195,7 @@ fun ChipItem(
                 text = item.text,
                 color = textColor,
                 style = TextStyle(
-                    fontFamily = infinitySansFamily,
+                    fontFamily = NanumSquareFamily,
                     fontSize = 12.sp
                 ),
                 modifier = Modifier.padding(8.dp, 5.dp),

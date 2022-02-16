@@ -1,6 +1,5 @@
 package com.example.runnincle
 
-import android.R.attr
 import android.annotation.SuppressLint
 import android.app.Service
 import android.content.Context
@@ -55,7 +54,7 @@ import androidx.lifecycle.ViewTreeViewModelStoreOwner
 import androidx.savedstate.ViewTreeSavedStateRegistryOwner
 import com.example.runnincle.business.domain.model.Program
 import com.example.runnincle.business.domain.model.Workout
-import com.example.runnincle.ui.theme.infinitySansFamily
+import com.example.runnincle.ui.theme.NanumSquareFamily
 import com.example.runnincle.util.FloatingServiceCommand
 import com.example.runnincle.util.MyLifecycleOwner
 import com.siddroid.holi.colors.MaterialColor
@@ -68,7 +67,7 @@ enum class ScheduleType {
 }
 
 enum class OverlayWindowStatus {
-    PLAY, PAUSE, EXIT
+    PLAY, PAUSE, END
 }
 
 data class ScheduleData(
@@ -221,9 +220,6 @@ class OverlayWindow (
                     windowManager.updateViewLayout(view, viewParams)
 
                 }
-                MotionEvent.ACTION_UP -> {
-
-                }
             }
             false
         }
@@ -236,13 +232,13 @@ class OverlayWindow (
                 remainingTimeOfCurrentWork = remainingTimeOfCurrentWork,
                 remainingTotalWorkTime = remainingTotalWorkTime,
                 originalTotalWorkTime = originalTotalWorkTime,
+                overlayStatus = overlayStatus,
                 onCloseBtnClicked = {
-                    overlayStatus = OverlayWindowStatus.EXIT
                     removeView()
                 },
-                onPlayPauseClick = {
+                onPlayBtnClick = {
                     overlayStatus = it
-                    if(overlayStatus == OverlayWindowStatus.PLAY) {
+                    if (overlayStatus == OverlayWindowStatus.PLAY) {
                         handler.sendEmptyMessageDelayed(0, 1000)
                     }
                 }
@@ -254,28 +250,25 @@ class OverlayWindow (
         handler = object : Handler(Looper.getMainLooper()) {
             override fun handleMessage(msg: Message) {
                 super.handleMessage(msg)
-                if (!isServiceRunning) return
-                if (remainingTimeOfCurrentWork <= 0) {
-                    if(currentIndex < schedule.lastIndex) { // 프로그램이 끝나지 않은 경우
-                        if(overlayStatus == OverlayWindowStatus.PLAY) {
-                            currentIndex += 1
-                            remainingTimeOfCurrentWork = schedule[currentIndex].time
-                            originalTimeOfCurrentWork = schedule[currentIndex].time
-                            currentTimerColor = schedule[currentIndex].timerColor
-                            sendEmptyMessageDelayed(0, 1000)
-                        }
-                    } else { // 프로그램이 완전히 끝난 경우
+                if (!isServiceRunning || overlayStatus != OverlayWindowStatus.PLAY) return
+
+                // 현재 진행중인 work 의 시간이 남은경우
+                if (remainingTimeOfCurrentWork > 0) {
+                    remainingTimeOfCurrentWork -= 1
+                    sendEmptyMessageDelayed(0, 1000)
+                } else { //  현재 진행중인 work 의 시간이 끝난 경우
+                    if (currentIndex < schedule.lastIndex) { // 남은 work 가 있을 경우
+                        currentIndex += 1
+                        remainingTimeOfCurrentWork = schedule[currentIndex].time
+                        originalTimeOfCurrentWork = schedule[currentIndex].time
+                        currentTimerColor = schedule[currentIndex].timerColor
+                        sendEmptyMessageDelayed(0, 1000)
+                    } else { // 남은 work 가 없을 경우 (프로그램 종료)
+                        overlayStatus = OverlayWindowStatus.END
                         return
                     }
-                } else {
-                    if(overlayStatus == OverlayWindowStatus.PLAY) {
-                        remainingTimeOfCurrentWork -= 1
-                        sendEmptyMessageDelayed(0, 1000)
-                    }
                 }
-                if(overlayStatus == OverlayWindowStatus.PLAY) {
-                    remainingTotalWorkTime += 1
-                }
+                remainingTotalWorkTime += 1
                 windowManager.updateViewLayout(composeView, viewParams)
             }
         }
@@ -334,8 +327,9 @@ private fun OverlayComposeView(
     remainingTimeOfCurrentWork: Int,
     originalTotalWorkTime: Int,
     remainingTotalWorkTime: Int,
+    overlayStatus: OverlayWindowStatus,
     onCloseBtnClicked: ()-> Unit,
-    onPlayPauseClick: (overlayStatus: OverlayWindowStatus) ->Unit
+    onPlayBtnClick: (overlayStatus: OverlayWindowStatus) ->Unit
 ) {
     val setTimeProgressBarColor by animateColorAsState(currentTimerColor)
 
@@ -372,14 +366,15 @@ private fun OverlayComposeView(
             }
             TimerCircle(
                 modifier = Modifier.align(BottomCenter),
-                workoutName,
-                remainingTimeOfCurrentWork,
-                originalTimeOfCurrentWork,
-                remainingTotalWorkTime,
-                originalTotalWorkTime,
-                sizeDp.times(0.95f),
-                setTimeProgressBarColor,
-                onPlayPauseClick
+                workoutName = workoutName,
+                remainingTimeOfCurrentWork = remainingTimeOfCurrentWork,
+                originalTimeOfCurrentWork = originalTimeOfCurrentWork,
+                remainingTotalWorkTime = remainingTotalWorkTime,
+                originalTotalWorkTime = originalTotalWorkTime,
+                sizeDp = sizeDp.times(0.95f),
+                overlayStatus =overlayStatus,
+                setTimeProgressBarColor = setTimeProgressBarColor,
+                onPlayBtnClick = onPlayBtnClick
             )
         }
     }
@@ -396,7 +391,8 @@ fun TimerCircle(
     originalTotalWorkTime: Int,
     sizeDp: Dp,
     setTimeProgressBarColor: Color,
-    onPlayPauseClick: (overlayStatus: OverlayWindowStatus)->Unit,
+    overlayStatus: OverlayWindowStatus,
+    onPlayBtnClick: (overlayStatus: OverlayWindowStatus)->Unit,
 ) {
     var isPaused by remember { mutableStateOf(true) }
 
@@ -446,7 +442,11 @@ fun TimerCircle(
             modifier = Modifier
                 .align(Center)
                 .alpha(if (isPaused) 0f else 1f),
-            text = remainingTimeOfCurrentWork.toTimeClock(),
+            text = if (overlayStatus == OverlayWindowStatus.END) {
+                        "END"
+                    } else {
+                        remainingTimeOfCurrentWork.toTimeClock()
+                    },
             fontSize = sizeDp.times(0.6f).value,
             fontWeight = FontWeight.Bold
         )
@@ -456,13 +456,15 @@ fun TimerCircle(
                 .align(Center)
                 .alpha(if (isPaused) 1f else 0f),
             onClick = {
-                isPaused = !isPaused
-                val overlayStatus = if (isPaused) {
-                    OverlayWindowStatus.PAUSE
-                } else {
-                    OverlayWindowStatus.PLAY
+                if (overlayStatus != OverlayWindowStatus.END) {
+                    isPaused = !isPaused
+                    val newStatus = if (isPaused) {
+                        OverlayWindowStatus.PAUSE
+                    } else {
+                        OverlayWindowStatus.PLAY
+                    }
+                    onPlayBtnClick(newStatus)
                 }
-                onPlayPauseClick(overlayStatus)
             },
         ) {
             Icon (
@@ -477,11 +479,11 @@ fun TimerCircle(
         }
         val workNameTextSize = sizeDp.value.times(0.08f).dp()
         Text(
-            text = workoutName,
+            text = if (overlayStatus != OverlayWindowStatus.END) workoutName else "",
             style = TextStyle(
                 color = Color.White,
                 fontSize = workNameTextSize,
-                fontFamily = infinitySansFamily,
+                fontFamily = NanumSquareFamily,
                 shadow = Shadow(
                     color = Color.DarkGray,
                     offset = Offset(0f, 0f),
@@ -600,7 +602,8 @@ private fun UITest() {
         remainingTimeOfCurrentWork =10,
         originalTotalWorkTime = 100,
         remainingTotalWorkTime = 90,
+        overlayStatus = OverlayWindowStatus.PLAY,
         onCloseBtnClicked = {},
-        onPlayPauseClick = {}
+        onPlayBtnClick = {}
     )
 }

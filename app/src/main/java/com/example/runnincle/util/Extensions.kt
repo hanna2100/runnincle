@@ -116,7 +116,11 @@ fun Int.toTimeClock(): String {
                 "$min:$sec"
             }
         } else {
-            "$min:00"
+            if (min < 10) {
+                "0$min:00"
+            } else {
+                "$min:00"
+            }
         }
     }
 }

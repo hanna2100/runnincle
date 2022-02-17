@@ -14,6 +14,7 @@ class WorkoutCacheMapper: EntityMapper<WorkoutCacheEntity, Workout>{
             set = entity.set,
             work = entity.work,
             coolDown = entity.coolDown,
+            isSkipLastCoolDown = entity.isSkipLastCoolDown,
             order = entity.order,
             timerColor = Color(entity.timerColor.toULong())
         )
@@ -27,6 +28,7 @@ class WorkoutCacheMapper: EntityMapper<WorkoutCacheEntity, Workout>{
             set = domainModel.set,
             work = domainModel.work,
             coolDown = domainModel.coolDown,
+            isSkipLastCoolDown = domainModel.isSkipLastCoolDown,
             order = domainModel.order!!,
             timerColor = domainModel.timerColor.value.toString()
         )

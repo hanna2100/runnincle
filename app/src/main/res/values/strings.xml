@@ -23,7 +23,7 @@
     <string name="name">이름</string>
     <string name="work_time">운동시간</string>
     <string name="cool_down_time">쿨다운시간</string>
-    <string name="skip_last_cool_down">마지막 쿨다운 생략</string>
+    <string name="skip_last_cool_down">마지막 쿨다운 생략 여부</string>
     <string name="set">세트</string>
     <string name="pick_color">색상 선택하기</string>
     <string name="timer_color">타이머 색상</string>

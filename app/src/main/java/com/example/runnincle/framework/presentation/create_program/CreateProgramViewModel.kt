@@ -17,6 +17,7 @@ import com.example.runnincle.business.domain.util.ResourcesProvider
 import com.example.runnincle.business.interactors.create_program.CreateProgramInteractors
 import com.example.runnincle.framework.presentation.create_program.CreateProgramErrorStatus.*
 import com.example.runnincle.framework.presentation.create_program.composable.ShowEditProgramNameDialog
+import com.example.runnincle.ui.theme.TimerColorPalette
 import com.example.runnincle.util.BaseViewModel
 import com.vanpra.composematerialdialogs.color.ColorPalette
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -50,13 +51,13 @@ constructor(
     var editingTargetIndex: Int? = null
 
     val name = mutableStateOf("")
-    val workMin = mutableStateOf("")
-    val workSec = mutableStateOf("")
-    val coolDownMin = mutableStateOf("")
-    val coolDownSec = mutableStateOf("")
+    val workMin = mutableStateOf(0)
+    val workSec = mutableStateOf(0)
+    val coolDownMin = mutableStateOf(0)
+    val coolDownSec = mutableStateOf(0)
     val isSkipLastCoolDown = mutableStateOf(false)
-    val set = mutableStateOf("")
-    val timerColor = mutableStateOf(ColorPalette.Primary[0])
+    val set = mutableStateOf(1)
+    val timerColor = mutableStateOf(TimerColorPalette[0])
 
     private fun addWorkoutToTheList(
         name: String,
@@ -184,24 +185,24 @@ constructor(
 
     fun clearBottomSheet() {
         name.value = ""
-        workMin.value = ""
-        workSec.value = ""
-        coolDownMin.value = ""
-        coolDownSec.value = ""
+        workMin.value = 0
+        workSec.value = 0
+        coolDownMin.value = 0
+        coolDownSec.value = 0
         isSkipLastCoolDown.value = false
-        set.value = ""
-        timerColor.value = ColorPalette.Primary[0]
+        set.value = 1
+        timerColor.value = TimerColorPalette[0]
 
         bottomSheetSaveButtonStatus.value = BottomSheetSaveButtonStatus.SAVE
     }
 
     fun setUpBottomSheetForEdit(workout: Workout) {
         name.value = workout.name
-        workMin.value = workout.getMinValueAndIgnoreSecValue(workout.work).toString()
-        workSec.value = workout.getSecValueAndIgnoreMinValue(workout.work).toString()
-        coolDownMin.value = workout.getMinValueAndIgnoreSecValue(workout.coolDown).toString()
-        coolDownSec.value = workout.getSecValueAndIgnoreMinValue(workout.coolDown).toString()
-        set.value = workout.set.toString()
+        workMin.value = workout.getMinValueAndIgnoreSecValue(workout.work)
+        workSec.value = workout.getSecValueAndIgnoreMinValue(workout.work)
+        coolDownMin.value = workout.getMinValueAndIgnoreSecValue(workout.coolDown)
+        coolDownSec.value = workout.getSecValueAndIgnoreMinValue(workout.coolDown)
+        set.value = workout.set
         isSkipLastCoolDown.value = workout.isSkipLastCoolDown
         timerColor.value = workout.timerColor
 
@@ -215,12 +216,12 @@ constructor(
             BottomSheetSaveButtonStatus.SAVE -> {
                 addWorkoutToTheList(
                     name = name.value,
-                    workoutMin = workMin.value,
-                    workoutSec = workSec.value,
-                    coolDownMin = coolDownMin.value,
-                    coolDownSec = coolDownSec.value,
+                    workoutMin = workMin.value.toString(),
+                    workoutSec = workSec.value.toString(),
+                    coolDownMin = coolDownMin.value.toString(),
+                    coolDownSec = coolDownSec.value.toString(),
                     isSkipLastCoolDown = isSkipLastCoolDown.value,
-                    set = set.value,
+                    set = set.value.toString(),
                     timerColor = timerColor.value
                 )
                 scaffoldState.bottomSheetState.collapse()
@@ -229,12 +230,12 @@ constructor(
             BottomSheetSaveButtonStatus.EDIT -> {
                 editWorkoutToTheList(
                     name = name.value,
-                    workoutMin = workMin.value,
-                    workoutSec = workSec.value,
-                    coolDownMin = coolDownMin.value,
-                    coolDownSec = coolDownSec.value,
+                    workoutMin = workMin.value.toString(),
+                    workoutSec = workSec.value.toString(),
+                    coolDownMin = coolDownMin.value.toString(),
+                    coolDownSec = coolDownSec.value.toString(),
                     isSkipLastCoolDown = isSkipLastCoolDown.value,
-                    set = set.value,
+                    set = set.value.toString(),
                     timerColor = timerColor.value,
                     index = editingTargetIndex?: return
                 )

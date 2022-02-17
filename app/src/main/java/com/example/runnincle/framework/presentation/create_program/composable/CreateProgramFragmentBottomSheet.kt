@@ -28,12 +28,12 @@ import com.example.runnincle.framework.presentation.create_program.composable.Bu
 fun CreateProgramFragmentBottomSheet(
     scaffoldState: BottomSheetScaffoldState,
     name: MutableState<String>,
-    workMin: MutableState<String>,
-    workSec: MutableState<String>,
-    coolDownMin: MutableState<String>,
-    coolDownSec: MutableState<String>,
+    workMin: MutableState<Int>,
+    workSec: MutableState<Int>,
+    coolDownMin: MutableState<Int>,
+    coolDownSec: MutableState<Int>,
     isSkipLastCoolDown: MutableState<Boolean>,
-    set: MutableState<String>,
+    set: MutableState<Int>,
     timerColor: MutableState<Color>,
     buttonStatus: BottomSheetSaveButtonStatus,
     onSaveClick: ()->Unit,
@@ -43,14 +43,14 @@ fun CreateProgramFragmentBottomSheet(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .heightIn(min = 150.dp, max = 470.dp)
+            .heightIn(min = 150.dp, max = 570.dp)
     ) {
         SheetExpanded {
             val scrollState = rememberScrollState()
             LaunchedEffect(Unit) { scrollState.animateScrollTo(10000) }
             AddWorkLayout(
                 modifier = Modifier
-                    .padding(bottom = 60.dp)
+                    .padding(top = 20.dp, bottom = 70.dp)
                     .fillMaxWidth()
                     .fillMaxHeight()
                     .align(Alignment.TopCenter)

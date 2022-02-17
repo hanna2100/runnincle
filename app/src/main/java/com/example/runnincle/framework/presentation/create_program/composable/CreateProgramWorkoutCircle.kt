@@ -20,12 +20,14 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.runnincle.R
 import com.example.runnincle.business.domain.model.Workout
 import com.example.runnincle.business.domain.model.Workout.Companion.getTotalWorkoutTime
 import com.example.runnincle.framework.presentation.composable.AutoSizeText
 import com.example.runnincle.getTotalWorkoutListTime
 import com.example.runnincle.toTimeClock
+import com.example.runnincle.ui.theme.InfinitySansFamily
 
 
 @Composable
@@ -64,13 +66,13 @@ fun CreateProgramWorkoutCircle(
                 ) {
                     AutoSizeText(
                         text = workouts.getTotalWorkoutListTime().toTimeClock(),
-                        textStyle = MaterialTheme.typography.h3.plus(
-                            TextStyle(
-                                fontWeight = FontWeight.Medium,
-                                color = MaterialTheme.colors.primary,
-                                textAlign = TextAlign.Center
-                            )
-                        ),
+                        textStyle = TextStyle(
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colors.primary,
+                            textAlign = TextAlign.Center,
+                            fontFamily = InfinitySansFamily,
+                            fontSize = 48.sp
+                            ),
                         modifier = Modifier
                             .fillMaxWidth(0.8f)
                             .padding(bottom = 20.dp)
@@ -80,14 +82,15 @@ fun CreateProgramWorkoutCircle(
             Column ( modifier = Modifier
                 .fillMaxWidth(0.7f)
                 .fillMaxHeight(0.33f)
-                .align(Alignment.BottomCenter),
+                .align(Alignment.BottomCenter)
+                .offset(y = 6.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 AutoSizeText(
                     text = programName,
                     textStyle = MaterialTheme.typography.h4.plus(
                         TextStyle(
-                            fontWeight = FontWeight.Medium,
+                            fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colors.onSurface,
                             textAlign = TextAlign.Center
                         )
@@ -119,25 +122,6 @@ fun WorkoutScheduleBar(workouts: List<Workout>, isFired: Boolean) {
         )
         workoutTimePercentages.add(drawPercentage)
     }
-
-
-//    LaunchedEffect(isFired) {
-//        stateList.clear()
-//
-//        workouts.forEach {
-//            workTimeFloatValue += it.getTotalWorkoutTime().toFloat().div(totalWorkoutListTime)
-//            val drawPercentage = animateFloatAsState(
-//                targetValue = if()workTimeFloatValue,
-//                animationSpec = tween(
-//                    delayMillis = 0,
-//                    durationMillis = 1000
-//                )
-//            )
-//            stateList.add(drawPercentage)
-//        }
-//        println("stateList size = ${stateList.size}")
-//        onComplete()
-//    }
 
     Box {
         Canvas(

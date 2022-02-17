@@ -16,6 +16,13 @@ val NanumSquareFamily = FontFamily(
     Font(R.font.nanum_square_eb, FontWeight.Bold)
 )
 
+val InfinitySansFamily = FontFamily(
+    Font(R.font.infinity_sans_regular, FontWeight.Normal),
+    Font(R.font.infinity_sans_regular, FontWeight.Normal, FontStyle.Italic),
+    Font(R.font.infinity_sans_bold, FontWeight.Medium),
+    Font(R.font.infinity_sans_cond_bold, FontWeight.Bold)
+)
+
 val NanumSquareTypography = Typography(
     h1 =  TextStyle(
         fontFamily = NanumSquareFamily,

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -94,6 +95,10 @@ fun NumberPicker(
     ) {
         val spacing = 4.dp
 
+        val arrowColor = MaterialTheme.colors.onSecondary.copy(alpha = ContentAlpha.disabled)
+
+//        Arrow(direction = Icons.Default.KeyboardArrowUp, tint = arrowColor)
+
         Spacer(modifier = Modifier.height(spacing))
 
         Box(
@@ -125,9 +130,14 @@ fun NumberPicker(
 
         Spacer(modifier = Modifier.height(spacing))
 
+//        Arrow(direction = Icons.Default.KeyboardArrowDown, tint = arrowColor)
     }
 }
 
+@Composable
+fun Arrow(direction: ImageVector, tint: Color) {
+    Icon(imageVector = direction, contentDescription = "", tint = tint)
+}
 
 @Composable
 private fun Label(text: String, modifier: Modifier) {

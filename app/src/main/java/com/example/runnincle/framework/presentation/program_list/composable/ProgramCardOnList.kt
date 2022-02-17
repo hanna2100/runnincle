@@ -86,8 +86,9 @@ fun ProgramCard(
         )
         .fillMaxWidth()
         .heightIn(min = 130.dp),
-        elevation = 5.dp,
-        shape = RoundedCornerShape(20.dp)
+        elevation = 8.dp,
+        shape = RoundedCornerShape(20.dp),
+        backgroundColor = MaterialColor.WHITE
     ) {
         Box(
             modifier = Modifier
@@ -101,7 +102,7 @@ fun ProgramCard(
                         onProgramCardClick(workouts)
                     }
                 )
-                .padding(20.dp, 15.dp)
+                .padding(30.dp, 25.dp)
         ) {
             Column(
                 modifier = Modifier
@@ -110,7 +111,9 @@ fun ProgramCard(
             ) {
                 Text(
                     text = name,
-                    style = MaterialTheme.typography.h6
+                    style = MaterialTheme.typography.h6.copy(
+                        fontWeight = FontWeight.Bold
+                    )
                 )
                 Spacer(Modifier.height(8.dp))
                 Text(
@@ -124,7 +127,7 @@ fun ProgramCard(
             Row(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
-                    .offset(x = 15.dp, y = (-5).dp)
+                    .offset(x = 15.dp, y = (-12).dp)
                 ,
                 horizontalArrangement = Arrangement.End
             ) {
@@ -287,11 +290,14 @@ fun WorkoutItem(
                 Text(
                     text = "${workout.name} ${workout.set}set",
                     fontFamily = NanumSquareFamily,
-                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 14.sp,
                 )
                 AutoSizeText(
                     text = getWorkAndRestTime(workout),
-                    textStyle = MaterialTheme.typography.caption
+                    textStyle = MaterialTheme.typography.caption.copy(
+                        color = MaterialColor.GREY_600
+                    )
                 )
             }
 
@@ -304,7 +310,7 @@ fun WorkoutItem(
             ) {
                 Text(
                     text = workout.getTotalWorkoutTime().toTimeClock(),
-                    fontWeight = FontWeight.Bold,
+                    fontWeight = FontWeight.Medium,
                     fontSize = 18.sp,
                     textAlign = TextAlign.End,
                     color = Color.DarkGray

@@ -54,7 +54,7 @@ data class Workout(
                 work = this.work,
                 coolDown = this.coolDown,
                 order = this.order,
-                isSkipLastCoolDown = isSkipLastCoolDown,
+                isSkipLastCoolDown = this.isSkipLastCoolDown,
                 timerColor = this.timerColor.value.toString()
             )
         }
@@ -68,7 +68,7 @@ data class Workout(
                 work = this.work,
                 coolDown = this.coolDown,
                 order = this.order,
-                isSkipLastCoolDown = isSkipLastCoolDown,
+                isSkipLastCoolDown = this.isSkipLastCoolDown,
                 timerColor = Color(this.timerColor.toULong())
             )
         }

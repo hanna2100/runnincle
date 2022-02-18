@@ -65,11 +65,16 @@ fun RunnincleTheme(
 
     val systemUiController = rememberSystemUiController()
     val background = colors.background
+    val primary = colors.primary
 
     SideEffect {
-        systemUiController.setSystemBarsColor(
-            color = if (darkSystemBar)SystemBarColor else background,
+        systemUiController.setStatusBarColor(
+            color = if (darkSystemBar) primary else background,
             darkIcons = !darkSystemBar
+        )
+        systemUiController.setNavigationBarColor(
+            color = if (!darkSystemBar) primary else background,
+            darkIcons = darkSystemBar
         )
     }
 }

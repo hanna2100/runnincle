@@ -21,7 +21,10 @@ import com.example.runnincle.ui.theme.RunnincleTheme
 @Composable
 fun ProgramListWithSearchBar(
     programs: Map<Program, List<Workout>>,
-    onProgramCardClick: (program: Program, workouts: List<Workout>)-> Unit
+    onProgramCardClick: (program: Program, workouts: List<Workout>)-> Unit,
+    onFloatingAddButtonClick: ()->Unit,
+    onProgramEditButtonClick: (program:Program, workout: List<Workout>)->Unit,
+    onProgramDeleteButtonClick: (program: Program)->Unit
 ) {
     RunnincleTheme {
         var searchBarOpen by remember { mutableStateOf(false) }
@@ -89,19 +92,23 @@ fun ProgramListWithSearchBar(
                     )
                 }
                 ProgramList(
-                    programs = programs,
+                    programs  = programs,
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f),
-                    onProgramCardClick = onProgramCardClick
+                    onProgramCardClick = onProgramCardClick,
+                    onProgramEditButtonClick = onProgramEditButtonClick,
+                    onProgramDeleteButtonClick = onProgramDeleteButtonClick
                 )
             }
 
             FloatingButtonToCreateProgram(
-                view = LocalView.current,
                 modifier = Modifier.constrainAs(floatingButtonRef) {
                     end.linkTo(parent.end)
                     bottom.linkTo(parent.bottom)
+                },
+                onClick = {
+                    onFloatingAddButtonClick()
                 }
             )
         }

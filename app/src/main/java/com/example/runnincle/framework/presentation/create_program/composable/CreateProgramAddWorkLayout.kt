@@ -6,6 +6,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -75,19 +77,20 @@ fun AddWorkLayout(
         // 이름
         WorkoutNameOutlineTextField(name, keyboardController, myTextFieldColors)
         // 운동 시간
-        TimePickerOutlineTextField(workMin, workSec, stringResource(id = R.string.work_time))
+        TimePickerOutlineTextField(workMin, workSec, stringResource(id = R.string.work_time), true)
         // 쿨다운 시간
         TimePickerOutlineTextField(coolDownMin, coolDownSec, stringResource(id = R.string.cool_down_time))
         // 쿨다운 생략
+        val isCoolDownEntered = !(coolDownMin.value == 0 && coolDownSec.value ==0)
         LastCoolDownSkipOptionField(
             leadingText = stringResource(id = R.string.skip_last_cool_down),
+            enabled = isCoolDownEntered,
             checked = isSkipLastCoolDown,
             onCheckedChange = { isChecked ->
                 isSkipLastCoolDown.value = isChecked
-                println("debug isSkipLastCoolDown = ${isSkipLastCoolDown.value}")
             },
             onFocused = {
-                isSkipLastCoolDown.value = true
+                isSkipLastCoolDown.value = !isSkipLastCoolDown.value
             }
         )
         // 세트 설정
@@ -114,11 +117,18 @@ fun TimerColorPickerField(leadingText: String, timerColor: MutableState<Color>) 
             .fillMaxWidth()
             .padding(bottom = 15.dp),
         leadingIcon = {
-            Text(
-                text = leadingText,
-                color = MaterialTheme.colors.onSecondary,
-                modifier = Modifier.padding(start = 20.dp)
-            )
+            Row {
+                Icon(
+                    modifier = Modifier.padding(start = 20.dp, end = 6.dp).size(18.dp),
+                    imageVector = Icons.Default.Done,
+                    contentDescription = "",
+                    tint = MaterialTheme.colors.secondaryVariant
+                )
+                Text(
+                    text = leadingText,
+                    color = MaterialTheme.colors.onSecondary,
+                )
+            }
         },
         trailingIcon = {
             Row {
@@ -164,12 +174,13 @@ fun TimerColorPickerField(leadingText: String, timerColor: MutableState<Color>) 
 fun SetNumberPickerOutlineTextField(set: MutableState<Int>, leadingText: String) {
     val focusRequester = FocusRequester()
     var label by remember { mutableStateOf("") }
+    val descriptionText = stringResource(id = R.string.enter_with_scrolling)
     OutlinedTextField(
         modifier = Modifier
             .focusRequester(focusRequester)
             .onFocusChanged {
                 label = if (it.hasFocus) {
-                    "숫자를 스크롤하여 입력"
+                    descriptionText
                 } else {
                     ""
                 }
@@ -178,14 +189,19 @@ fun SetNumberPickerOutlineTextField(set: MutableState<Int>, leadingText: String)
             .padding(bottom = 15.dp),
         leadingIcon = {
             Row(verticalAlignment = Alignment.Bottom) {
+                Icon(
+                    modifier = Modifier.padding(start = 20.dp, end = 6.dp).size(18.dp),
+                    imageVector = Icons.Default.Done,
+                    contentDescription = "",
+                    tint = MaterialTheme.colors.secondaryVariant
+                )
                 Text(
                     text = leadingText,
                     color = MaterialTheme.colors.onSecondary,
-                    modifier = Modifier.padding(start = 20.dp)
                 )
                 Text(
                     text = label,
-                    color = MaterialTheme.colors.error,
+                    color = MaterialTheme.colors.secondaryVariant,
                     style = LocalTextStyle.current.copy(
                         fontSize = 10.sp,
                     ),
@@ -229,6 +245,7 @@ fun SetNumberPickerOutlineTextField(set: MutableState<Int>, leadingText: String)
 @Composable
 fun LastCoolDownSkipOptionField(
     leadingText: String,
+    enabled: Boolean,
     checked: MutableState<Boolean>,
     onCheckedChange: (Boolean) -> Unit,
     onFocused: () -> Unit
@@ -238,7 +255,7 @@ fun LastCoolDownSkipOptionField(
         modifier = Modifier
             .focusRequester(focusRequester)
             .onFocusChanged {
-                if (it.hasFocus) {
+                if (it.isFocused) {
                     onFocused()
                 }
             }
@@ -253,15 +270,20 @@ fun LastCoolDownSkipOptionField(
         },
         trailingIcon = {
             Switch(
-                checked = checked.value,
+                checked = if(enabled) {
+                    checked.value
+                } else {
+                    false
+                },
                 onCheckedChange = onCheckedChange,
                 modifier = Modifier.padding(end = 20.dp),
                 colors = SwitchDefaults.colors(
-                    checkedTrackColor = MaterialColor.CYAN_A700,
-                    checkedThumbColor = MaterialColor.CYAN_A400,
-                    uncheckedTrackColor = MaterialColor.GREY_600,
-                    uncheckedThumbColor = MaterialColor.GREY_400,
-                )
+                    checkedTrackColor = MaterialTheme.colors.secondaryVariant.copy(alpha = 0.1f),
+                    checkedThumbColor = MaterialTheme.colors.secondaryVariant,
+                    uncheckedTrackColor = if(enabled) MaterialColor.GREY_200 else MaterialColor.GREY_900,
+                    uncheckedThumbColor = if(enabled) MaterialColor.GREY_100 else MaterialColor.GREY_700,
+                ),
+                enabled = enabled
             )
         },
         value = "",
@@ -278,7 +300,8 @@ fun LastCoolDownSkipOptionField(
         shape = RoundedCornerShape(20.dp),
         textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
         singleLine = true,
-        readOnly = true
+        readOnly = true,
+        enabled = enabled
     )
 }
 
@@ -289,20 +312,43 @@ fun WorkoutNameOutlineTextField(
     keyboardController: SoftwareKeyboardController?,
     myTextFieldColors: TextFieldColors
 ) {
+    val maxChar = 20
     OutlinedTextField(
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 15.dp),
         leadingIcon = {
+            Row {
+                Icon(
+                    modifier = Modifier.padding(start = 20.dp, end = 6.dp).size(18.dp),
+                    imageVector = Icons.Default.Done,
+                    contentDescription = "",
+                    tint = if(name.value.isEmpty()) {
+                        MaterialTheme.colors.onSecondary
+                    } else {
+                        MaterialTheme.colors.secondaryVariant
+                    },
+                )
+                Text(
+                    text = stringResource(id = R.string.name),
+                    color = MaterialTheme.colors.onSecondary,
+                )
+            }
+        },
+        trailingIcon = {
             Text(
-                text = stringResource(id = R.string.name),
+                text = "${name.value.length} / $maxChar",
+                textAlign = TextAlign.End,
                 color = MaterialTheme.colors.onSecondary,
-                modifier = Modifier.padding(start = 20.dp)
+                style = MaterialTheme.typography.caption,
+                modifier = Modifier.padding(end =20.dp)
             )
         },
         value = name.value,
         onValueChange = {
-            name.value = it
+            if (it.length <= 20) {
+                name.value = it
+            }
         },
         colors = myTextFieldColors,
         shape = RoundedCornerShape(20.dp),
@@ -318,15 +364,21 @@ fun WorkoutNameOutlineTextField(
 }
 
 @Composable
-fun TimePickerOutlineTextField(min: MutableState<Int>, sec: MutableState<Int>, leadingText: String) {
+fun TimePickerOutlineTextField(
+    min: MutableState<Int>,
+    sec: MutableState<Int>,
+    leadingText: String,
+    isRequired: Boolean = false
+) {
     val focusRequester = FocusRequester()
     var label by remember { mutableStateOf("") }
+    val descriptionText = stringResource(id = R.string.enter_with_scrolling)
     OutlinedTextField(
         modifier = Modifier
             .focusRequester(focusRequester)
             .onFocusChanged {
                 label = if (it.hasFocus) {
-                    "숫자를 스크롤하여 입력"
+                    descriptionText
                 } else {
                     ""
                 }
@@ -335,14 +387,30 @@ fun TimePickerOutlineTextField(min: MutableState<Int>, sec: MutableState<Int>, l
             .padding(bottom = 15.dp),
         leadingIcon = {
             Row(verticalAlignment = Alignment.Bottom) {
+                if (isRequired) {
+                    Icon(
+                        modifier = Modifier.padding(start = 20.dp, end = 6.dp).size(18.dp),
+                        imageVector = Icons.Default.Done,
+                        contentDescription = "",
+                        tint = if(min.value == 0 && sec.value == 0) {
+                            MaterialTheme.colors.onSecondary
+                        } else {
+                            MaterialTheme.colors.secondaryVariant
+                        },
+                    )
+                }
                 Text(
                     text = leadingText,
                     color = MaterialTheme.colors.onSecondary,
-                    modifier = Modifier.padding(start = 20.dp)
+                    modifier = if(!isRequired) {
+                        Modifier.padding(start = 20.dp)
+                    } else {
+                        Modifier.padding(0.dp)
+                    }
                 )
                 Text(
                     text = label,
-                    color = MaterialTheme.colors.error,
+                    color = MaterialTheme.colors.secondaryVariant,
                     style = LocalTextStyle.current.copy(
                         fontSize = 10.sp,
                     ),

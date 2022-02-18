@@ -18,4 +18,9 @@ class ProgramListInteractors (
         return workoutCacheDataSource.getWorkoutsOfProgram(programId)
     }
 
+    suspend fun deleteProgram(programId: String) {
+        programCacheDataSource.deleteProgram(programId)
+        workoutCacheDataSource.deleteWorkoutsWithProgramId(programId)
+    }
+
 }

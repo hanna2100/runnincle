@@ -14,14 +14,11 @@ import androidx.navigation.findNavController
 import com.example.runnincle.framework.presentation.program_list.ProgramListFragmentDirections
 
 @Composable
-fun FloatingButtonToCreateProgram(view: View, modifier: Modifier) {
+fun FloatingButtonToCreateProgram(modifier: Modifier, onClick: ()-> Unit) {
     FloatingActionButton(
         modifier = modifier.padding(20.dp),
         backgroundColor = MaterialTheme.colors.primary,
-        onClick = {
-            val action = ProgramListFragmentDirections.actionProgramListFragmentToCreateProgramFragment()
-            view.findNavController().navigate(action)
-        }
+        onClick = onClick
     ) {
         Icon(Icons.Filled.Add,"")
     }

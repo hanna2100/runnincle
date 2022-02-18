@@ -24,8 +24,8 @@ constructor(
         return programDaoService.updateProgram(id, name, updatedAt)
     }
 
-    override suspend fun deleteProgram(primaryKey: Int): Int {
-        return programDaoService.deleteProgram(primaryKey)
+    override suspend fun deleteProgram(programId: String): Int {
+        return programDaoService.deleteProgram(programId)
     }
 
     override suspend fun getAllPrograms(): List<Program> {

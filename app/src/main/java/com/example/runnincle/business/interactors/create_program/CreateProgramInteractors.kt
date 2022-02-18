@@ -38,4 +38,17 @@ class CreateProgramInteractors(
 
         return programCacheDataSource.insertProgram(program)
     }
+
+    suspend fun updateProgram(
+        programId: String,
+        name: String,
+        workouts: List<Workout>
+    ) {
+        // 원래 프로그램 지우기
+        programCacheDataSource.deleteProgram(programId)
+        workoutCacheDataSource.deleteWorkoutsWithProgramId(programId)
+
+        // 수정된 프로그램 추가
+        insertNewProgram(name, workouts)
+    }
 }

@@ -19,4 +19,6 @@ interface WorkoutDaoService {
 
     suspend fun getWorkoutsOfProgram(programId: String): List<Workout>
 
+    suspend fun deleteWorkoutsWithProgramId(programId: String): Int
+
 }

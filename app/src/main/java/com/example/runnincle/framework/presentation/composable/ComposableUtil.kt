@@ -14,7 +14,7 @@ import androidx.compose.ui.text.TextStyle
 fun AutoSizeText(
     text: String,
     textStyle: TextStyle,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     // 미리보기용
     if (LocalInspectionMode.current) {
@@ -31,7 +31,7 @@ fun AutoSizeText(
     var readyToDraw by remember { mutableStateOf(false) }
 
     Text(
-        text,
+        text = text,
         modifier.drawWithContent {
             if (readyToDraw) {
                 drawContent()

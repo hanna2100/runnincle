@@ -1,5 +1,6 @@
 package com.example.runnincle.ui.theme
 
+import androidx.compose.material.ripple.RippleTheme
 import androidx.compose.ui.graphics.Color
 
 val Cultured = Color(0xFFeff0f5)
@@ -8,7 +9,8 @@ val Charcoal = Color(0xFF353F50)
 val PaleEggBlue = Color(0xFF59617E)
 val SkyBlue = Color(0xFF77E4DC)
 val PatrickBlue= Color(0xFF59617E)
-val Jasper= Color(0xFFDF4343)
+val Jasper = Color(0xFFDF4343)
+val White = Color(0xFFFFFFFF)
 
 val Gunmetal = Color(0xFF2E3136)
 

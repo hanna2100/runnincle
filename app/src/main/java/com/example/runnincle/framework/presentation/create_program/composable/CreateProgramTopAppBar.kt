@@ -13,13 +13,14 @@ import com.example.runnincle.R
 
 @Composable
 fun CreateProgramTopAppBar(
+    title: String,
     onBackClick: ()->Unit,
     onProgramSaveClick: ()->Unit,
 ) {
     TopAppBar(
         title = {
             Text(
-                text = stringResource(R.string.add_new_workout),
+                text = title,
                 color = MaterialTheme.colors.onBackground,
                 fontWeight = FontWeight.Bold
             )

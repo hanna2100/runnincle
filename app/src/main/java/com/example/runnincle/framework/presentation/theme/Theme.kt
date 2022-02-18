@@ -4,7 +4,11 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
+import androidx.compose.material.ripple.LocalRippleTheme
+import androidx.compose.material.ripple.RippleAlpha
+import androidx.compose.material.ripple.RippleTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -20,7 +24,7 @@ private val DarkColorPalette = darkColors(
     onError = Cultured,
     background = Cultured,
     onBackground = Gunmetal,
-    surface = Color.White,
+    surface = White,
     onSurface = Gunmetal,
 )
 
@@ -35,7 +39,7 @@ private val LightColorPalette = lightColors(
     onError = Cultured,
     background = Cultured,
     onBackground = Gunmetal,
-    surface = Color.White,
+    surface = White,
     onSurface = Gunmetal,
 )
 
@@ -63,4 +67,17 @@ fun RunnincleTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composa
             darkIcons = useDarkIcons
         )
     }
+}
+
+
+object RippleCustomTheme: RippleTheme {
+
+    @Composable
+    override fun defaultColor(): Color = MaterialTheme.colors.primary
+
+    @Composable
+    override fun rippleAlpha(): RippleAlpha = RippleTheme.defaultRippleAlpha(
+        Color.Black,
+        lightTheme = !isSystemInDarkTheme()
+    )
 }

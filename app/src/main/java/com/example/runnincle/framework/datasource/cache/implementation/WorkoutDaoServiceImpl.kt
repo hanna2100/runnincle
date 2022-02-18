@@ -49,4 +49,8 @@ constructor(
         }
         return domainWorkouts
     }
+
+    override suspend fun deleteWorkoutsWithProgramId(programId: String): Int {
+        return workoutDao.deleteWorkoutsWithProgramId(programId)
+    }
 }

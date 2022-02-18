@@ -1,6 +1,9 @@
 package com.example.runnincle.framework.presentation.program_list.composable
 
+import androidx.compose.animation.Animatable
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -14,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.ripple.LocalRippleTheme
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -32,36 +36,55 @@ import com.example.runnincle.R
 import com.example.runnincle.business.domain.model.Program
 import com.example.runnincle.business.domain.model.Workout
 import com.example.runnincle.business.domain.model.Workout.Companion.getTotalWorkoutTime
-import com.example.runnincle.framework.presentation.composable.AutoSizeText
 import com.example.runnincle.ui.theme.NanumSquareFamily
+import com.example.runnincle.ui.theme.RippleCustomTheme
 import com.google.accompanist.flowlayout.FlowColumn
 import com.google.accompanist.flowlayout.SizeMode
 import com.siddroid.holi.colors.MaterialColor
 import java.lang.StringBuilder
 
 
+private val UpdatedAtComparator = Comparator<Program> { left, right ->
+    right.updatedAt.compareTo(left.updatedAt)
+}
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ProgramList(
     programs: Map<Program, List<Workout>>,
     modifier: Modifier,
-    onProgramCardClick: (program: Program, workouts: List<Workout>)-> Unit
+    onProgramCardClick: (program: Program, workouts: List<Workout>)-> Unit,
+    onProgramEditButtonClick: (program: Program, workout: List<Workout>)->Unit,
+    onProgramDeleteButtonClick: (program:Program)->Unit,
 ) {
+    val p = programs.keys.toList().sortedWith(UpdatedAtComparator)
     LazyColumn(
         modifier = modifier,
         contentPadding = PaddingValues(10.dp, 0.dp)
     ) {
-        val p = programs.keys.toList().sortedByDescending { it.updatedAt }
-        itemsIndexed(items = p) { index, item ->
-            ProgramCard(
-                index = index,
-                name = item.name,
-                updatedAt = item.updatedAt,
-                workouts = programs[item]?: emptyList(),
-                onProgramCardClick = {
-                    onProgramCardClick(item, it)
-                }
-            )
+        itemsIndexed(items = p, key = { index, item ->  item.id }) { index, item ->
+            CompositionLocalProvider(LocalRippleTheme provides  RippleCustomTheme) {
+                ProgramCard(
+                    modifier = Modifier
+                        .padding(
+                            top = if (index == 0) 25.dp else 6.dp,
+                            start = 10.dp,
+                            end = 10.dp,
+                            bottom = 20.dp
+                        )
+                        .fillMaxWidth()
+                        .heightIn(min = 130.dp)
+                        .animateItemPlacement()
+                    ,
+                    program = item,
+                    workouts = programs[item]?: emptyList(),
+                    onProgramCardClick = {
+                        onProgramCardClick(item, it)
+                    },
+                    onProgramDeleteButtonClick = onProgramDeleteButtonClick,
+                    onProgramEditButtonClick = onProgramEditButtonClick,
+                )
+            }
         }
     }
 
@@ -69,26 +92,46 @@ fun ProgramList(
 
 @Composable
 fun ProgramCard(
-    index: Int,
-    name: String,
-    updatedAt: String,
+    modifier: Modifier,
+    program: Program,
     workouts: List<Workout>,
-    onProgramCardClick: (workouts: List<Workout>)->Unit
+    onProgramCardClick: (workouts: List<Workout>)->Unit,
+    onProgramEditButtonClick: (program:Program, workout: List<Workout>)->Unit,
+    onProgramDeleteButtonClick: (program: Program)->Unit
 ) {
-    var isMoreOpen by remember { mutableStateOf(false) }
+    val backgroundColor = MaterialTheme.colors.background
+    val activeBackgroundColor = MaterialTheme.colors.primary
+    val textColor = MaterialTheme.colors.secondary
 
-    Card(modifier = Modifier
-        .padding(
-            top = if (index == 0) 25.dp else 6.dp,
-            start = 10.dp,
-            end = 10.dp,
-            bottom = 20.dp
+    var isMoreOpen by remember { mutableStateOf(false) }
+    var animatableCardColor = remember { Animatable(backgroundColor) }
+    var animatableTextColor = remember { Animatable(textColor) }
+
+    LaunchedEffect(isMoreOpen) {
+        animatableCardColor.animateTo(
+            if (isMoreOpen) {
+                activeBackgroundColor
+            } else {
+                backgroundColor
+            },
+            animationSpec = tween(500)
         )
-        .fillMaxWidth()
-        .heightIn(min = 130.dp),
-        elevation = 8.dp,
+    }
+    LaunchedEffect(isMoreOpen) {
+        animatableTextColor.animateTo(
+            if (isMoreOpen) {
+                backgroundColor
+            } else {
+                textColor
+            },
+            animationSpec = tween(500)
+        )
+    }
+    Card(
+        modifier = modifier,
+        elevation = 6.dp,
         shape = RoundedCornerShape(20.dp),
-        backgroundColor = MaterialColor.WHITE
+        backgroundColor = animatableCardColor.value
     ) {
         Box(
             modifier = Modifier
@@ -110,18 +153,22 @@ fun ProgramCard(
                     .wrapContentHeight()
             ) {
                 Text(
-                    text = name,
+                    text = program.name,
                     style = MaterialTheme.typography.h6.copy(
-                        fontWeight = FontWeight.Bold
-                    )
+                        fontWeight = FontWeight.Bold,
+                        color = animatableTextColor.value
+                    ),
+                    modifier = Modifier.fillMaxWidth(0.65f)
                 )
                 Spacer(Modifier.height(8.dp))
                 Text(
-                    text = updatedAt.toTimeAgo(),
-                    style = MaterialTheme.typography.caption
+                    text = program.updatedAt.toTimeAgo(),
+                    style = MaterialTheme.typography.caption.copy(
+                        color = animatableTextColor.value
+                    )
                 )
                 AnimatedVisibility(visible = isMoreOpen) {
-                    WorkoutsOnProgramCard(workouts = workouts)
+                    WorkoutsOnProgramCard(workouts = workouts, textColor = animatableTextColor.value)
                 }
             }
             Row(
@@ -134,10 +181,12 @@ fun ProgramCard(
                 AnimatedVisibility(visible = isMoreOpen) {
                     Row {
                         IconButton(
-                            modifier = Modifier.offset(x = 25.dp),
+                            modifier = Modifier
+                                .offset(x = 25.dp),
                             onClick = {
-
-                            }) {
+                                onProgramEditButtonClick(program, workouts)
+                            }
+                        ) {
                             Icon (
                                 modifier = Modifier
                                     .size(20.dp),
@@ -149,8 +198,9 @@ fun ProgramCard(
                         IconButton(
                             modifier = Modifier.offset(x = 15.dp),
                             onClick = {
-
-                            }) {
+                                onProgramDeleteButtonClick(program)
+                            }
+                        ) {
                             Icon (
                                 modifier = Modifier
                                     .size(20.dp),
@@ -161,9 +211,11 @@ fun ProgramCard(
                         }
                     }
                 }
-                IconButton(onClick = {
-                    isMoreOpen = !isMoreOpen
-                }) {
+                IconButton(
+                    onClick = {
+                        isMoreOpen = !isMoreOpen
+                    }
+                ) {
                     Icon (
                         modifier = Modifier
                             .size(22.dp),
@@ -173,13 +225,12 @@ fun ProgramCard(
                     )
                 }
             }
-
-
             val totalWorkTime = if(workouts.isEmpty()) 0 else workouts.getTotalWorkoutListTime()
             Text(
                 text = totalWorkTime.toTimeClock(),
                 style = MaterialTheme.typography.h4.copy(
-                    fontWeight = FontWeight.Medium
+                    fontWeight = FontWeight.Medium,
+                    color = animatableTextColor.value
                 ),
                 modifier = Modifier.align(Alignment.BottomEnd)
             )
@@ -190,7 +241,8 @@ fun ProgramCard(
 
 @Composable
 fun WorkoutsOnProgramCard(
-    workouts: List<Workout>
+    workouts: List<Workout>,
+    textColor: Color
 ) {
     Column(
         modifier = Modifier
@@ -205,7 +257,7 @@ fun WorkoutsOnProgramCard(
             mainAxisSize = SizeMode.Expand
         ) {
             workouts.forEachIndexed { index, item ->
-                WorkoutItem(workout = item, index, workouts.size)
+                WorkoutItem(workout = item, index, workouts.size, textColor = textColor)
             }
         }
     }
@@ -216,7 +268,8 @@ fun WorkoutsOnProgramCard(
 fun WorkoutItem(
     workout: Workout,
     index: Int,
-    size: Int
+    size: Int,
+    textColor: Color
 ) {
 
     val configuration = LocalConfiguration.current
@@ -252,23 +305,23 @@ fun WorkoutItem(
                     if (size > 1) {
                         Box(modifier = Modifier
                             .fillMaxHeight(0.5f)
-                            .width(2.dp)
-                            .background(MaterialTheme.colors.background)
+                            .width(1.dp)
+                            .background(textColor.copy(alpha = 0.6f))
                             .align(Alignment.BottomCenter)
                         )
                     }
                 } else if(index == size -1){
                     Box(modifier = Modifier
                         .fillMaxHeight(0.5f)
-                        .width(2.dp)
-                        .background(MaterialTheme.colors.background)
+                        .width(1.dp)
+                        .background(textColor.copy(alpha = 0.6f))
                         .align(Alignment.TopCenter)
                     )
                 } else {
                     Box(modifier = Modifier
                         .fillMaxHeight()
-                        .width(2.dp)
-                        .background(MaterialTheme.colors.background)
+                        .width(1.dp)
+                        .background(textColor.copy(alpha = 0.6f))
                         .align(Alignment.BottomCenter)
                     )
                 }
@@ -292,11 +345,14 @@ fun WorkoutItem(
                     fontFamily = NanumSquareFamily,
                     fontWeight = FontWeight.Medium,
                     fontSize = 14.sp,
+                    color = textColor
                 )
-                AutoSizeText(
+                Text(
                     text = getWorkAndRestTime(workout),
-                    textStyle = MaterialTheme.typography.caption.copy(
-                        color = MaterialColor.GREY_600
+                    fontFamily = NanumSquareFamily,
+                    fontSize = 10.sp,
+                    color = textColor.copy(
+                        alpha = 0.6f
                     )
                 )
             }
@@ -313,7 +369,7 @@ fun WorkoutItem(
                     fontWeight = FontWeight.Medium,
                     fontSize = 18.sp,
                     textAlign = TextAlign.End,
-                    color = Color.DarkGray
+                    color = textColor
                 )
             }
         }

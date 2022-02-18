@@ -12,11 +12,14 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.navArgs
 import com.example.runnincle.R
+import com.example.runnincle.business.domain.model.Workout.Companion.toWorkout
 import com.example.runnincle.framework.presentation.composable.*
 import com.example.runnincle.framework.presentation.create_program.composable.CreateProgramTopAppBar
 import com.example.runnincle.framework.presentation.create_program.composable.CreateProgramWorkoutCircle
@@ -28,13 +31,18 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+enum class MODE {
+    CREATE, EDIT
+}
+
 @ExperimentalMaterialApi
 @AndroidEntryPoint
 class CreateProgramFragment: Fragment() {
 
     private val viewModel: CreateProgramViewModel by viewModels()
-    private lateinit var callback: OnBackPressedCallback
+    private var callback: OnBackPressedCallback? = null
     private lateinit var scaffoldState: BottomSheetScaffoldState
+    private var mode = MODE.CREATE
 
     @OptIn(ExperimentalMaterialApi::class)
     override fun onCreateView(
@@ -54,6 +62,8 @@ class CreateProgramFragment: Fragment() {
         val isSkipLastCoolDown = viewModel.isSkipLastCoolDown
         val set = viewModel.set
         val timerColor = viewModel.timerColor
+        val onAddAnimKey = viewModel.onAddAnimKey
+        val onEditAnimKey = viewModel.onEditAnimKey
 
         observeData()
 
@@ -67,25 +77,21 @@ class CreateProgramFragment: Fragment() {
                     setOnBackPressedCallback(scope)
                     viewModel.setUpEditProgramNameDialog()
 
-                    val isFired = remember { mutableStateOf(false) }
-
                     BottomSheetScaffold(
                         modifier = Modifier.fillMaxWidth(),
                         scaffoldState = scaffoldState,
                         sheetShape = RoundedCornerShape(topStart = radius, topEnd = radius),
                         topBar = { CreateProgramTopAppBar(
+                            title = if (mode == MODE.CREATE) {
+                                stringResource(id = R.string.add_new_workout)
+                            } else {
+                                stringResource(id = R.string.edit_workout)
+                           },
                             onBackClick = {
                                 viewModel.moveToProgramListFragment(this)
                             },
                             onProgramSaveClick = {
-                                val view = this@CreateProgramFragment.requireView()
-                                scope.launch {
-                                    val isValid = viewModel.insertNewProgram()
-                                    if (isValid) {
-                                        delay(100)
-                                        viewModel.moveToProgramListFragment(view)
-                                    }
-                                }
+                                saveProgram()
                             }
                         ) },
                         sheetContent = {
@@ -94,14 +100,12 @@ class CreateProgramFragment: Fragment() {
                                 buttonStatus = viewModel.bottomSheetSaveButtonStatus.value,
                                 onSaveClick = {
                                     scope.launch {
-                                        viewModel.onBottomSheetSaveButtonClick(scaffoldState)
-                                        isFired.value = false
-                                        isFired.value = true
+                                        saveWorkout()
                                     }
                                 },
                                 onDeleteClick = {
                                     scope.launch {
-                                        viewModel.onBottomSheetDeleteButtonClick(scaffoldState)
+                                        deleteWorkout()
                                     }
                                 },
                                 onCollapsedSheetClick = {
@@ -134,7 +138,8 @@ class CreateProgramFragment: Fragment() {
                                     onProgramNameClick = {
                                         viewModel.isShowingEditProgramNameDialog.value = true
                                     },
-                                    isFired = isFired.value
+                                    onAddAnimKey = onAddAnimKey.value,
+                                    onEditAnimKey = onEditAnimKey.value
                                 )
                                 CreateProgramWorkoutList(
                                     workouts = workouts,
@@ -149,6 +154,69 @@ class CreateProgramFragment: Fragment() {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private suspend fun deleteWorkout() {
+        viewModel.onBottomSheetDeleteButtonClick(scaffoldState)
+        viewModel.launchEditAnimation()
+    }
+
+    private suspend fun saveWorkout() {
+        when(viewModel.bottomSheetSaveButtonStatus.value) {
+            BottomSheetSaveButtonStatus.SAVE -> {
+                val isSuccess = viewModel.onBottomSheetSaveButtonClick(scaffoldState)
+                if (isSuccess) {
+                    viewModel.launchAddAnimation()
+                }
+            }
+            BottomSheetSaveButtonStatus.EDIT -> {
+                val isSuccess = viewModel.onBottomSheetEditButtonClick(scaffoldState)
+                if (isSuccess) {
+                    viewModel.launchEditAnimation()
+                }
+            }
+        }
+    }
+
+    private fun saveProgram() {
+        val view = this@CreateProgramFragment.requireView()
+        val isValid = viewModel.validateProgramData()
+        if (!isValid) {
+            return
+        }
+        viewModel.launch {
+            if (mode == MODE.CREATE) {
+                viewModel.insertNewProgram()
+                delay(100)
+                viewModel.moveToProgramListFragment(view)
+            } else if (mode == MODE.EDIT){
+                val args: CreateProgramFragmentArgs by navArgs()
+                val programId = args.program?.id
+                if (programId != null) {
+                    viewModel.updateProgram(programId = programId)
+                    delay(100)
+                    viewModel.moveToProgramListFragment(view)
+                }
+            }
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val args: CreateProgramFragmentArgs by navArgs()
+        val parcelableWorkouts = args.workouts?.toCollection(ArrayList())
+        parcelableWorkouts?.forEach {
+            viewModel.workouts.value.add(it.toWorkout())
+        }
+        val program = args.program
+        if (program != null) {
+            viewModel.programName.value = program.name
+            mode = MODE.EDIT
+            viewModel.launch {
+                delay(500)
+                viewModel.launchAddAnimation()
             }
         }
     }
@@ -186,21 +254,21 @@ class CreateProgramFragment: Fragment() {
         }
         requireActivity().onBackPressedDispatcher.addCallback(
             this@CreateProgramFragment.viewLifecycleOwner,
-            callback
+            callback!!
         )
     }
 
     override fun onDetach() {
         super.onDetach()
-        callback.remove()
+        callback?.remove()
     }
 
     private fun observeData() {
         viewModel.errorStatus.observe(this.viewLifecycleOwner) { status ->
             status?.let {
                 when (status) {
-                    CreateProgramErrorStatus.NUMBER_FORMAT -> {
-                        context?.showToastMessage(getString(R.string.enter_number_to_work_time))
+                    CreateProgramErrorStatus.WORK_NAME_EMPTY -> {
+                        context?.showToastMessage(getString(R.string.enter_name))
                     }
                     CreateProgramErrorStatus.SET_FORMAT -> {
                         context?.showToastMessage(getString(R.string.set_must_be_at_least_1))

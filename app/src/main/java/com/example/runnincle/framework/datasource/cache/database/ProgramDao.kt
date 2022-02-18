@@ -21,8 +21,8 @@ interface ProgramDao {
         updatedAt: String
     ): Int
 
-    @Query("DELETE FROM programs WHERE id = :id")
-    suspend fun deleteProgram(id: String): Int
+    @Query("DELETE FROM programs WHERE id = :programId")
+    suspend fun deleteProgram(programId: String): Int
 
     @Query("""
         SELECT * FROM programs ORDER BY updated_at DESC

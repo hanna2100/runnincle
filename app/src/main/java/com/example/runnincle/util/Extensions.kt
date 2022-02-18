@@ -111,9 +111,17 @@ fun Int.toTimeClock(): String {
         val sec: Int = this - (min * 60)
         if(sec > 0) {
             if(sec < 10) {
-                "$min:0$sec"
+                if (min < 10) {
+                    "0$min:0$sec"
+                } else {
+                    "$min:0$sec"
+                }
             } else {
-                "$min:$sec"
+                if (min < 10) {
+                    "0$min:$sec"
+                } else {
+                    "$min:$sec"
+                }
             }
         } else {
             if (min < 10) {

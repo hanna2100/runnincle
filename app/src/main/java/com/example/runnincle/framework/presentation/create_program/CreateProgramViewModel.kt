@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.findNavController
 import com.example.runnincle.R
 import com.example.runnincle.business.domain.model.Workout
@@ -19,14 +18,12 @@ import com.example.runnincle.framework.presentation.create_program.CreateProgram
 import com.example.runnincle.framework.presentation.create_program.composable.ShowEditProgramNameDialog
 import com.example.runnincle.ui.theme.TimerColorPalette
 import com.example.runnincle.util.BaseViewModel
-import com.vanpra.composematerialdialogs.color.ColorPalette
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
-import java.lang.NumberFormatException
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 enum class CreateProgramErrorStatus{
-    NUMBER_FORMAT, SET_FORMAT, WORK_FORMAT, WORKOUTS_EMPTY, PROGRAM_NAME_EMPTY,
+    WORK_NAME_EMPTY, SET_FORMAT, WORK_FORMAT, WORKOUTS_EMPTY, PROGRAM_NAME_EMPTY,
 }
 
 enum class BottomSheetSaveButtonStatus {
@@ -43,7 +40,7 @@ constructor(
 
     val workouts = mutableStateOf<MutableList<Workout>>(mutableListOf())
 
-    val programName = mutableStateOf(resourcesProvider.getString(R.string.enter_program_name))
+    val programName = mutableStateOf(resourcesProvider.getString(R.string.enter_name))
     val isShowingEditProgramNameDialog = mutableStateOf(false)
 
     val errorStatus = MutableLiveData<CreateProgramErrorStatus?>()
@@ -58,129 +55,79 @@ constructor(
     val isSkipLastCoolDown = mutableStateOf(false)
     val set = mutableStateOf(1)
     val timerColor = mutableStateOf(TimerColorPalette[0])
+    var onAddAnimKey = mutableStateOf(false)
+    var onEditAnimKey = mutableStateOf(false)
+
+    private fun validateWorkoutFormat(
+        name: String,
+        workoutMin: Int,
+        workoutSec: Int,
+        set: Int,
+    ): Boolean {
+        if (workoutMin <= 0 && workoutSec<=0) {
+            errorStatus.value = WORK_FORMAT
+            return false
+        }
+        if (name.isBlank()) {
+            errorStatus.value = WORK_NAME_EMPTY
+            return false
+        }
+        if (set <= 0) {
+            errorStatus.value = SET_FORMAT
+            return false
+        }
+        return true
+    }
 
     private fun addWorkoutToTheList(
         name: String,
-        workoutMin: String,
-        workoutSec: String,
-        coolDownMin: String,
-        coolDownSec: String,
+        workoutMin: Int,
+        workoutSec: Int,
+        coolDownMin: Int,
+        coolDownSec: Int,
         isSkipLastCoolDown: Boolean,
-        set: String,
+        set: Int,
         timerColor: Color
-    ) {
-        val wm: Int
-        val ws: Int
-        val cdm: Int
-        val cds: Int
-        val st: Int
-        try {
-            wm = if (workoutMin.isBlank()) {
-                0
-            } else {
-                workoutMin.toInt()
-            }
-            ws = if (workoutSec.isBlank()) {
-                0
-            } else {
-                workoutSec.toInt()
-            }
-            if (wm <= 0 && ws<=0) {
-                errorStatus.value = WORK_FORMAT
-                return
-            }
-            cdm = if (coolDownMin.isBlank()) {
-                0
-            } else {
-                coolDownMin.toInt()
-            }
-            cds = if (coolDownSec.isBlank()) {
-                0
-            } else {
-                coolDownSec.toInt()
-            }
-            if (set.isBlank()) {
-                errorStatus.value = SET_FORMAT
-                return
-            } else {
-                st = set.toInt()
-            }
-        } catch (e: NumberFormatException) {
-            errorStatus.value = NUMBER_FORMAT
-            return
-        }
+    ): Boolean {
+        val isValid = validateWorkoutFormat(name, workoutMin, workoutSec, set)
+        if (!isValid) return false
+
         val newWorkout = Workout(
             name = name,
-            set = st,
-            work = (wm * 60) + ws,
-            coolDown = (cdm * 60) + cds,
+            set = set,
+            work = (workoutMin * 60) + workoutSec,
+            coolDown = (coolDownMin * 60) + coolDownSec,
             isSkipLastCoolDown = isSkipLastCoolDown,
             timerColor = timerColor
         )
         workouts.value.add(newWorkout)
+        return true
     }
 
     private fun editWorkoutToTheList(
         name: String,
-        workoutMin: String,
-        workoutSec: String,
-        coolDownMin: String,
-        coolDownSec: String,
+        workoutMin: Int,
+        workoutSec: Int,
+        coolDownMin: Int,
+        coolDownSec: Int,
         isSkipLastCoolDown: Boolean,
-        set: String,
+        set: Int,
         timerColor: Color,
         index: Int
-    ) {
-        val wm: Int
-        val ws: Int
-        val cdm: Int
-        val cds: Int
-        val st: Int
-        try {
-            wm = if (workoutMin.isBlank()) {
-                0
-            } else {
-                workoutMin.toInt()
-            }
-            ws = if (workoutSec.isBlank()) {
-                0
-            } else {
-                workoutSec.toInt()
-            }
-            if (wm <= 0 && ws<=0) {
-                errorStatus.value = WORK_FORMAT
-                return
-            }
-            cdm = if (coolDownMin.isBlank()) {
-                0
-            } else {
-                coolDownMin.toInt()
-            }
-            cds = if (coolDownSec.isBlank()) {
-                0
-            } else {
-                coolDownSec.toInt()
-            }
-            if (set.isBlank()) {
-                errorStatus.value = SET_FORMAT
-                return
-            } else {
-                st = set.toInt()
-            }
-        } catch (e: NumberFormatException) {
-            errorStatus.value = NUMBER_FORMAT
-            return
-        }
+    ): Boolean {
+        val isValid = validateWorkoutFormat(name, workoutMin, workoutSec, set)
+        if (!isValid) return false
         val newWorkout = Workout(
             name = name,
-            set = st,
-            work = (wm * 60) + ws,
-            coolDown = (cdm * 60) + cds,
+            set = set,
+            work = (workoutMin * 60) + workoutSec,
+            coolDown = (coolDownMin * 60) + coolDownSec,
             isSkipLastCoolDown = isSkipLastCoolDown,
             timerColor = timerColor
         )
         workouts.value.removeAt(index)
         workouts.value.add(index, newWorkout)
+        return true
     }
 
     fun clearBottomSheet() {
@@ -211,38 +158,42 @@ constructor(
     }
 
     @OptIn(ExperimentalMaterialApi::class)
-    suspend fun onBottomSheetSaveButtonClick(scaffoldState: BottomSheetScaffoldState) {
-        when (bottomSheetSaveButtonStatus.value) {
-            BottomSheetSaveButtonStatus.SAVE -> {
-                addWorkoutToTheList(
-                    name = name.value,
-                    workoutMin = workMin.value.toString(),
-                    workoutSec = workSec.value.toString(),
-                    coolDownMin = coolDownMin.value.toString(),
-                    coolDownSec = coolDownSec.value.toString(),
-                    isSkipLastCoolDown = isSkipLastCoolDown.value,
-                    set = set.value.toString(),
-                    timerColor = timerColor.value
-                )
-                scaffoldState.bottomSheetState.collapse()
-                clearBottomSheet()
-            }
-            BottomSheetSaveButtonStatus.EDIT -> {
-                editWorkoutToTheList(
-                    name = name.value,
-                    workoutMin = workMin.value.toString(),
-                    workoutSec = workSec.value.toString(),
-                    coolDownMin = coolDownMin.value.toString(),
-                    coolDownSec = coolDownSec.value.toString(),
-                    isSkipLastCoolDown = isSkipLastCoolDown.value,
-                    set = set.value.toString(),
-                    timerColor = timerColor.value,
-                    index = editingTargetIndex?: return
-                )
-                scaffoldState.bottomSheetState.collapse()
-                clearBottomSheet()
-            }
+    suspend fun onBottomSheetSaveButtonClick(scaffoldState: BottomSheetScaffoldState): Boolean {
+        val isSuccess = addWorkoutToTheList(
+            name = name.value,
+            workoutMin = workMin.value,
+            workoutSec = workSec.value,
+            coolDownMin = coolDownMin.value,
+            coolDownSec = coolDownSec.value,
+            isSkipLastCoolDown = isSkipLastCoolDown.value,
+            set = set.value,
+            timerColor = timerColor.value
+        )
+        if (isSuccess) {
+            scaffoldState.bottomSheetState.collapse()
+            clearBottomSheet()
         }
+        return isSuccess
+    }
+
+    @OptIn(ExperimentalMaterialApi::class)
+    suspend fun onBottomSheetEditButtonClick(scaffoldState: BottomSheetScaffoldState): Boolean {
+        val isSuccess = editWorkoutToTheList(
+            name = name.value,
+            workoutMin = workMin.value,
+            workoutSec = workSec.value,
+            coolDownMin = coolDownMin.value,
+            coolDownSec = coolDownSec.value,
+            isSkipLastCoolDown = isSkipLastCoolDown.value,
+            set = set.value,
+            timerColor = timerColor.value,
+            index = editingTargetIndex?: return false
+        )
+        if (isSuccess) {
+            scaffoldState.bottomSheetState.collapse()
+            clearBottomSheet()
+        }
+        return isSuccess
     }
 
     @OptIn(ExperimentalMaterialApi::class)
@@ -267,27 +218,26 @@ constructor(
         }
     }
 
-    fun insertNewProgram(): Boolean {
-        val valid = validateProgramData()
-        if (!valid) {
-            return false
-        }
-        viewModelScope.launch {
-            createProgramInteractors.insertNewProgram(
-                name = programName.value,
-                workouts = workouts.value
-            )
-        }
-        return true
+    suspend fun insertNewProgram() {
+        createProgramInteractors.insertNewProgram(
+            name = programName.value,
+            workouts = workouts.value
+        )
     }
 
-    private fun validateProgramData(): Boolean {
+    suspend fun updateProgram(programId: String) {
+        createProgramInteractors.updateProgram(
+            programId = programId,
+            name = programName.value,
+            workouts = workouts.value
+        )
+    }
+
+    fun validateProgramData(): Boolean {
         return if (workouts.value.isEmpty()) {
             errorStatus.value = WORKOUTS_EMPTY
             false
-        } else if (programName.value.isEmpty() ||
-            programName.value == resourcesProvider.getString(R.string.enter_program_name)
-        ) {
+        } else if (programName.value.isEmpty() || programName.value == resourcesProvider.getString(R.string.enter_name)) {
             errorStatus.value = PROGRAM_NAME_EMPTY
             false
         } else {
@@ -299,4 +249,20 @@ constructor(
         val action = CreateProgramFragmentDirections.actionCreateProgramFragmentToProgramListFragment()
         view.findNavController().navigate(action)
     }
+
+    fun launchAddAnimation() {
+        launch {
+            onAddAnimKey.value = false
+            onAddAnimKey.value = true
+        }
+    }
+
+    fun launchEditAnimation() {
+        launch {
+            onEditAnimKey.value = true
+            delay(200)
+            onEditAnimKey.value = false
+        }
+    }
+
 }

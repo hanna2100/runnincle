@@ -24,6 +24,14 @@
             app:destination="@+id/programListFragment"
             app:enterAnim="@anim/slide_in_left"
             app:exitAnim="@anim/slide_out_left"/>
+        <argument
+            android:name="program"
+            app:argType="com.example.runnincle.business.domain.model.Program"
+            app:nullable="true" />
+        <argument
+            android:name="workouts"
+            app:argType="com.example.runnincle.business.domain.model.ParcelableWorkout[]"
+            app:nullable="true" />
     </fragment>
 
 </navigation>

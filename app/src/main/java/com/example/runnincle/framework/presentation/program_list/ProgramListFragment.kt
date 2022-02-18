@@ -52,6 +52,16 @@ class ProgramListFragment: Fragment() {
                         programs = programs,
                         onProgramCardClick = { program, workouts ->
                             startFloatingService(program, workouts)
+                        },
+                        onProgramEditButtonClick = { program, workouts ->
+                            viewModel.moveToEditProgram(view, program, workouts)
+                        },
+                        onProgramDeleteButtonClick = { program ->
+                            viewModel.deleteProgram(program.id)
+                            viewModel.programs.remove(program)
+                        },
+                        onFloatingAddButtonClick = {
+                            viewModel.moveToCreateProgram(view)
                         }
                     )
                 }

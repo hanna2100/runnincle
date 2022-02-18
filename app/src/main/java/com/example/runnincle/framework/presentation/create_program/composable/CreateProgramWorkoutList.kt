@@ -27,8 +27,10 @@ import com.example.runnincle.R
 import com.example.runnincle.business.domain.model.Workout
 import com.example.runnincle.business.domain.model.Workout.Companion.getTotalWorkoutTime
 import com.example.runnincle.framework.presentation.composable.AutoSizeText
+import com.example.runnincle.framework.presentation.program_list.composable.getWorkAndRestTime
 import com.example.runnincle.toTimeClock
 import com.example.runnincle.toTimeLetters
+import com.siddroid.holi.colors.MaterialColor
 import java.lang.StringBuilder
 
 
@@ -37,35 +39,33 @@ fun CreateProgramWorkoutList(
     workouts: List<Workout>,
     onItemClick: (workout: Workout)->Unit
 ) {
-    Box(
+    Card(
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight()
-            .shadow(elevation = 60.dp)
-            .clip(shape = RoundedCornerShape(topStart = 100.dp))
-            .background(MaterialTheme.colors.surface)
-            .padding(10.dp, 20.dp, 10.dp, 30.dp)
+            .fillMaxHeight(),
+        shape =  RoundedCornerShape(topStart = 70.dp),
+        backgroundColor = MaterialTheme.colors.background,
+        elevation = 50.dp,
     ) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Transparent),
-            contentPadding = PaddingValues(10.dp, 0.dp)
+        Box(
+            modifier = Modifier.padding(20.dp, 40.dp)
         ) {
-            itemsIndexed(items = workouts) { index, item ->
-                WorkoutItem(workout = item, index, workouts.size, onItemClick)
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Transparent),
+                contentPadding = PaddingValues(10.dp, 0.dp)
+            ) {
+                itemsIndexed(items = workouts) { index, item ->
+                    WorkoutItem(
+                        workout = item,
+                        index = index,
+                        size = workouts.size,
+                        onItemClick = onItemClick
+                    )
+                }
             }
         }
-        Box(
-            Modifier
-                .fillMaxWidth()
-                .height(40.dp)
-                .background(
-                    Brush.verticalGradient(
-                        listOf(Color.White, Color.White, Color.Transparent)
-                    )
-                )
-        )
     }
 }
 
@@ -107,7 +107,7 @@ fun WorkoutItem(
                         Box(modifier = Modifier
                             .fillMaxHeight(0.5f)
                             .width(2.dp)
-                            .background(MaterialTheme.colors.background)
+                            .background(MaterialColor.GREY_300)
                             .align(Alignment.BottomCenter)
                         )
                     }
@@ -115,14 +115,14 @@ fun WorkoutItem(
                     Box(modifier = Modifier
                         .fillMaxHeight(0.5f)
                         .width(2.dp)
-                        .background(MaterialTheme.colors.background)
+                        .background(MaterialColor.GREY_300)
                         .align(Alignment.TopCenter)
                     )
                 } else {
                     Box(modifier = Modifier
                         .fillMaxHeight()
                         .width(2.dp)
-                        .background(MaterialTheme.colors.background)
+                        .background(MaterialColor.GREY_300)
                         .align(Alignment.BottomCenter)
                     )
                 }
@@ -144,7 +144,7 @@ fun WorkoutItem(
                 Text(
                     text = "${workout.name} ${workout.set}set",
                     style = MaterialTheme.typography.subtitle1,
-                    fontWeight = FontWeight.Bold,
+                    fontWeight = FontWeight.Medium,
                     fontSize = 18.sp
                 )
                 AutoSizeText(
@@ -163,7 +163,7 @@ fun WorkoutItem(
             ) {
                 Text(
                     text = workout.getTotalWorkoutTime().toTimeClock(),
-                    fontWeight = FontWeight.Bold,
+                    fontWeight = FontWeight.Medium,
                     fontSize = 20.sp,
                     textAlign = TextAlign.End,
                     color = Color.DarkGray
@@ -185,3 +185,5 @@ fun getWorkAndRestTime(workout: Workout): String {
     }
     return workTimeBuilder.toString()
 }
+
+

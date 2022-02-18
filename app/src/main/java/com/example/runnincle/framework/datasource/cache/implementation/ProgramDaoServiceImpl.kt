@@ -35,8 +35,8 @@ class ProgramDaoServiceImpl(
         }
     }
 
-    override suspend fun deleteProgram(primaryKey: Int): Int {
-        TODO("Not yet implemented")
+    override suspend fun deleteProgram(programId: String): Int {
+        return programDao.deleteProgram(programId)
     }
 
     override suspend fun getAllPrograms(): List<Program> {

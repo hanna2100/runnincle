@@ -1,9 +1,7 @@
 package com.example.runnincle.framework.presentation.create_program.composable
 
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.Animatable
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -35,7 +33,8 @@ fun CreateProgramWorkoutCircle(
     workouts: List<Workout>,
     programName: String,
     onProgramNameClick: ()-> Unit,
-    isFired: Boolean
+    onAddAnimKey: Boolean,
+    onEditAnimKey: Boolean
 ) {
 
     BoxWithConstraints (
@@ -52,7 +51,7 @@ fun CreateProgramWorkoutCircle(
                 .fillMaxSize(0.75f)
                 .align(Alignment.TopCenter)
             ) {
-                WorkoutScheduleBar(workouts, isFired)
+                WorkoutScheduleBar(workouts, onAddAnimKey, onEditAnimKey)
             }
             Box ( modifier = Modifier
                 .fillMaxSize(0.8f)
@@ -106,22 +105,41 @@ fun CreateProgramWorkoutCircle(
 }
 
 @Composable
-fun WorkoutScheduleBar(workouts: List<Workout>, isFired: Boolean) {
+fun WorkoutScheduleBar(
+    workouts: List<Workout>,
+    onAddAnimKey: Boolean,
+    onEditAnimKey: Boolean
+) {
     val totalWorkoutListTime = workouts.getTotalWorkoutListTime()
     val workoutTimePercentages =  mutableListOf<State<Float>>()
     var workTimeFloatValue = 0f
+    val animatableTimerColorList = remember { mutableListOf<Animatable<Color, AnimationVector4D>>() }
 
     workouts.forEach {
         workTimeFloatValue += it.getTotalWorkoutTime().toFloat().div(totalWorkoutListTime)
         val drawPercentage = animateFloatAsState(
-            targetValue = if (isFired) workTimeFloatValue else 0f,
+            targetValue = if (onAddAnimKey) workTimeFloatValue else 0f,
             animationSpec = tween(
                 delayMillis = 0,
-                durationMillis = 1000
+                durationMillis = 500,
             )
         )
         workoutTimePercentages.add(drawPercentage)
+
+        animatableTimerColorList.add(
+            Animatable(it.timerColor)
+        )
     }
+
+    for(i in 0..workouts.lastIndex) {
+        LaunchedEffect(onEditAnimKey) {
+            animatableTimerColorList[i].animateTo(
+                workouts[i].timerColor,
+                animationSpec = tween(500)
+            )
+        }
+    }
+
 
     Box {
         Canvas(
@@ -137,24 +155,26 @@ fun WorkoutScheduleBar(workouts: List<Workout>, isFired: Boolean) {
                 style = Stroke(35f, cap = StrokeCap.Round)
             )
         }
-        Canvas(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(10.dp)
-        ) {
-            var stroke = 35f
-            for (i in workouts.lastIndex downTo 0) {
-                drawArc(
-                    brush = SolidColor(workouts[i].timerColor),
-                    startAngle = 130f,
-                    sweepAngle = 280f * workoutTimePercentages[i].value,
-                    useCenter = false,
-                    style = Stroke(stroke, cap = StrokeCap.Round)
-                )
-                stroke += 1f
+
+        for (i in workouts.lastIndex downTo 0) {
+            Canvas(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(10.dp)
+            ) {
+                var stroke = 35f
+                for (i in workouts.lastIndex downTo 0) {
+                    drawArc(
+                        brush = SolidColor(animatableTimerColorList[i].value),
+                        startAngle = 130f,
+                        sweepAngle = 280f * workoutTimePercentages[i].value,
+                        useCenter = false,
+                        style = Stroke(stroke, cap = StrokeCap.Round)
+                    )
+                    stroke += 1f
+                }
             }
         }
-
 
     }
 
@@ -166,6 +186,7 @@ fun ShowEditProgramNameDialog(
     onDismissRequest: ()-> Unit,
 ) {
     var newName: String by remember { mutableStateOf("")}
+    val maxChar = 20
 
     AlertDialog(
         onDismissRequest = onDismissRequest,
@@ -181,16 +202,29 @@ fun ShowEditProgramNameDialog(
         },
         title = { },
         text = {
-            OutlinedTextField(
-                value = newName,
-                modifier = Modifier.fillMaxWidth(),
-                label = {
-                    Text(stringResource(id = R.string.program_name))
-                },
-                onValueChange = {
-                    newName = it
-                }
-            )
+            Column {
+                OutlinedTextField(
+                    value = newName,
+                    modifier = Modifier.fillMaxWidth(),
+                    label = {
+                        Text(stringResource(id = R.string.program_name))
+                    },
+                    onValueChange = {
+                        if(it.length <= 20) {
+                            newName = it
+                        }
+                    },
+                    maxLines = 1,
+                    singleLine = true,
+                )
+                Text(
+                    text = "${newName.length} / $maxChar",
+                    textAlign = TextAlign.End,
+                    color = MaterialTheme.colors.primary,
+                    style = MaterialTheme.typography.button,
+                    modifier = Modifier.fillMaxWidth().padding(10.dp)
+                )
+            }
         }
     )
 }

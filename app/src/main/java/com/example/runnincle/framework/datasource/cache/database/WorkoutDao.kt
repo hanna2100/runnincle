@@ -38,4 +38,11 @@ interface WorkoutDao {
         ORDER BY workout_order ASC
     """)
     suspend fun getWorkoutsOfProgram(programId: String): Array<WorkoutCacheEntity>
+
+    @Query("""
+        DELETE 
+        FROM workouts 
+        WHERE programId = :programId
+    """)
+    suspend fun deleteWorkoutsWithProgramId(programId: String): Int
 }

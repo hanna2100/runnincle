@@ -12,6 +12,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.siddroid.holi.colors.MaterialColor
 
 private val DarkColorPalette = darkColors(
     primary = YankeesBlue,
@@ -44,7 +45,11 @@ private val LightColorPalette = lightColors(
 )
 
 @Composable
-fun RunnincleTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
+fun RunnincleTheme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    darkSystemBar: Boolean = false,
+    content: @Composable () -> Unit,
+) {
     val colors = if (darkTheme) {
         DarkColorPalette
     } else {
@@ -59,16 +64,15 @@ fun RunnincleTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composa
     )
 
     val systemUiController = rememberSystemUiController()
-    val useDarkIcons = MaterialTheme.colors.isLight
+    val background = colors.background
 
     SideEffect {
         systemUiController.setSystemBarsColor(
-            color = Color.Transparent,
-            darkIcons = useDarkIcons
+            color = if (darkSystemBar)SystemBarColor else background,
+            darkIcons = !darkSystemBar
         )
     }
 }
-
 
 object RippleCustomTheme: RippleTheme {
 

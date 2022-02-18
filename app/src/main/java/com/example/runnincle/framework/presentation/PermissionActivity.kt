@@ -107,7 +107,7 @@ fun PermissionAlert(
     val configuration = LocalConfiguration.current
     val cardWidth = configuration.screenWidthDp.dp.times(0.75f)
 
-    RunnincleTheme {
+    RunnincleTheme(darkSystemBar = true) {
         ConstraintLayout(modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()

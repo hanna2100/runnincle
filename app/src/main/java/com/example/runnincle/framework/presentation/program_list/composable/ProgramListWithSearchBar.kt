@@ -26,92 +26,89 @@ fun ProgramListWithSearchBar(
     onProgramEditButtonClick: (program:Program, workout: List<Workout>)->Unit,
     onProgramDeleteButtonClick: (program: Program)->Unit
 ) {
-    RunnincleTheme {
-        var searchBarOpen by remember { mutableStateOf(false) }
-        var searchString by remember { mutableStateOf("") }
-        var chipList by remember { mutableStateOf(mutableListOf<SearchChip>()) }
-        val selectedChipIndex = remember { mutableStateOf(-1) }
+    var searchBarOpen by remember { mutableStateOf(false) }
+    var searchString by remember { mutableStateOf("") }
+    var chipList by remember { mutableStateOf(mutableListOf<SearchChip>()) }
+    val selectedChipIndex = remember { mutableStateOf(-1) }
 
-        ConstraintLayout(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colors.background)
+    ConstraintLayout(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colors.background)
+    ) {
+        val (floatingButtonRef) = createRefs()
+
+        Column(modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
         ) {
-            val (floatingButtonRef) = createRefs()
-
-            Column(modifier = Modifier
+            Column (modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight()
-            ) {
-                Column (modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .clip(RoundedCornerShape(bottomStart = 50.dp, bottomEnd = 50.dp))
-                    .background(
-                        brush = Brush.linearGradient(
-                            colors = listOf(
-                                MaterialTheme.colors.primary,
-                                MaterialTheme.colors.primary,
-                                MaterialTheme.colors.primaryVariant
-                            ),
-                            end = Offset(0f, Float.POSITIVE_INFINITY),
-                            start = Offset(Float.POSITIVE_INFINITY, 0f)
+                .wrapContentHeight()
+                .clip(RoundedCornerShape(bottomStart = 50.dp, bottomEnd = 50.dp))
+                .background(
+                    brush = Brush.linearGradient(
+                        colors = listOf(
+                            MaterialTheme.colors.primary,
+                            MaterialTheme.colors.primary,
+                            MaterialTheme.colors.primaryVariant
                         ),
-                    )
-                    .padding(30.dp)
-                    .animateContentSize()
-                ) {
-                    ProgramSearchBar(
-                        searchButtonState = searchBarOpen,
-                        searchString = searchString,
-                        onSearchButtonClick = {
-                            if(searchBarOpen && searchString.isNotEmpty()) {
-                                chipList.add(0, SearchChip(searchString))
-                                searchString = ""
-                                selectedChipIndex.value = 0
-                            }
-                            searchBarOpen = !searchBarOpen
-                        },
-                        onSearchTextFieldValueChange = {
-                            searchString = it
+                        end = Offset(0f, Float.POSITIVE_INFINITY),
+                        start = Offset(Float.POSITIVE_INFINITY, 0f)
+                    ),
+                )
+                .padding(30.dp)
+                .animateContentSize()
+            ) {
+                ProgramSearchBar(
+                    searchButtonState = searchBarOpen,
+                    searchString = searchString,
+                    onSearchButtonClick = {
+                        if(searchBarOpen && searchString.isNotEmpty()) {
+                            chipList.add(0, SearchChip(searchString))
+                            searchString = ""
+                            selectedChipIndex.value = 0
                         }
-                    )
-                    Spacer(modifier = Modifier
-                        .fillMaxWidth()
-                        .height(6.dp))
-                    ChipGroup(
-                        items = chipList,
-                        selectIndex = selectedChipIndex,
-                        onDeleteChipClick = { chip ->
-                            var list = mutableListOf<SearchChip>()
-                            list.addAll(chipList)
-                            list.remove(chip)
-                            chipList = list
-                            println(chipList.toString())
-                        },
-                    )
-                }
-                ProgramList(
-                    programs  = programs,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-                    onProgramCardClick = onProgramCardClick,
-                    onProgramEditButtonClick = onProgramEditButtonClick,
-                    onProgramDeleteButtonClick = onProgramDeleteButtonClick
+                        searchBarOpen = !searchBarOpen
+                    },
+                    onSearchTextFieldValueChange = {
+                        searchString = it
+                    }
+                )
+                Spacer(modifier = Modifier
+                    .fillMaxWidth()
+                    .height(6.dp))
+                ChipGroup(
+                    items = chipList,
+                    selectIndex = selectedChipIndex,
+                    onDeleteChipClick = { chip ->
+                        var list = mutableListOf<SearchChip>()
+                        list.addAll(chipList)
+                        list.remove(chip)
+                        chipList = list
+                        println(chipList.toString())
+                    },
                 )
             }
-
-            FloatingButtonToCreateProgram(
-                modifier = Modifier.constrainAs(floatingButtonRef) {
-                    end.linkTo(parent.end)
-                    bottom.linkTo(parent.bottom)
-                },
-                onClick = {
-                    onFloatingAddButtonClick()
-                }
+            ProgramList(
+                programs  = programs,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                onProgramCardClick = onProgramCardClick,
+                onProgramEditButtonClick = onProgramEditButtonClick,
+                onProgramDeleteButtonClick = onProgramDeleteButtonClick
             )
         }
-    }
 
+        FloatingButtonToCreateProgram(
+            modifier = Modifier.constrainAs(floatingButtonRef) {
+                end.linkTo(parent.end)
+                bottom.linkTo(parent.bottom)
+            },
+            onClick = {
+                onFloatingAddButtonClick()
+            }
+        )
+    }
 }

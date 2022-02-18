@@ -14,7 +14,8 @@ val White = Color(0xFFFFFFFF)
 
 val Gunmetal = Color(0xFF2E3136)
 
-val CharlestonGreen = Color(0xFF232931)
+val SystemBarColor = Color(0xFF1C1D24)
+
 val OldSilver = Color(0xFF808386)
 val Arsenic = Color(0xFF393E46)
 val Aquamarine = Color(0xFF82ECCA)

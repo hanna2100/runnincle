@@ -5,7 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -17,6 +19,7 @@ import com.example.runnincle.business.domain.model.Workout.Companion.toParcelabl
 import com.example.runnincle.framework.presentation.program_list.composable.ProgramListWithSearchBar
 import com.example.runnincle.startFloatingServiceWithCommand
 import com.example.runnincle.util.FloatingServiceCommand
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 
@@ -45,7 +48,7 @@ class ProgramListFragment: Fragment() {
 
         return ComposeView(requireContext()).apply {
             setContent {
-                RunnincleTheme {
+                RunnincleTheme(darkSystemBar = true) {
                     val scope = rememberCoroutineScope()
                     setOnBackPressedCallback(scope)
                     ProgramListWithSearchBar(

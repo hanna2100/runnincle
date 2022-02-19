@@ -1,6 +1,7 @@
 package com.example.runnincle.framework.datasource.cache.database
 
 import androidx.room.*
+import com.example.runnincle.business.domain.model.Program
 import com.example.runnincle.framework.datasource.cache.model.ProgramCacheEntity
 
 @Dao
@@ -28,5 +29,13 @@ interface ProgramDao {
         SELECT * FROM programs ORDER BY updated_at DESC
         """)
     suspend fun getAllProgram(): Array<ProgramCacheEntity>
+
+    @Query("""
+        SELECT *
+        FROM programs 
+        WHERE name LIKE '%' || :searchText || '%'
+        ORDER BY updated_at DESC
+        """)
+    suspend fun searchProgram(searchText: String): Array<ProgramCacheEntity>
 
 }

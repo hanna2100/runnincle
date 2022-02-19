@@ -114,7 +114,7 @@ fun ProgramCard(
             } else {
                 backgroundColor
             },
-            animationSpec = tween(500)
+            animationSpec = tween(300)
         )
     }
     LaunchedEffect(isMoreOpen) {
@@ -124,7 +124,7 @@ fun ProgramCard(
             } else {
                 textColor
             },
-            animationSpec = tween(500)
+            animationSpec = tween(300)
         )
     }
     Card(

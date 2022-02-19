@@ -48,4 +48,14 @@ class ProgramDaoServiceImpl(
         }
         return domainPrograms
     }
+
+    override suspend fun searchProgram(searchText: String): List<Program> {
+        val entityPrograms = programDao.searchProgram(searchText)
+        val domainPrograms = mutableListOf<Program>()
+        entityPrograms.forEach { entity ->
+            val domain = programCacheMapper.mapFromEntity(entity)
+            domainPrograms.add(domain)
+        }
+        return domainPrograms
+    }
 }

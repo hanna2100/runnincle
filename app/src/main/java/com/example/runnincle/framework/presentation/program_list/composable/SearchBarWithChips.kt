@@ -132,7 +132,8 @@ fun ChipGroup(
     items: List<SearchChip>,
     selectIndex: MutableState<Int>,
     modifier: Modifier = Modifier,
-    onDeleteChipClick: (SearchChip) -> Unit
+    onChipClick: (chipText:String) -> Unit,
+    onChipDeleteButtonClick: (SearchChip) -> Unit
 ) {
     FlowRow(
         modifier = modifier,
@@ -143,7 +144,8 @@ fun ChipGroup(
                 item = chip,
                 itemIndex = index,
                 selectIndex = selectIndex,
-                onDeleteChipClick = onDeleteChipClick
+                onChipClick = onChipClick,
+                onDeleteChipClick = onChipDeleteButtonClick
             )
         }
     }
@@ -155,6 +157,7 @@ fun ChipItem(
     item: SearchChip,
     itemIndex: Int,
     selectIndex: MutableState<Int>,
+    onChipClick: (chipText: String) -> Unit,
     onDeleteChipClick: (SearchChip)->Unit
 ) {
     val backgroundColor = if (selectIndex.value == itemIndex) {
@@ -183,6 +186,7 @@ fun ChipItem(
             )
             .clickable {
                 selectIndex.value = itemIndex
+                onChipClick(item.text)
             }
     ) {
         Row(
@@ -196,7 +200,7 @@ fun ChipItem(
                 color = textColor,
                 style = TextStyle(
                     fontFamily = NanumSquareFamily,
-                    fontSize = 12.sp
+                    fontSize = 15.sp
                 ),
                 modifier = Modifier.padding(8.dp, 5.dp),
                 overflow = TextOverflow.Ellipsis,

@@ -10,24 +10,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.runnincle.business.domain.model.Program
 import com.example.runnincle.business.domain.model.Workout
-import com.example.runnincle.ui.theme.RunnincleTheme
 
 
 @Composable
 fun ProgramListWithSearchBar(
     programs: Map<Program, List<Workout>>,
+    onSearchButtonClick: (searchText: String) -> Unit,
+    onChipClick: (chipText: String) -> Unit,
     onProgramCardClick: (program: Program, workouts: List<Workout>)-> Unit,
     onFloatingAddButtonClick: ()->Unit,
     onProgramEditButtonClick: (program:Program, workout: List<Workout>)->Unit,
     onProgramDeleteButtonClick: (program: Program)->Unit
 ) {
     var searchBarOpen by remember { mutableStateOf(false) }
-    var searchString by remember { mutableStateOf("") }
+    var searchText by remember { mutableStateOf("") }
     var chipList by remember { mutableStateOf(mutableListOf<SearchChip>()) }
     val selectedChipIndex = remember { mutableStateOf(-1) }
 
@@ -62,17 +62,18 @@ fun ProgramListWithSearchBar(
             ) {
                 ProgramSearchBar(
                     searchButtonState = searchBarOpen,
-                    searchString = searchString,
+                    searchString = searchText,
                     onSearchButtonClick = {
-                        if(searchBarOpen && searchString.isNotEmpty()) {
-                            chipList.add(0, SearchChip(searchString))
-                            searchString = ""
+                        if(searchBarOpen && searchText.isNotEmpty()) {
+                            onSearchButtonClick(searchText)
+                            chipList.add(0, SearchChip(searchText))
+                            searchText = ""
                             selectedChipIndex.value = 0
                         }
                         searchBarOpen = !searchBarOpen
                     },
                     onSearchTextFieldValueChange = {
-                        searchString = it
+                        searchText = it
                     }
                 )
                 Spacer(modifier = Modifier
@@ -81,7 +82,8 @@ fun ProgramListWithSearchBar(
                 ChipGroup(
                     items = chipList,
                     selectIndex = selectedChipIndex,
-                    onDeleteChipClick = { chip ->
+                    onChipClick = onChipClick,
+                    onChipDeleteButtonClick = { chip ->
                         var list = mutableListOf<SearchChip>()
                         list.addAll(chipList)
                         list.remove(chip)

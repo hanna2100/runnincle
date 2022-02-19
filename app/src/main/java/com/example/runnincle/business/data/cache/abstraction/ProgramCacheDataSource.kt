@@ -14,4 +14,6 @@ interface ProgramCacheDataSource {
     suspend fun deleteProgram(programId: String): Int
 
     suspend fun getAllPrograms(): List<Program>
+
+    suspend fun searchProgram(searchText: String): List<Program>
 }

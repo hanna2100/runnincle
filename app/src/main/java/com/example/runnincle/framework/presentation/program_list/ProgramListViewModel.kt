@@ -28,6 +28,16 @@ constructor(
     var programs = mutableStateMapOf<Program, List<Workout>>()
         private set
 
+    fun setMapOfProgram() {
+        launch {
+            val cachePrograms = getAllPrograms()
+            cachePrograms.forEach { program->
+                val workoutsOfProgram = getWorkoutsOfProgram(program.id)
+                programs[program] = workoutsOfProgram
+            }
+        }
+    }
+
     suspend fun getAllPrograms(): List<Program> = withContext(Dispatchers.IO) {
         programListInteractors.getAllProgram()
     }
@@ -62,6 +72,17 @@ constructor(
     fun deleteProgram(programId: String) {
         launch {
             programListInteractors.deleteProgram(programId)
+        }
+    }
+
+    fun searchProgram(searchText: String) {
+        launch {
+            programs.clear()
+            val searchedProgram = programListInteractors.searchProgram(searchText)
+            searchedProgram.forEach { program->
+                val workoutsOfProgram = getWorkoutsOfProgram(program.id)
+                programs[program] = workoutsOfProgram
+            }
         }
     }
 

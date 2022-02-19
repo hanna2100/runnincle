@@ -32,4 +32,8 @@ constructor(
         return programDaoService.getAllPrograms()
     }
 
+    override suspend fun searchProgram(searchText: String): List<Program> {
+        return programDaoService.searchProgram(searchText)
+    }
+
 }

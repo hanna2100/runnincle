@@ -22,6 +22,7 @@ import com.example.runnincle.util.FloatingServiceCommand
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ProgramListFragment: Fragment() {
@@ -37,22 +38,21 @@ class ProgramListFragment: Fragment() {
 
         val programs = viewModel.programs
 
-        viewModel.launch {
-            val cachePrograms = viewModel.getAllPrograms()
-            cachePrograms.forEach { program->
-                println("program = $program")
-                val workoutsOfProgram = viewModel.getWorkoutsOfProgram(program.id)
-                programs.put(program, workoutsOfProgram)
-            }
-        }
+        viewModel.setMapOfProgram()
 
         return ComposeView(requireContext()).apply {
             setContent {
                 RunnincleTheme(darkSystemBar = true) {
-                    val scope = rememberCoroutineScope()
+                val scope = rememberCoroutineScope()
                     setOnBackPressedCallback(scope)
                     ProgramListWithSearchBar(
                         programs = programs,
+                        onSearchButtonClick = { searchText ->
+                            viewModel.searchProgram(searchText)
+                        },
+                        onChipClick = { chipText ->
+                            viewModel.searchProgram(chipText)
+                        },
                         onProgramCardClick = { program, workouts ->
                             startFloatingService(program, workouts)
                         },

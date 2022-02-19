@@ -16,4 +16,6 @@ interface ProgramDaoService {
 
     suspend fun getAllPrograms(): List<Program>
 
+    suspend fun searchProgram(searchText: String): List<Program>
+
 }

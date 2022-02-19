@@ -32,5 +32,6 @@
     <string name="program_name_must_be_entered">프로그램 이름을 입력해 주세요.</string>
     <string name="workout_must_be_exist">하단의 + 버튼을 눌러 프로그램을 구성해주세요.</string>
     <string name="enter_with_scrolling">숫자를 스크롤하여 입력</string>
+    <string name="no_search_result">검색결과가 없습니다</string>
 
 </resources>

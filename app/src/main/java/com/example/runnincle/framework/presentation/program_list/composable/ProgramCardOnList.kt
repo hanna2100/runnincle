@@ -56,6 +56,7 @@ fun ProgramList(
     onProgramCardClick: (program: Program, workouts: List<Workout>)-> Unit,
     onProgramEditButtonClick: (program: Program, workout: List<Workout>)->Unit,
     onProgramDeleteButtonClick: (program:Program)->Unit,
+    selectedChipIndex: Int
 ) {
     val p = programs.keys.toList().sortedWith(UpdatedAtComparator)
     LazyColumn(
@@ -87,6 +88,7 @@ fun ProgramList(
             }
         }
     }
+
 
 }
 

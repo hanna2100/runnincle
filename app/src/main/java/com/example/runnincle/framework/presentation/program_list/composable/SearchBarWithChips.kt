@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -17,12 +18,18 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -33,15 +40,21 @@ import androidx.compose.ui.unit.sp
 import com.example.runnincle.ui.theme.NanumSquareFamily
 import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.flowlayout.SizeMode
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ProgramSearchBar(
     searchButtonState: Boolean,
     searchString: String,
     onSearchTextFieldValueChange: (String)->Unit,
-    onSearchButtonClick: ()->Unit
+    onSearchButtonClick: ()->Unit,
 ) {
+    val focusRequester = remember { FocusRequester() }
+    val scope = rememberCoroutineScope()
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -87,12 +100,14 @@ fun ProgramSearchBar(
                 AnimatedVisibility(searchButtonState) {
                     val configuration = LocalConfiguration.current
                     val textFieldWidth = configuration.screenWidthDp.dp - 150.dp
+                    val keyboardController = LocalSoftwareKeyboardController.current
                     BasicTextField(
                         value = searchString,
                         onValueChange = {
                             onSearchTextFieldValueChange(it)
                         },
                         modifier = Modifier
+                            .focusRequester(focusRequester)
                             .padding(20.dp, 10.dp, 20.dp, 4.dp)
                             .fillMaxHeight()
                             .width(textFieldWidth)
@@ -105,10 +120,27 @@ fun ProgramSearchBar(
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                         cursorBrush = SolidColor(Color.White),
                         singleLine = true,
-                        maxLines = 1
+                        maxLines = 1,
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                keyboardController?.hide()
+                                onSearchButtonClick()
+                            }
+                        ),
                     )
                 }
-                IconButton(onClick = onSearchButtonClick) {
+                IconButton(
+                    onClick = {
+                        scope.launch {
+                            onSearchButtonClick()
+                            // 키보드 오픈
+                            if(!searchButtonState) {
+                                delay(500) // AnimatedVisibility 효과 기다림
+                                focusRequester.requestFocus()
+                            }
+                        }
+                    }
+                ) {
                     Icon (
                         modifier = Modifier
                             .size(30.dp),
@@ -130,7 +162,7 @@ data class SearchChip(
 @Composable
 fun ChipGroup(
     items: List<SearchChip>,
-    selectIndex: MutableState<Int>,
+    selectedChipIndex: MutableState<Int>,
     modifier: Modifier = Modifier,
     onChipClick: (chipText:String) -> Unit,
     onChipDeleteButtonClick: (SearchChip) -> Unit
@@ -143,9 +175,9 @@ fun ChipGroup(
             ChipItem(
                 item = chip,
                 itemIndex = index,
-                selectIndex = selectIndex,
+                selectIndex = selectedChipIndex,
                 onChipClick = onChipClick,
-                onDeleteChipClick = onChipDeleteButtonClick
+                onChipDeleteButtonClick = onChipDeleteButtonClick
             )
         }
     }
@@ -158,7 +190,7 @@ fun ChipItem(
     itemIndex: Int,
     selectIndex: MutableState<Int>,
     onChipClick: (chipText: String) -> Unit,
-    onDeleteChipClick: (SearchChip)->Unit
+    onChipDeleteButtonClick: (SearchChip)->Unit
 ) {
     val backgroundColor = if (selectIndex.value == itemIndex) {
         MaterialTheme.colors.background
@@ -185,14 +217,20 @@ fun ChipItem(
                 shape = CircleShape
             )
             .clickable {
-                selectIndex.value = itemIndex
-                onChipClick(item.text)
+                // 한번 더 클릭 할 경우 검색 비활성화
+                if (selectIndex.value == itemIndex) {
+                    selectIndex.value = -1
+                    onChipClick("")
+                } else {
+                    selectIndex.value = itemIndex
+                    onChipClick(item.text)
+                }
             }
     ) {
         Row(
             modifier = Modifier
                 .wrapContentWidth()
-                .padding(end = 10.dp),
+                .padding(end = 15.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
@@ -207,7 +245,9 @@ fun ChipItem(
                 maxLines = 1
             )
             IconButton(
-                onClick = { onDeleteChipClick(item) },
+                onClick = {
+                    onChipDeleteButtonClick(item)
+                },
                 modifier = Modifier
                     .size(12.dp)
                     .offset(10.dp)
@@ -215,7 +255,7 @@ fun ChipItem(
                 Icon (
                     modifier = Modifier
                         .size(12.dp)
-                        .offset((-10).dp),
+                        .offset(-(5).dp),
                     imageVector = Icons.Filled.Close,
                     contentDescription = null,
                     tint = textColor

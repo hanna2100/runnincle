@@ -20,6 +20,7 @@ import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -120,8 +121,9 @@ fun CustomMaterialDialog(
     border: BorderStroke? = null,
     elevation: Dp = 24.dp,
     autoDismiss: Boolean = true,
+    dialogWidthWeight: Float = 0.8f,
     onCloseRequest: (MaterialDialogState) -> Unit = { it.hide() },
-    content: @Composable MaterialDialogScope.() -> Unit
+    content: @Composable MaterialDialogScope.() -> Unit,
 ) {
     val dialogScope = remember { CustomMaterialDialogScopeImpl(dialogState, autoDismiss) }
     DisposableEffect(dialogState.showing) {
@@ -152,7 +154,7 @@ fun CustomMaterialDialog(
             ) {
                 Surface(
                     modifier = Modifier
-                        .width(LocalConfiguration.current.screenWidthDp.times(0.7f).dp)
+                        .width(LocalConfiguration.current.screenWidthDp.times(dialogWidthWeight).dp)
                         .sizeIn(maxHeight = maxHeight, maxWidth = 560.dp)
                         .padding(horizontal = padding)
                         .clipToBounds()

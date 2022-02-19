@@ -2,8 +2,13 @@ package com.example.runnincle.framework.presentation.program_list
 
 import android.content.Context
 import android.view.View
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.navigation.findNavController
 import com.example.runnincle.business.domain.model.ParcelableWorkout
 import com.example.runnincle.business.domain.model.Program
@@ -11,6 +16,7 @@ import com.example.runnincle.business.domain.model.Workout
 import com.example.runnincle.business.domain.model.Workout.Companion.toParcelableWorkout
 import com.example.runnincle.business.domain.util.DateUtil
 import com.example.runnincle.business.interactors.program_list.ProgramListInteractors
+import com.example.runnincle.ui.theme.TimerColorPalette
 import com.example.runnincle.util.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -27,6 +33,10 @@ constructor(
 
     var programs = mutableStateMapOf<Program, List<Workout>>()
         private set
+    var overlaySize = mutableStateOf(3)
+    var totalTimerColor = mutableStateOf(TimerColorPalette[0])
+    var isTtsUsed = mutableStateOf(false)
+
 
     fun setMapOfProgram() {
         launch {

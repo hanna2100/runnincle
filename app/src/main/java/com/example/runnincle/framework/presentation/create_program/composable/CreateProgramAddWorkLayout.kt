@@ -12,29 +12,20 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.layout.layoutId
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import com.example.runnincle.R
 import com.example.runnincle.framework.presentation.composable.CustomMaterialDialog
 import com.example.runnincle.framework.presentation.composable.NumberPicker
@@ -43,9 +34,7 @@ import com.example.runnincle.ui.theme.NanumSquareFamily
 import com.example.runnincle.ui.theme.TimerColorPalette
 import com.siddroid.holi.colors.MaterialColor
 import com.vanpra.composematerialdialogs.*
-import com.vanpra.composematerialdialogs.color.ColorPalette
 import com.vanpra.composematerialdialogs.color.colorChooser
-import kotlin.math.min
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -94,16 +83,26 @@ fun AddWorkLayout(
             }
         )
         // 세트 설정
-        SetNumberPickerOutlineTextField(set = set, leadingText = stringResource(id = R.string.set))
+        NumberPickerOutlineTextField(
+            number = set,
+            numberRange = 1..100,
+            leadingText = stringResource(id = R.string.set),
+            isRequired = true
+        )
         TimerColorPickerField(
             leadingText = stringResource(id = R.string.timer_color),
-            timerColor = timerColor
+            timerColor = timerColor,
+            isRequired = true
         )
     }
 }
 
 @Composable
-fun TimerColorPickerField(leadingText: String, timerColor: MutableState<Color>) {
+fun TimerColorPickerField(
+    leadingText: String,
+    timerColor: MutableState<Color>,
+    isRequired: Boolean = false
+) {
     val focusRequester = FocusRequester()
     val dialogState = rememberMaterialDialogState()
     OutlinedTextField(
@@ -118,13 +117,20 @@ fun TimerColorPickerField(leadingText: String, timerColor: MutableState<Color>) 
             .padding(bottom = 15.dp),
         leadingIcon = {
             Row {
-                Icon(
-                    modifier = Modifier.padding(start = 20.dp, end = 6.dp).size(18.dp),
-                    imageVector = Icons.Default.Done,
-                    contentDescription = "",
-                    tint = MaterialTheme.colors.secondaryVariant
-                )
+                if (isRequired) {
+                    Icon(
+                        modifier = Modifier.padding(start = 20.dp, end = 6.dp).size(18.dp),
+                        imageVector = Icons.Default.Done,
+                        contentDescription = "",
+                        tint = MaterialTheme.colors.secondaryVariant
+                    )
+                }
                 Text(
+                    modifier = if (isRequired) {
+                        Modifier.padding(0.dp)
+                    } else {
+                        Modifier.padding(start = 20.dp)
+                    },
                     text = leadingText,
                     color = MaterialTheme.colors.onSecondary,
                 )
@@ -171,7 +177,12 @@ fun TimerColorPickerField(leadingText: String, timerColor: MutableState<Color>) 
 }
 
 @Composable
-fun SetNumberPickerOutlineTextField(set: MutableState<Int>, leadingText: String) {
+fun NumberPickerOutlineTextField(
+    number: MutableState<Int>,
+    numberRange: IntRange,
+    leadingText: String,
+    isRequired: Boolean = false,
+) {
     val focusRequester = FocusRequester()
     var label by remember { mutableStateOf("") }
     val descriptionText = stringResource(id = R.string.enter_with_scrolling)
@@ -189,13 +200,20 @@ fun SetNumberPickerOutlineTextField(set: MutableState<Int>, leadingText: String)
             .padding(bottom = 15.dp),
         leadingIcon = {
             Row(verticalAlignment = Alignment.Bottom) {
-                Icon(
-                    modifier = Modifier.padding(start = 20.dp, end = 6.dp).size(18.dp),
-                    imageVector = Icons.Default.Done,
-                    contentDescription = "",
-                    tint = MaterialTheme.colors.secondaryVariant
-                )
+                if (isRequired) {
+                    Icon(
+                        modifier = Modifier.padding(start = 20.dp, end = 6.dp).size(18.dp),
+                        imageVector = Icons.Default.Done,
+                        contentDescription = "",
+                        tint = MaterialTheme.colors.secondaryVariant
+                    )
+                }
                 Text(
+                    modifier = if (isRequired) {
+                        Modifier.padding(0.dp)
+                    } else {
+                        Modifier.padding(start = 20.dp)
+                    },
                     text = leadingText,
                     color = MaterialTheme.colors.onSecondary,
                 )
@@ -212,8 +230,8 @@ fun SetNumberPickerOutlineTextField(set: MutableState<Int>, leadingText: String)
         trailingIcon = {
             Row {
                 NumberPicker(
-                    state = remember { set },
-                    range = 1..100,
+                    state = remember { number },
+                    range = numberRange,
                     textStyle = TextStyle(
                         color = MaterialTheme.colors.onPrimary,
                         fontFamily = NanumSquareFamily,

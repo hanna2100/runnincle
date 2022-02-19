@@ -30,7 +30,8 @@ fun ProgramListWithSearchBar(
     onProgramCardClick: (program: Program, workouts: List<Workout>)-> Unit,
     onFloatingAddButtonClick: ()->Unit,
     onProgramEditButtonClick: (program:Program, workout: List<Workout>)->Unit,
-    onProgramDeleteButtonClick: (program: Program)->Unit
+    onProgramDeleteButtonClick: (program: Program)->Unit,
+    onFloatingSettingButtonClick: ()->Unit
 ) {
     var searchBarOpen by remember { mutableStateOf(false) }
     var searchText by remember { mutableStateOf("") }
@@ -42,7 +43,7 @@ fun ProgramListWithSearchBar(
             .fillMaxSize()
             .background(MaterialTheme.colors.background)
     ) {
-        val (floatingButtonRef) = createRefs()
+        val (floatingAddButtonRef, floatingSettingButtonRef) = createRefs()
         Column(modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
@@ -128,12 +129,22 @@ fun ProgramListWithSearchBar(
         }
 
         FloatingButtonToCreateProgram(
-            modifier = Modifier.constrainAs(floatingButtonRef) {
+            modifier = Modifier.constrainAs(floatingAddButtonRef) {
                 end.linkTo(parent.end)
                 bottom.linkTo(parent.bottom)
             },
             onClick = {
                 onFloatingAddButtonClick()
+            }
+        )
+
+        FloatingButtonToSetting(
+            modifier = Modifier.constrainAs(floatingSettingButtonRef) {
+                start.linkTo(parent.start)
+                bottom.linkTo(parent.bottom)
+            },
+            onClick = {
+                onFloatingSettingButtonClick()
             }
         )
     }

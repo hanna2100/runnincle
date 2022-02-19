@@ -25,8 +25,10 @@ import com.example.runnincle.business.domain.model.Workout
 @Composable
 fun ProgramListWithSearchBar(
     programs: Map<Program, List<Workout>>,
+    chipList: MutableState<MutableList<String>>,
     onSearchButtonClick: (searchText: String) -> Unit,
     onChipClick: (chipText: String) -> Unit,
+    onChipDeleteButtonClick: (chipText: String) -> Unit,
     onProgramCardClick: (program: Program, workouts: List<Workout>)-> Unit,
     onFloatingAddButtonClick: ()->Unit,
     onProgramEditButtonClick: (program:Program, workout: List<Workout>)->Unit,
@@ -35,7 +37,6 @@ fun ProgramListWithSearchBar(
 ) {
     var searchBarOpen by remember { mutableStateOf(false) }
     var searchText by remember { mutableStateOf("") }
-    var chipList by remember { mutableStateOf(mutableListOf<SearchChip>()) }
     val selectedChipIndex = remember { mutableStateOf(-1) }
 
     ConstraintLayout(
@@ -72,7 +73,7 @@ fun ProgramListWithSearchBar(
                     onSearchButtonClick = {
                         if(searchBarOpen && searchText.isNotEmpty()) {
                             onSearchButtonClick(searchText)
-                            chipList.add(0, SearchChip(searchText))
+                            chipList.value.add(0, searchText)
                             searchText = ""
                             selectedChipIndex.value = 0
                         }
@@ -86,19 +87,22 @@ fun ProgramListWithSearchBar(
                     .fillMaxWidth()
                     .height(6.dp))
                 ChipGroup(
-                    items = chipList,
+                    items = chipList.value,
                     selectedChipIndex = selectedChipIndex,
                     onChipClick = onChipClick,
-                    onChipDeleteButtonClick = { chip ->
-                        var list = mutableListOf<SearchChip>()
-                        list.addAll(chipList)
-                        list.remove(chip)
-                        chipList = list
+                    onChipDeleteButtonClick = { chipText ->
+                        var list = mutableListOf<String>()
+                        list.addAll(chipList.value)
+                        list.remove(chipText)
+                        chipList.value = list
 
+                        // chip 을 삭제하면 chip index 초기화 후 전체 프로그램을 보여줌
                         if(selectedChipIndex.value != -1) {
                             selectedChipIndex.value = -1
                             onChipClick("")
                         }
+                        // preference 에서 검색어 제거
+                        onChipDeleteButtonClick(chipText)
                     },
                 )
             }

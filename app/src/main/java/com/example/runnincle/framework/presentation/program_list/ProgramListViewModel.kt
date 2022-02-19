@@ -1,12 +1,6 @@
 package com.example.runnincle.framework.presentation.program_list
 
-import android.content.Context
 import android.view.View
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetState
-import androidx.compose.material.ModalBottomSheetValue
-import androidx.compose.material.rememberModalBottomSheetState
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.navigation.findNavController
@@ -14,7 +8,6 @@ import com.example.runnincle.business.domain.model.ParcelableWorkout
 import com.example.runnincle.business.domain.model.Program
 import com.example.runnincle.business.domain.model.Workout
 import com.example.runnincle.business.domain.model.Workout.Companion.toParcelableWorkout
-import com.example.runnincle.business.domain.util.DateUtil
 import com.example.runnincle.business.interactors.program_list.ProgramListInteractors
 import com.example.runnincle.ui.theme.TimerColorPalette
 import com.example.runnincle.util.BaseViewModel
@@ -33,10 +26,12 @@ constructor(
 
     var programs = mutableStateMapOf<Program, List<Workout>>()
         private set
+
+    // Setting
     var overlaySize = mutableStateOf(3)
     var totalTimerColor = mutableStateOf(TimerColorPalette[0])
-    var isTtsUsed = mutableStateOf(false)
-
+    var isTTSUsed = mutableStateOf(false)
+    var searchChipList = mutableStateOf(mutableListOf<String>())
 
     fun setMapOfProgram() {
         launch {
@@ -48,11 +43,11 @@ constructor(
         }
     }
 
-    suspend fun getAllPrograms(): List<Program> = withContext(Dispatchers.IO) {
+    private suspend fun getAllPrograms(): List<Program> = withContext(Dispatchers.IO) {
         programListInteractors.getAllProgram()
     }
 
-    suspend fun getWorkoutsOfProgram(programId: String): List<Workout> {
+    private suspend fun getWorkoutsOfProgram(programId: String): List<Workout> {
         return programListInteractors.getWorkoutsOfProgram(programId)
     }
 
@@ -94,6 +89,36 @@ constructor(
                 programs[program] = workoutsOfProgram
             }
         }
+    }
+
+    suspend fun getSettingValue() {
+        overlaySize.value = programListInteractors.getOverlaySize()
+        totalTimerColor.value = programListInteractors.getTotalTimerColor()
+        isTTSUsed.value = programListInteractors.isTTSUsed()
+    }
+
+    fun setSavedSearchWords() {
+        launch {
+            val savedList = programListInteractors.getSavedSearchWords()
+            searchChipList.value.clear()
+            searchChipList.value.addAll(savedList)
+        }
+    }
+
+    suspend fun saveSettingProperty() {
+        programListInteractors.saveSettingProperty(
+            overlaySize.value,
+            totalTimerColor.value,
+            isTTSUsed.value
+        )
+    }
+
+    suspend fun saveSearchWordToSharedPreference(text: String) {
+        programListInteractors.saveSearchWord(text)
+    }
+
+    suspend fun removeSearchWorldToSharedPreference(text: String) {
+        programListInteractors.removeSearchWord(text)
     }
 
 }

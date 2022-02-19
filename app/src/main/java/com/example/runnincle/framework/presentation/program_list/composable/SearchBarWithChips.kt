@@ -135,7 +135,7 @@ fun ProgramSearchBar(
                             onSearchButtonClick()
                             // 키보드 오픈
                             if(!searchButtonState) {
-                                delay(500) // AnimatedVisibility 효과 기다림
+                                delay(400) // AnimatedVisibility 효과 기다림
                                 focusRequester.requestFocus()
                             }
                         }
@@ -154,18 +154,14 @@ fun ProgramSearchBar(
     }
 }
 
-data class SearchChip(
-    var text: String
-)
-
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun ChipGroup(
-    items: List<SearchChip>,
+    items: List<String>,
     selectedChipIndex: MutableState<Int>,
     modifier: Modifier = Modifier,
     onChipClick: (chipText:String) -> Unit,
-    onChipDeleteButtonClick: (SearchChip) -> Unit
+    onChipDeleteButtonClick: (chipText: String) -> Unit
 ) {
     FlowRow(
         modifier = modifier,
@@ -173,7 +169,7 @@ fun ChipGroup(
     ) {
         items.forEachIndexed { index, chip ->
             ChipItem(
-                item = chip,
+                text = chip,
                 itemIndex = index,
                 selectIndex = selectedChipIndex,
                 onChipClick = onChipClick,
@@ -186,11 +182,11 @@ fun ChipGroup(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ChipItem(
-    item: SearchChip,
+    text: String,
     itemIndex: Int,
     selectIndex: MutableState<Int>,
     onChipClick: (chipText: String) -> Unit,
-    onChipDeleteButtonClick: (SearchChip)->Unit
+    onChipDeleteButtonClick: (chipText: String)->Unit
 ) {
     val backgroundColor = if (selectIndex.value == itemIndex) {
         MaterialTheme.colors.background
@@ -223,7 +219,7 @@ fun ChipItem(
                     onChipClick("")
                 } else {
                     selectIndex.value = itemIndex
-                    onChipClick(item.text)
+                    onChipClick(text)
                 }
             }
     ) {
@@ -234,7 +230,7 @@ fun ChipItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = item.text,
+                text = text,
                 color = textColor,
                 style = TextStyle(
                     fontFamily = NanumSquareFamily,
@@ -246,7 +242,7 @@ fun ChipItem(
             )
             IconButton(
                 onClick = {
-                    onChipDeleteButtonClick(item)
+                    onChipDeleteButtonClick(text)
                 },
                 modifier = Modifier
                     .size(12.dp)

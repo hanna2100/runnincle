@@ -5,30 +5,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.example.runnincle.R
 import com.example.runnincle.ui.theme.RunnincleTheme
 import com.example.runnincle.business.domain.model.ParcelableWorkout
 import com.example.runnincle.business.domain.model.Program
 import com.example.runnincle.business.domain.model.Workout
 import com.example.runnincle.business.domain.model.Workout.Companion.toParcelableWorkout
-import com.example.runnincle.framework.presentation.create_program.BottomSheetSaveButtonStatus
-import com.example.runnincle.framework.presentation.create_program.composable.LastCoolDownSkipOptionField
-import com.example.runnincle.framework.presentation.create_program.composable.NumberPickerOutlineTextField
-import com.example.runnincle.framework.presentation.create_program.composable.TimerColorPickerField
 import com.example.runnincle.framework.presentation.program_list.composable.AdRemoveDialog
 import com.example.runnincle.framework.presentation.program_list.composable.ProgramListWithSearchBar
 import com.example.runnincle.framework.presentation.program_list.composable.SettingModalBottomSheet
@@ -55,9 +45,11 @@ class ProgramListFragment: Fragment() {
         val programs = viewModel.programs
         val overlaySize = viewModel.overlaySize
         val totalTimerColor = viewModel.totalTimerColor
-        val isTtsUsed = viewModel.isTtsUsed
+        val isTTSUsed = viewModel.isTTSUsed
+        val searchChipList = viewModel.searchChipList
 
         viewModel.setMapOfProgram()
+        viewModel.setSavedSearchWords()
 
         return ComposeView(requireContext()).apply {
             setContent {
@@ -75,23 +67,35 @@ class ProgramListFragment: Fragment() {
                             SettingModalBottomSheet(
                                 overlaySize = overlaySize,
                                 totalTimerColor = totalTimerColor,
-                                isTtsUsed = isTtsUsed,
+                                isTtsUsed = isTTSUsed,
                                 onAdRemoveClick = {
                                     dialogState.show()
                                 },
                                 onSaveClick = {
-
+                                    scope.launch {
+                                        viewModel.saveSettingProperty()
+                                        modalBottomSheetState.hide()
+                                    }
                                 }
                             )
                         }
                     ) {
                         ProgramListWithSearchBar(
                             programs = programs,
+                            chipList = searchChipList,
                             onSearchButtonClick = { searchText ->
-                                viewModel.searchProgram(searchText)
+                                scope.launch {
+                                    viewModel.searchProgram(searchText)
+                                    viewModel.saveSearchWordToSharedPreference(searchText)
+                                }
                             },
                             onChipClick = { chipText ->
                                 viewModel.searchProgram(chipText)
+                            },
+                            onChipDeleteButtonClick = { chipText ->
+                              scope.launch {
+                                  viewModel.removeSearchWorldToSharedPreference(chipText)
+                              }
                             },
                             onProgramCardClick = { program, workouts ->
                                 startFloatingService(program, workouts)
@@ -108,6 +112,7 @@ class ProgramListFragment: Fragment() {
                             },
                             onFloatingSettingButtonClick = {
                                 scope.launch {
+                                    viewModel.getSettingValue()
                                     modalBottomSheetState.show()
                                 }
                             }

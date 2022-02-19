@@ -10,13 +10,17 @@ import com.example.runnincle.business.domain.util.ResourcesProvider
 import com.example.runnincle.business.domain.util.ResourcesProviderImpl
 import com.example.runnincle.business.interactors.create_program.CreateProgramInteractors
 import com.example.runnincle.business.interactors.program_list.ProgramListInteractors
+import com.example.runnincle.framework.datasource.cache.abstraction.GsonSharedPreferenceService
 import com.example.runnincle.framework.datasource.cache.abstraction.ProgramDaoService
+import com.example.runnincle.framework.datasource.cache.abstraction.SharedPreferencesService
 import com.example.runnincle.framework.datasource.cache.abstraction.WorkoutDaoService
 import com.example.runnincle.framework.datasource.cache.database.ProgramDao
 import com.example.runnincle.framework.datasource.cache.database.ProgramDatabase
 import com.example.runnincle.framework.datasource.cache.database.WorkoutDao
 import com.example.runnincle.framework.datasource.cache.database.WorkoutDatabase
+import com.example.runnincle.framework.datasource.cache.implementation.GsonSharedPreferencesServiceImpl
 import com.example.runnincle.framework.datasource.cache.implementation.ProgramDaoServiceImpl
+import com.example.runnincle.framework.datasource.cache.implementation.SharedPreferencesServiceImpl
 import com.example.runnincle.framework.datasource.cache.implementation.WorkoutDaoServiceImpl
 import com.example.runnincle.framework.datasource.cache.mappers.ProgramCacheMapper
 import com.example.runnincle.framework.datasource.cache.mappers.WorkoutCacheMapper
@@ -80,8 +84,9 @@ object AppModule {
     fun provideProgramListInteractors(
         programCacheDataSource: ProgramCacheDataSource,
         workoutCacheDataSource: WorkoutCacheDataSource,
+        sharedPreferencesService: SharedPreferencesService
     ): ProgramListInteractors {
-        return ProgramListInteractors (programCacheDataSource, workoutCacheDataSource)
+        return ProgramListInteractors (programCacheDataSource, workoutCacheDataSource, sharedPreferencesService)
     }
 
     @Singleton
@@ -137,6 +142,20 @@ object AppModule {
     @Provides
     fun provideResourcesProvider(@ApplicationContext app: Context): ResourcesProvider {
         return ResourcesProviderImpl(app)
+    }
+
+    @Singleton
+    @Provides
+    fun provideGsonSharedPreferenceService(@ApplicationContext app: Context)
+    : GsonSharedPreferenceService {
+        return GsonSharedPreferencesServiceImpl(app)
+    }
+
+    @Singleton
+    @Provides
+    fun provideSharedPreferencesService(gsonSharedPreferenceService: GsonSharedPreferenceService)
+    : SharedPreferencesService {
+        return SharedPreferencesServiceImpl(gsonSharedPreferenceService)
     }
 
 }

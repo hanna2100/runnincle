@@ -25,7 +25,7 @@ import com.example.runnincle.business.domain.model.Workout.Companion.getTotalWor
 import com.example.runnincle.framework.presentation.composable.AutoSizeText
 import com.example.runnincle.getTotalWorkoutListTime
 import com.example.runnincle.toTimeClock
-import com.example.runnincle.ui.theme.InfinitySansFamily
+import com.example.runnincle.ui.theme.MinSansFamily
 
 
 @Composable
@@ -69,7 +69,7 @@ fun CreateProgramWorkoutCircle(
                             fontWeight = FontWeight.Medium,
                             color = MaterialTheme.colors.primary,
                             textAlign = TextAlign.Center,
-                            fontFamily = InfinitySansFamily,
+                            fontFamily = MinSansFamily,
                             fontSize = 48.sp
                             ),
                         modifier = Modifier

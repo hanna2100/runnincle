@@ -10,7 +10,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -22,8 +24,7 @@ import com.example.runnincle.business.domain.model.Workout.Companion.toParcelabl
 import com.example.runnincle.framework.presentation.program_list.composable.AdRemoveDialog
 import com.example.runnincle.framework.presentation.program_list.composable.ProgramListWithSearchBar
 import com.example.runnincle.framework.presentation.program_list.composable.SettingModalBottomSheet
-import com.example.runnincle.startFloatingServiceWithCommand
-import com.example.runnincle.util.FloatingServiceCommand
+import com.example.runnincle.openOverlayWindowWithFloatingService
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -48,8 +49,12 @@ class ProgramListFragment: Fragment() {
         val isTTSUsed = viewModel.isTTSUsed
         val searchChipList = viewModel.searchChipList
 
-        viewModel.setMapOfProgram()
-        viewModel.setSavedSearchWords()
+        viewModel.launch {
+            viewModel.setMapOfProgram()
+            viewModel.setSavedSearchWords()
+            viewModel.getSettingValue()
+        }
+
 
         return ComposeView(requireContext()).apply {
             setContent {
@@ -80,6 +85,10 @@ class ProgramListFragment: Fragment() {
                             )
                         }
                     ) {
+                        val sw = LocalConfiguration.current.screenWidthDp
+                        val sh = LocalConfiguration.current.screenHeightDp
+                        val maxOverlaySize = if(sw > sh) sh else sw
+
                         ProgramListWithSearchBar(
                             programs = programs,
                             chipList = searchChipList,
@@ -98,7 +107,21 @@ class ProgramListFragment: Fragment() {
                               }
                             },
                             onProgramCardClick = { program, workouts ->
-                                startFloatingService(program, workouts)
+                                scope.launch {
+                                    viewModel.getSettingValue()
+                                    var overlayDp: Int = if (overlaySize.value <= 1) {
+                                        maxOverlaySize.toFloat().times(1.5).div(10).toInt()
+                                    } else {
+                                        maxOverlaySize.times(overlaySize.value).div(10)
+                                    }
+                                    startFloatingService(
+                                        program = program,
+                                        workouts = workouts,
+                                        isTTSUsed = isTTSUsed.value,
+                                        overlayDp = overlayDp,
+                                        totalTimerColor = totalTimerColor.value
+                                    )
+                                }
                             },
                             onProgramEditButtonClick = { program, workouts ->
                                 viewModel.moveToEditProgram(view, program, workouts)
@@ -134,17 +157,22 @@ class ProgramListFragment: Fragment() {
 
     private fun startFloatingService(
         program: Program,
-        workouts: List<Workout>
+        workouts: List<Workout>,
+        isTTSUsed: Boolean,
+        totalTimerColor: Color,
+        overlayDp: Int
     ) {
         val parcelableWorkouts = ArrayList<ParcelableWorkout>()
         workouts.forEach { workout ->
             parcelableWorkouts.add(workout.toParcelableWorkout())
         }
 
-        activity?.startFloatingServiceWithCommand(
-            command = FloatingServiceCommand.OPEN,
+        activity?.openOverlayWindowWithFloatingService(
             program = program,
-            workouts = parcelableWorkouts
+            workouts = parcelableWorkouts,
+            isTTSUsed = isTTSUsed,
+            totalTimerColor = totalTimerColor,
+            overlayDp = overlayDp
         )
     }
 

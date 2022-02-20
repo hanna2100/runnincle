@@ -6,58 +6,54 @@ import android.content.Intent
 import android.os.Build
 import android.provider.Settings
 import android.widget.Toast
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Paint
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.dp
 import com.example.runnincle.business.domain.model.ParcelableWorkout
 import com.example.runnincle.util.FloatingService.Companion.COMMAND_NAME
-import com.example.runnincle.util.FloatingService.Companion.INTENT_ARGS_PROGRAM
+import com.example.runnincle.util.FloatingService.Companion.INTENT_PROGRAM
 import com.example.runnincle.business.domain.model.Program
 import com.example.runnincle.business.domain.model.Workout
 import com.example.runnincle.business.domain.model.Workout.Companion.getTotalWorkoutTime
 import com.example.runnincle.business.domain.util.TimeAgo
 import com.example.runnincle.framework.presentation.PermissionActivity
 import com.example.runnincle.util.FloatingService
-import com.example.runnincle.util.FloatingService.Companion.INTENT_ARGS_WORKOUTS
+import com.example.runnincle.util.FloatingService.Companion.INTENT_IS_TTS_USED
+import com.example.runnincle.util.FloatingService.Companion.INTENT_OVERLAY_DP
+import com.example.runnincle.util.FloatingService.Companion.INTENT_TOTAL_TIMER_COLOR_VALUE
+import com.example.runnincle.util.FloatingService.Companion.INTENT_WORKOUTS
 import com.example.runnincle.util.FloatingServiceCommand
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.reflect.KClass
 
-fun Context.startFloatingServiceWithCommand(
-    command: FloatingServiceCommand,
-    program: Program? = null,
-    workouts: ArrayList<ParcelableWorkout>? = null
+fun Context.openOverlayWindowWithFloatingService(
+    program: Program,
+    workouts: ArrayList<ParcelableWorkout>,
+    overlayDp: Int,
+    isTTSUsed: Boolean,
+    totalTimerColor: Color
 ) {
-    println("debug startFloatingServiceWithCommand in fragment")
     val intent = Intent(this, FloatingService::class.java)
+    intent.putExtra(COMMAND_NAME, FloatingServiceCommand.OPEN.name)
+    intent.putExtra(INTENT_OVERLAY_DP, overlayDp)
+    intent.putExtra(INTENT_PROGRAM, program)
+    intent.putExtra(INTENT_WORKOUTS, workouts)
+    intent.putExtra(INTENT_IS_TTS_USED, isTTSUsed)
+    intent.putExtra(INTENT_TOTAL_TIMER_COLOR_VALUE, totalTimerColor.value.toString())
 
-    when (command) {
-        FloatingServiceCommand.OPEN -> {
-            if (program != null && workouts!= null) {
-                intent.putExtra(INTENT_ARGS_PROGRAM, program)
-                intent.putExtra(INTENT_ARGS_WORKOUTS, workouts)
-                intent.putExtra(COMMAND_NAME, command.name)
-            } else {
-                Toast.makeText(this, "프로그램을 불러올 수 없습니다.", Toast.LENGTH_SHORT).show()
-            }
-        }
-        FloatingServiceCommand.CLOSE -> {
-            intent.putExtra(COMMAND_NAME, command.name)
-        }
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        this.startForegroundService(intent)
+    } else {
+        this.startService(intent)
     }
+}
+
+fun Context.closeOverlayWindowWithFloatingService() {
+    val intent = Intent(this, FloatingService::class.java)
+    intent.putExtra(COMMAND_NAME, FloatingServiceCommand.CLOSE.name)
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         this.startForegroundService(intent)
     } else {

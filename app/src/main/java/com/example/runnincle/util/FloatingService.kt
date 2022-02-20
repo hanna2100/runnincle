@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.IBinder
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.compose.ui.graphics.Color
 import androidx.core.app.NotificationCompat
 import com.example.runnincle.OverlayWindow
 import com.example.runnincle.R
@@ -27,8 +28,11 @@ class FloatingService: Service() {
     companion object {
         const val NOTIFICATION_ID = 10
         const val COMMAND_NAME = "COMMAND"
-        const val INTENT_ARGS_PROGRAM = "INTENT_ARGS_PROGRAM"
-        const val INTENT_ARGS_WORKOUTS = "INTENT_ARGS_WORKOUTS"
+        const val INTENT_PROGRAM = "INTENT_PROGRAM"
+        const val INTENT_OVERLAY_DP = "INTENT_OVERLAY_DP"
+        const val INTENT_TOTAL_TIMER_COLOR_VALUE = "INTENT_TOTAL_TIMER_COLOR_VALUE"
+        const val INTENT_IS_TTS_USED = "INTENT_IS_TTS_USED"
+        const val INTENT_WORKOUTS = "INTENT_WORKOUTS"
     }
 
     override fun onBind(p0: Intent?): IBinder? {
@@ -53,10 +57,13 @@ class FloatingService: Service() {
 
         if (command == FloatingServiceCommand.OPEN.name) {
             if (drawOverOtherAppsEnabled()) {
-                val program = intent.getParcelableExtra<Program>(INTENT_ARGS_PROGRAM)
-                val parcelableWorkouts = intent.getParcelableArrayListExtra<ParcelableWorkout>(INTENT_ARGS_WORKOUTS)
+                val program = intent.getParcelableExtra<Program>(INTENT_PROGRAM)
+                val parcelableWorkouts = intent.getParcelableArrayListExtra<ParcelableWorkout>(INTENT_WORKOUTS)
+                val overlayDp = intent.getIntExtra(INTENT_OVERLAY_DP, 100)
+                val totalTimerColor = intent.getStringExtra(INTENT_TOTAL_TIMER_COLOR_VALUE)
+                val isTTSUsed = intent.getBooleanExtra(INTENT_IS_TTS_USED, false)
 
-                if(program == null || parcelableWorkouts == null) {
+                if(program == null || parcelableWorkouts == null || totalTimerColor == null) {
                     stopService()
                     //TODO 예외처리
                     return START_STICKY
@@ -67,7 +74,14 @@ class FloatingService: Service() {
                     workouts.add(it.toWorkout())
                 }
 
-                val window = OverlayWindow(context = this, program = program, workouts = workouts)
+                val window = OverlayWindow(
+                    context = this,
+                    program = program,
+                    workouts = workouts,
+                    overlayDp = overlayDp,
+                    totalTimerColor = Color(totalTimerColor.toULong()),
+                    isTTSUsed = isTTSUsed,
+                )
                 if(!window.isServiceRunning()) {
                     window.showOverlay()
                 } else {

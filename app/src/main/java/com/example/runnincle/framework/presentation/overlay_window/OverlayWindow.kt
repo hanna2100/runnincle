@@ -55,7 +55,6 @@ import androidx.savedstate.ViewTreeSavedStateRegistryOwner
 import com.example.runnincle.business.domain.model.Program
 import com.example.runnincle.business.domain.model.Workout
 import com.example.runnincle.ui.theme.NanumSquareFamily
-import com.example.runnincle.util.FloatingServiceCommand
 import com.example.runnincle.util.MyLifecycleOwner
 import com.siddroid.holi.colors.MaterialColor
 import kotlinx.coroutines.CoroutineScope
@@ -81,7 +80,10 @@ data class ScheduleData(
 class OverlayWindow (
     private val context: Context,
     program: Program,
-    workouts: List<Workout>
+    workouts: List<Workout>,
+    overlayDp: Int,
+    totalTimerColor: Color,
+    isTTSUsed: Boolean
     ) {
 
     companion object {
@@ -101,16 +103,15 @@ class OverlayWindow (
     private var originalTimeOfCurrentWork by mutableStateOf(0)
     private var remainingTimeOfCurrentWork by mutableStateOf(0)
     private var originalTotalWorkTime = 0
-    private var remainingTotalWorkTime by mutableStateOf(0)
+    private var progressedTotalWorkTime by mutableStateOf(0)
 
     private var currentTimerColor = MaterialColor.GREY_200
 
     init {
-        val size = 120
         initWindowManager()
-        initViewParams(size)
+        initViewParams(overlayDp)
         initVariableTimeValue()
-        initComposeView(size)
+        initComposeView(overlayDp, totalTimerColor)
         initHandler()
     }
 
@@ -161,7 +162,7 @@ class OverlayWindow (
         windowManager = context.getSystemService(Service.WINDOW_SERVICE) as WindowManager
     }
 
-    private fun initViewParams(size: Int) {
+    private fun initViewParams(overlaySize: Int) {
         viewParams = WindowManager.LayoutParams(
             0,
             0,
@@ -173,18 +174,17 @@ class OverlayWindow (
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
             PixelFormat.TRANSLUCENT
         )
-        calculateSizeAndPosition(viewParams, size, size)
+        calculateSizeAndPosition(viewParams, overlaySize)
     }
 
     private fun calculateSizeAndPosition(
         params: WindowManager.LayoutParams,
-        widthInDp: Int,
-        heightInDp: Int
+        overlaySize: Int
     ) {
         val dm = getCurrentDisplayMetrics()
         params.gravity = Gravity.TOP or Gravity.RIGHT
-        params.width = (widthInDp * dm.density).toInt()
-        params.height = (heightInDp * dm.density).toInt()
+        params.width = (overlaySize * dm.density).toInt()
+        params.height = (overlaySize * dm.density).toInt()
     }
 
     private fun getCurrentDisplayMetrics(): DisplayMetrics {
@@ -195,7 +195,10 @@ class OverlayWindow (
 
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("ClickableViewAccessibility")
-    private fun initComposeView(size: Int) {
+    private fun initComposeView(
+        overlayDp: Int,
+        totalTimerColor: Color
+    ) {
         composeView = ComposeView(context)
         composeView.filterTouchesWhenObscured = true
         composeView.setOnTouchListener { view, motionEvent ->
@@ -225,19 +228,21 @@ class OverlayWindow (
         }
         composeView.setContent {
             OverlayComposeView(
-                sizeDp = size.dp,
+                sizeDp = overlayDp.dp,
                 workoutName = schedule[currentIndex].workoutName,
                 currentTimerColor = currentTimerColor,
+                totalTimerColor = totalTimerColor,
                 originalTimeOfCurrentWork = originalTimeOfCurrentWork,
                 remainingTimeOfCurrentWork = remainingTimeOfCurrentWork,
-                remainingTotalWorkTime = remainingTotalWorkTime,
+                progressedTotalWorkTime = progressedTotalWorkTime,
                 originalTotalWorkTime = originalTotalWorkTime,
                 overlayStatus = overlayStatus,
                 onCloseBtnClicked = {
                     removeView()
                 },
-                onPlayBtnClick = {
-                    overlayStatus = it
+                onPlayBtnClick = { overlayWindowStatus ->
+                    handler.removeMessages(0)
+                    overlayStatus = overlayWindowStatus
                     if (overlayStatus == OverlayWindowStatus.PLAY) {
                         handler.sendEmptyMessageDelayed(0, 1000)
                     }
@@ -255,6 +260,7 @@ class OverlayWindow (
                 // 현재 진행중인 work 의 시간이 남은경우
                 if (remainingTimeOfCurrentWork > 0) {
                     remainingTimeOfCurrentWork -= 1
+                    progressedTotalWorkTime += 1
                     sendEmptyMessageDelayed(0, 1000)
                 } else { //  현재 진행중인 work 의 시간이 끝난 경우
                     if (currentIndex < schedule.lastIndex) { // 남은 work 가 있을 경우
@@ -268,7 +274,6 @@ class OverlayWindow (
                         return
                     }
                 }
-                remainingTotalWorkTime += 1
                 windowManager.updateViewLayout(composeView, viewParams)
             }
         }
@@ -306,7 +311,7 @@ class OverlayWindow (
     private fun removeView() {
         handler.removeMessages(0)
         isServiceRunning = false
-        context.startFloatingServiceWithCommand(FloatingServiceCommand.CLOSE)
+        context.closeOverlayWindowWithFloatingService()
         composeView.setContent {  } // composeView를 비워주지 않으면 돌아가던 애니메이션이 remove 된 view 를 찾지 못해서 크래쉬가 남
         windowManager.removeView(composeView)
     }
@@ -323,15 +328,16 @@ private fun OverlayComposeView(
     sizeDp: Dp,
     workoutName: String,
     currentTimerColor: Color,
+    totalTimerColor: Color,
     originalTimeOfCurrentWork: Int,
     remainingTimeOfCurrentWork: Int,
     originalTotalWorkTime: Int,
-    remainingTotalWorkTime: Int,
+    progressedTotalWorkTime: Int,
     overlayStatus: OverlayWindowStatus,
     onCloseBtnClicked: ()-> Unit,
     onPlayBtnClick: (overlayStatus: OverlayWindowStatus) ->Unit
 ) {
-    val setTimeProgressBarColor by animateColorAsState(currentTimerColor)
+    val animatedCurrentTimerColor by animateColorAsState(currentTimerColor)
 
     Column(
         modifier = Modifier
@@ -369,11 +375,12 @@ private fun OverlayComposeView(
                 workoutName = workoutName,
                 remainingTimeOfCurrentWork = remainingTimeOfCurrentWork,
                 originalTimeOfCurrentWork = originalTimeOfCurrentWork,
-                remainingTotalWorkTime = remainingTotalWorkTime,
+                remainingTotalWorkTime = progressedTotalWorkTime,
                 originalTotalWorkTime = originalTotalWorkTime,
                 sizeDp = sizeDp.times(0.95f),
-                overlayStatus =overlayStatus,
-                setTimeProgressBarColor = setTimeProgressBarColor,
+                overlayStatus = overlayStatus,
+                currentTimerColor = animatedCurrentTimerColor,
+                totalTimerColor = totalTimerColor,
                 onPlayBtnClick = onPlayBtnClick
             )
         }
@@ -390,7 +397,8 @@ fun TimerCircle(
     remainingTotalWorkTime: Int,
     originalTotalWorkTime: Int,
     sizeDp: Dp,
-    setTimeProgressBarColor: Color,
+    currentTimerColor: Color,
+    totalTimerColor: Color,
     overlayStatus: OverlayWindowStatus,
     onPlayBtnClick: (overlayStatus: OverlayWindowStatus)->Unit,
 ) {
@@ -427,7 +435,7 @@ fun TimerCircle(
                         rotationY = 180f
                     }
                 },
-            color = setTimeProgressBarColor,
+            color = currentTimerColor,
             strokeWidth = strokeWith
         )
         CircularProgressIndicator(
@@ -435,7 +443,7 @@ fun TimerCircle(
             modifier = Modifier
                 .size(sizeDp.times(0.86f))
                 .align(Center),
-            color = MaterialColor.PURPLE_200,
+            color = totalTimerColor,
             strokeWidth = strokeWith
         )
         OutlineText(
@@ -510,9 +518,9 @@ fun OutlineText(
     fontWeight: FontWeight = FontWeight.Normal
 ) {
     val typeFace = if(fontWeight == FontWeight.Bold) {
-        LocalContext.current.resources.getFont(R.font.infinity_sans_cond_bold)
+        LocalContext.current.resources.getFont(R.font.minsans_medium)
     } else {
-        LocalContext.current.resources.getFont(R.font.infinity_sans_regular)
+        LocalContext.current.resources.getFont(R.font.minsans_medium)
     }
 
     val textPaintStroke = Paint().asFrameworkPaint().apply {
@@ -521,7 +529,7 @@ fun OutlineText(
         textSize = fontSize
         textAlign = android.graphics.Paint.Align.CENTER
         color = android.graphics.Color.BLACK
-        strokeWidth = fontSize/6
+        strokeWidth = fontSize/10
         strokeMiter= 10f
         strokeJoin = android.graphics.Paint.Join.ROUND
         typeface = typeFace
@@ -598,10 +606,11 @@ private fun UITest() {
         sizeDp =200.dp,
         workoutName = "자전거자전거자전거",
         currentTimerColor = Color.Blue,
+        totalTimerColor = Color.Red,
         originalTimeOfCurrentWork = 60,
         remainingTimeOfCurrentWork =10,
         originalTotalWorkTime = 100,
-        remainingTotalWorkTime = 90,
+        progressedTotalWorkTime = 90,
         overlayStatus = OverlayWindowStatus.PLAY,
         onCloseBtnClicked = {},
         onPlayBtnClick = {}

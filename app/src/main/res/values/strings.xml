@@ -33,5 +33,13 @@
     <string name="workout_must_be_exist">하단의 + 버튼을 눌러 프로그램을 구성해주세요.</string>
     <string name="enter_with_scrolling">숫자를 스크롤하여 입력</string>
     <string name="no_search_result">검색결과가 없습니다</string>
+    <string name="delete_timer">타이머 삭제하기</string>
+    <string name="delete_timer_confirm">%1s을(를) 삭제하시겠습니까?</string>
+    <string name="remove_ad">광고제거</string>
+    <string name="remove_ad_for_3days">광고보고 3일동안 광고제거</string>
+    <string name="remove_ad_forever">3900원으로 영원히 광고제거</string>
+    <string name="timer_size">타이머 크기</string>
+    <string name="total_timer_color">타이머 전체 진행도 색상</string>
+    <string name="is_used_tts">TTS 사용여부</string>
 
 </resources>

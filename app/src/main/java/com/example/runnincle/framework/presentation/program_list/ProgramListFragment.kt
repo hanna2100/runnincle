@@ -24,11 +24,13 @@ import com.example.runnincle.business.domain.model.Workout.Companion.toParcelabl
 import com.example.runnincle.framework.presentation.program_list.composable.AdRemoveDialog
 import com.example.runnincle.framework.presentation.program_list.composable.ProgramListWithSearchBar
 import com.example.runnincle.framework.presentation.program_list.composable.SettingModalBottomSheet
+import com.example.runnincle.framework.presentation.program_list.composable.deleteProgramDialog
 import com.example.runnincle.openOverlayWindowWithFloatingService
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlin.collections.ArrayList
 
 @AndroidEntryPoint
 class ProgramListFragment: Fragment() {
@@ -48,6 +50,7 @@ class ProgramListFragment: Fragment() {
         val totalTimerColor = viewModel.totalTimerColor
         val isTTSUsed = viewModel.isTTSUsed
         val searchChipList = viewModel.searchChipList
+        var programToBeDeleted = viewModel.programToBeDeleted
 
         viewModel.launch {
             viewModel.setMapOfProgram()
@@ -61,7 +64,9 @@ class ProgramListFragment: Fragment() {
                 RunnincleTheme(darkSystemBar = true) {
                     val scope = rememberCoroutineScope()
                     val modalBottomSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
-                    val dialogState = rememberMaterialDialogState()
+                    val adRemoveDialogState = rememberMaterialDialogState()
+                    val deleteProgramDialogState = rememberMaterialDialogState()
+
                     setOnBackPressedCallback(scope, modalBottomSheetState)
 
                     ModalBottomSheetLayout(
@@ -74,7 +79,7 @@ class ProgramListFragment: Fragment() {
                                 totalTimerColor = totalTimerColor,
                                 isTtsUsed = isTTSUsed,
                                 onAdRemoveClick = {
-                                    dialogState.show()
+                                    adRemoveDialogState.show()
                                 },
                                 onSaveClick = {
                                     scope.launch {
@@ -127,8 +132,8 @@ class ProgramListFragment: Fragment() {
                                 viewModel.moveToEditProgram(view, program, workouts)
                             },
                             onProgramDeleteButtonClick = { program ->
-                                viewModel.deleteProgram(program.id)
-                                viewModel.programs.remove(program)
+                                programToBeDeleted.value = program
+                                deleteProgramDialogState.show()
                             },
                             onFloatingAddButtonClick = {
                                 viewModel.moveToCreateProgram(view)
@@ -141,8 +146,20 @@ class ProgramListFragment: Fragment() {
                             }
                         )
                     }
+                    deleteProgramDialog(
+                        dialogState = deleteProgramDialogState,
+                        programName = programToBeDeleted.value.name,
+                        onConfirmClick = {
+                            viewModel.deleteProgram(programToBeDeleted.value.id)
+                            viewModel.programs.remove(programToBeDeleted.value)
+                            deleteProgramDialogState.hide()
+                        },
+                        onCancelClick = {
+                            deleteProgramDialogState.hide()
+                        }
+                    )
                     AdRemoveDialog(
-                        dialogState = dialogState,
+                        dialogState = adRemoveDialogState,
                         onRemoveAdFor3DaysClick = {
 
                         },

@@ -12,12 +12,17 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.runnincle.R
+import com.example.runnincle.business.domain.model.Program
 import com.example.runnincle.framework.presentation.composable.CustomMaterialDialog
 import com.example.runnincle.framework.presentation.create_program.composable.LastCoolDownSkipOptionField
 import com.example.runnincle.framework.presentation.create_program.composable.NumberPickerOutlineTextField
 import com.example.runnincle.framework.presentation.create_program.composable.TimerColorPickerField
+import com.siddroid.holi.colors.MaterialColor
 import com.vanpra.composematerialdialogs.*
 
 @Composable
@@ -44,14 +49,14 @@ fun SettingModalBottomSheet(
         NumberPickerOutlineTextField(
             number = overlaySize,
             numberRange = 1..10,
-            leadingText = "타이머 사이즈",
+            leadingText = stringResource(id = R.string.timer_size),
         )
         TimerColorPickerField(
-            leadingText = "타이머 전체 진행도 색상",
+            leadingText = stringResource(id = R.string.total_timer_color),
             timerColor = totalTimerColor,
         )
         LastCoolDownSkipOptionField(
-            leadingText = "TTS 사용여부",
+            leadingText = stringResource(id = R.string.is_used_tts),
             enabled = true,
             checked = isTtsUsed,
             onCheckedChange = { isChecked ->
@@ -62,7 +67,7 @@ fun SettingModalBottomSheet(
             }
         )
         BottomSheetButton(
-            text = "광고제거",
+            text = stringResource(id = R.string.remove_ad),
             onButtonClick = onAdRemoveClick,
             modifier = Modifier
                 .fillMaxWidth()
@@ -70,7 +75,7 @@ fun SettingModalBottomSheet(
                 .height(55.dp)
         )
         BottomSheetButton(
-            text = "저장하기",
+            text = stringResource(id = R.string.save),
             onButtonClick = onSaveClick,
             modifier = Modifier
                 .fillMaxWidth()
@@ -102,6 +107,73 @@ fun BottomSheetButton(
 }
 
 @Composable
+fun deleteProgramDialog(
+    dialogState: MaterialDialogState,
+    programName: String,
+    onConfirmClick: () -> Unit,
+    onCancelClick: () -> Unit
+) {
+    CustomMaterialDialog(
+        dialogState = dialogState,
+        backgroundColor = MaterialTheme.colors.surface,
+        shape = RoundedCornerShape(20.dp),
+        dialogWidthWeight = 0.8f,
+        elevation = 0.dp
+    ) {
+        title(stringResource(id = R.string.delete_timer))
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+        ) {
+            Text(
+                text = stringResource(id = R.string.delete_timer_confirm, programName),
+                style = MaterialTheme.typography.subtitle1.copy(
+                    color = MaterialTheme.colors.secondary
+                ),
+                modifier = Modifier.padding(30.dp, 10.dp, 30.dp, 30.dp)
+            )
+            Row {
+                Button(
+                    onClick = onCancelClick,
+                    colors = ButtonDefaults.textButtonColors(
+                        backgroundColor = MaterialColor.GREY_400,
+                        contentColor = Color.White
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(60.dp)
+                        .weight(1f),
+                    shape = RoundedCornerShape(0.dp)
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.cancel),
+                        style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Medium)
+                    )
+                }
+                Button(
+                    onClick = onConfirmClick,
+                    colors = ButtonDefaults.textButtonColors(
+                        backgroundColor = MaterialTheme.colors.primary,
+                        contentColor = MaterialTheme.colors.onPrimary
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(60.dp)
+                        .weight(1f),
+                    shape = RoundedCornerShape(0.dp)
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.confirm),
+                        style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Medium)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
 fun AdRemoveDialog(
     dialogState: MaterialDialogState,
     onRemoveAdFor3DaysClick: ()-> Unit,
@@ -113,10 +185,12 @@ fun AdRemoveDialog(
         shape = RoundedCornerShape(20.dp),
         dialogWidthWeight = 0.8f
     ) {
-        title("광고제거")
+        title(stringResource(id = R.string.remove_ad))
         customView {
             Column(
-                modifier = Modifier.fillMaxWidth().wrapContentHeight()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
             ) {
                 Button(
                     onClick = onRemoveAdFor3DaysClick,
@@ -125,10 +199,13 @@ fun AdRemoveDialog(
                         contentColor = MaterialTheme.colors.onPrimary
                     ),
                     shape = RoundedCornerShape(10.dp),
-                    modifier = Modifier.padding(bottom = 15.dp).fillMaxWidth().height(50.dp)
+                    modifier = Modifier
+                        .padding(bottom = 15.dp)
+                        .fillMaxWidth()
+                        .height(50.dp)
                 ) {
                     Text(
-                        text = "광고보고 3일동안 광고제거",
+                        text = stringResource(id = R.string.remove_ad_for_3days),
                         style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Medium)
                     )
                 }
@@ -139,10 +216,12 @@ fun AdRemoveDialog(
                         contentColor = MaterialTheme.colors.onPrimary
                     ),
                     shape = RoundedCornerShape(10.dp),
-                    modifier = Modifier.fillMaxWidth().height(50.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp)
                 ) {
                     Text(
-                        text = "3900원으로 영원히 광고제거",
+                        text = stringResource(id = R.string.remove_ad_forever),
                         style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Medium)
                     )
                 }

@@ -3,6 +3,7 @@ package com.example.runnincle.framework.presentation.program_list
 import android.view.View
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.findNavController
 import com.example.runnincle.business.domain.model.ParcelableWorkout
 import com.example.runnincle.business.domain.model.Program
@@ -26,6 +27,8 @@ constructor(
 
     var programs = mutableStateMapOf<Program, List<Workout>>()
         private set
+
+    var programToBeDeleted = mutableStateOf(Program("","",""))
 
     // Setting
     var overlaySize = mutableStateOf(3)

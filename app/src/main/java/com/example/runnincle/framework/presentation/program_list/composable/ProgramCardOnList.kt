@@ -37,7 +37,7 @@ import com.example.runnincle.business.domain.model.Program
 import com.example.runnincle.business.domain.model.Workout
 import com.example.runnincle.business.domain.model.Workout.Companion.getTotalWorkoutTime
 import com.example.runnincle.ui.theme.NanumSquareFamily
-import com.example.runnincle.ui.theme.RippleCustomTheme
+import com.example.runnincle.ui.theme.DarkRippleTheme
 import com.google.accompanist.flowlayout.FlowColumn
 import com.google.accompanist.flowlayout.SizeMode
 import com.siddroid.holi.colors.MaterialColor
@@ -64,7 +64,7 @@ fun ProgramList(
         contentPadding = PaddingValues(10.dp, 0.dp)
     ) {
         itemsIndexed(items = p, key = { index, item ->  item.id }) { index, item ->
-            CompositionLocalProvider(LocalRippleTheme provides  RippleCustomTheme) {
+            CompositionLocalProvider(LocalRippleTheme provides  DarkRippleTheme) {
                 ProgramCard(
                     modifier = Modifier
                         .padding(

@@ -79,7 +79,7 @@ fun RunnincleTheme(
     }
 }
 
-object RippleCustomTheme: RippleTheme {
+object DarkRippleTheme: RippleTheme {
 
     @Composable
     override fun defaultColor(): Color = MaterialTheme.colors.primary
@@ -87,6 +87,18 @@ object RippleCustomTheme: RippleTheme {
     @Composable
     override fun rippleAlpha(): RippleAlpha = RippleTheme.defaultRippleAlpha(
         Color.Black,
+        lightTheme = !isSystemInDarkTheme()
+    )
+}
+
+object WhiteRippleTheme: RippleTheme {
+
+    @Composable
+    override fun defaultColor(): Color = Color.White
+
+    @Composable
+    override fun rippleAlpha(): RippleAlpha = RippleTheme.defaultRippleAlpha(
+        Color.White,
         lightTheme = !isSystemInDarkTheme()
     )
 }

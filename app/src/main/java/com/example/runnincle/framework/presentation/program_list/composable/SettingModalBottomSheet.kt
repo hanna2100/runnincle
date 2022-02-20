@@ -7,21 +7,23 @@ import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.ripple.LocalRippleTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.runnincle.R
-import com.example.runnincle.business.domain.model.Program
 import com.example.runnincle.framework.presentation.composable.CustomMaterialDialog
 import com.example.runnincle.framework.presentation.create_program.composable.LastCoolDownSkipOptionField
 import com.example.runnincle.framework.presentation.create_program.composable.NumberPickerOutlineTextField
 import com.example.runnincle.framework.presentation.create_program.composable.TimerColorPickerField
+import com.example.runnincle.ui.theme.DarkRippleTheme
+import com.example.runnincle.ui.theme.WhiteRippleTheme
 import com.siddroid.holi.colors.MaterialColor
 import com.vanpra.composematerialdialogs.*
 
@@ -90,19 +92,21 @@ fun BottomSheetButton(
     onButtonClick: ()-> Unit,
     modifier: Modifier
 ) {
-    Button(
-        onClick = onButtonClick,
-        colors = ButtonDefaults.textButtonColors(
-            backgroundColor = MaterialTheme.colors.onPrimary,
-            contentColor = MaterialTheme.colors.primary
-        ),
-        shape = RoundedCornerShape(20.dp),
-        modifier = modifier
-    ) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.h6.copy(fontWeight = FontWeight.Medium)
-        )
+    CompositionLocalProvider(LocalRippleTheme provides DarkRippleTheme) {
+        Button(
+            onClick = onButtonClick,
+            colors = ButtonDefaults.textButtonColors(
+                backgroundColor = MaterialTheme.colors.onPrimary,
+                contentColor = MaterialTheme.colors.primary
+            ),
+            shape = RoundedCornerShape(20.dp),
+            modifier = modifier
+        ) {
+            Text(
+                text = text,
+                style = MaterialTheme.typography.h6.copy(fontWeight = FontWeight.Medium)
+            )
+        }
     }
 }
 
@@ -134,39 +138,41 @@ fun deleteProgramDialog(
                 modifier = Modifier.padding(30.dp, 10.dp, 30.dp, 30.dp)
             )
             Row {
-                Button(
-                    onClick = onCancelClick,
-                    colors = ButtonDefaults.textButtonColors(
-                        backgroundColor = MaterialColor.GREY_400,
-                        contentColor = Color.White
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(60.dp)
-                        .weight(1f),
-                    shape = RoundedCornerShape(0.dp)
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.cancel),
-                        style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Medium)
-                    )
-                }
-                Button(
-                    onClick = onConfirmClick,
-                    colors = ButtonDefaults.textButtonColors(
-                        backgroundColor = MaterialTheme.colors.primary,
-                        contentColor = MaterialTheme.colors.onPrimary
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(60.dp)
-                        .weight(1f),
-                    shape = RoundedCornerShape(0.dp)
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.confirm),
-                        style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Medium)
-                    )
+                CompositionLocalProvider(LocalRippleTheme provides WhiteRippleTheme) {
+                    Button(
+                        onClick = onCancelClick,
+                        colors = ButtonDefaults.textButtonColors(
+                            backgroundColor = MaterialColor.GREY_400,
+                            contentColor = Color.White
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(60.dp)
+                            .weight(1f),
+                        shape = RoundedCornerShape(0.dp)
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.cancel),
+                            style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Medium)
+                        )
+                    }
+                    Button(
+                        onClick = onConfirmClick,
+                        colors = ButtonDefaults.textButtonColors(
+                            backgroundColor = MaterialTheme.colors.primary,
+                            contentColor = MaterialTheme.colors.onPrimary
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(60.dp)
+                            .weight(1f),
+                        shape = RoundedCornerShape(0.dp)
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.confirm),
+                            style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Medium)
+                        )
+                    }
                 }
             }
         }
@@ -192,38 +198,40 @@ fun AdRemoveDialog(
                     .fillMaxWidth()
                     .wrapContentHeight()
             ) {
-                Button(
-                    onClick = onRemoveAdFor3DaysClick,
-                    colors = ButtonDefaults.textButtonColors(
-                        backgroundColor = MaterialTheme.colors.primary,
-                        contentColor = MaterialTheme.colors.onPrimary
-                    ),
-                    shape = RoundedCornerShape(10.dp),
-                    modifier = Modifier
-                        .padding(bottom = 15.dp)
-                        .fillMaxWidth()
-                        .height(50.dp)
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.remove_ad_for_3days),
-                        style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Medium)
-                    )
-                }
-                Button(
-                    onClick = onRemoveAdForeverClick,
-                    colors = ButtonDefaults.textButtonColors(
-                        backgroundColor = MaterialTheme.colors.primary,
-                        contentColor = MaterialTheme.colors.onPrimary
-                    ),
-                    shape = RoundedCornerShape(10.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp)
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.remove_ad_forever),
-                        style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Medium)
-                    )
+                CompositionLocalProvider(LocalRippleTheme provides WhiteRippleTheme) {
+                    Button(
+                        onClick = onRemoveAdFor3DaysClick,
+                        colors = ButtonDefaults.textButtonColors(
+                            backgroundColor = MaterialTheme.colors.primary,
+                            contentColor = MaterialTheme.colors.onPrimary
+                        ),
+                        shape = RoundedCornerShape(10.dp),
+                        modifier = Modifier
+                            .padding(bottom = 15.dp)
+                            .fillMaxWidth()
+                            .height(50.dp)
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.remove_ad_for_3days),
+                            style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Medium)
+                        )
+                    }
+                    Button(
+                        onClick = onRemoveAdForeverClick,
+                        colors = ButtonDefaults.textButtonColors(
+                            backgroundColor = MaterialTheme.colors.primary,
+                            contentColor = MaterialTheme.colors.onPrimary
+                        ),
+                        shape = RoundedCornerShape(10.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(50.dp)
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.remove_ad_forever),
+                            style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Medium)
+                        )
+                    }
                 }
             }
         }

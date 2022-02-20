@@ -31,6 +31,7 @@ import com.vanpra.composematerialdialogs.*
 fun SettingModalBottomSheet(
     overlaySize: MutableState<Int>,
     totalTimerColor: MutableState<Color>,
+    coolDownTimerColor: MutableState<Color>,
     isTtsUsed: MutableState<Boolean>,
     onAdRemoveClick: ()->Unit,
     onSaveClick: ()->Unit
@@ -56,6 +57,10 @@ fun SettingModalBottomSheet(
         TimerColorPickerField(
             leadingText = stringResource(id = R.string.total_timer_color),
             timerColor = totalTimerColor,
+        )
+        TimerColorPickerField(
+            leadingText = stringResource(id = R.string.cool_down_timer_color),
+            timerColor = coolDownTimerColor,
         )
         LastCoolDownSkipOptionField(
             leadingText = stringResource(id = R.string.is_used_tts),

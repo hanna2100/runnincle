@@ -48,6 +48,7 @@ class ProgramListFragment: Fragment() {
         val programs = viewModel.programs
         val overlaySize = viewModel.overlaySize
         val totalTimerColor = viewModel.totalTimerColor
+        var coolDownTimerColor = viewModel.coolDownTimerColor
         val isTTSUsed = viewModel.isTTSUsed
         val searchChipList = viewModel.searchChipList
         var programToBeDeleted = viewModel.programToBeDeleted
@@ -77,6 +78,7 @@ class ProgramListFragment: Fragment() {
                             SettingModalBottomSheet(
                                 overlaySize = overlaySize,
                                 totalTimerColor = totalTimerColor,
+                                coolDownTimerColor = coolDownTimerColor,
                                 isTtsUsed = isTTSUsed,
                                 onAdRemoveClick = {
                                     adRemoveDialogState.show()
@@ -124,7 +126,8 @@ class ProgramListFragment: Fragment() {
                                         workouts = workouts,
                                         isTTSUsed = isTTSUsed.value,
                                         overlayDp = overlayDp,
-                                        totalTimerColor = totalTimerColor.value
+                                        totalTimerColor = totalTimerColor.value,
+                                        coolDownTimerColor = coolDownTimerColor.value
                                     )
                                 }
                             },
@@ -177,6 +180,7 @@ class ProgramListFragment: Fragment() {
         workouts: List<Workout>,
         isTTSUsed: Boolean,
         totalTimerColor: Color,
+        coolDownTimerColor: Color,
         overlayDp: Int
     ) {
         val parcelableWorkouts = ArrayList<ParcelableWorkout>()
@@ -189,6 +193,7 @@ class ProgramListFragment: Fragment() {
             workouts = parcelableWorkouts,
             isTTSUsed = isTTSUsed,
             totalTimerColor = totalTimerColor,
+            coolDownTimerColor = coolDownTimerColor,
             overlayDp = overlayDp
         )
     }

@@ -40,6 +40,7 @@
     <string name="remove_ad_forever">3900원으로 영원히 광고제거</string>
     <string name="timer_size">타이머 크기</string>
     <string name="total_timer_color">타이머 전체 진행도 색상</string>
+    <string name="cool_down_timer_color">타이머 쿨다운 색상</string>
     <string name="is_used_tts">TTS 사용여부</string>
 
 </resources>

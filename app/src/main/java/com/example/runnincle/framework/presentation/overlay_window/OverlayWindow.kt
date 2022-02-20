@@ -83,6 +83,7 @@ class OverlayWindow (
     workouts: List<Workout>,
     overlayDp: Int,
     totalTimerColor: Color,
+    coolDownTimerColor: Color,
     isTTSUsed: Boolean
     ) {
 
@@ -98,7 +99,7 @@ class OverlayWindow (
     private lateinit var handler: Handler
     private var overlayStatus by mutableStateOf(OverlayWindowStatus.PAUSE)
 
-    private var schedule: List<ScheduleData> = setSchedule(workouts)
+    private var schedule: List<ScheduleData> = setSchedule(workouts, coolDownTimerColor)
     private var currentIndex = 0
     private var originalTimeOfCurrentWork by mutableStateOf(0)
     private var remainingTimeOfCurrentWork by mutableStateOf(0)
@@ -129,7 +130,7 @@ class OverlayWindow (
         }
     }
 
-    private fun setSchedule(workouts: List<Workout>): List<ScheduleData> {
+    private fun setSchedule(workouts: List<Workout>, coolDownTimerColor: Color): List<ScheduleData> {
         val schedules = mutableListOf<ScheduleData>()
 
         workouts.forEach { workout ->
@@ -149,7 +150,7 @@ class OverlayWindow (
                         workoutName = workout.name,
                         time = workout.coolDown,
                         type = ScheduleType.COOL_DOWN,
-                        timerColor = MaterialColor.GREY_400
+                        timerColor = coolDownTimerColor
                     )
                     schedules.add(newCoolDownSchedule)
                 }

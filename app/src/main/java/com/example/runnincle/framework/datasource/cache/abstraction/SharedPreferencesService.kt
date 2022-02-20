@@ -18,10 +18,13 @@ interface SharedPreferencesService {
     suspend fun saveSettingProperty(
         overlaySize: Int,
         totalTimerColor: Color,
+        coolDownTimerColor: Color,
         isTTSUsed: Boolean
     )
 
     suspend fun saveSearchWord(text: String)
 
     suspend fun removeSearchWord(text: String)
+
+    suspend fun getCoolDownTimerColor(): Color
 }

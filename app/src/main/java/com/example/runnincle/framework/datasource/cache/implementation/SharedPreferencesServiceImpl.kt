@@ -38,11 +38,13 @@ class SharedPreferencesServiceImpl(
     override suspend fun saveSettingProperty(
         overlaySize: Int,
         totalTimerColor: Color,
+        coolDownTimerColor: Color,
         isTTSUsed: Boolean
     ) {
         val sharedPreferenceEntity = getPreferenceEntity()
         sharedPreferenceEntity.overlaySize = overlaySize
         sharedPreferenceEntity.totalTimerColor = totalTimerColor
+        sharedPreferenceEntity.coolDownTimerColor = coolDownTimerColor
         sharedPreferenceEntity.isTTSUsed = isTTSUsed
 
         gsonSharedPreferenceService.saveObject(sharedPreferenceEntity)
@@ -66,6 +68,10 @@ class SharedPreferencesServiceImpl(
         newList.remove(text)
         sharedPreferenceEntity.searchWords = newList
         gsonSharedPreferenceService.saveObject(sharedPreferenceEntity)
+    }
+
+    override suspend fun getCoolDownTimerColor(): Color {
+        return getPreferenceEntity().coolDownTimerColor
     }
 
 }

@@ -31,6 +31,7 @@ class FloatingService: Service() {
         const val INTENT_PROGRAM = "INTENT_PROGRAM"
         const val INTENT_OVERLAY_DP = "INTENT_OVERLAY_DP"
         const val INTENT_TOTAL_TIMER_COLOR_VALUE = "INTENT_TOTAL_TIMER_COLOR_VALUE"
+        const val INTENT_COOL_DOWN_TIMER_COLOR_VALUE = "INTENT_COOL_DOWN_TIMER_COLOR_VALUE"
         const val INTENT_IS_TTS_USED = "INTENT_IS_TTS_USED"
         const val INTENT_WORKOUTS = "INTENT_WORKOUTS"
     }
@@ -61,9 +62,14 @@ class FloatingService: Service() {
                 val parcelableWorkouts = intent.getParcelableArrayListExtra<ParcelableWorkout>(INTENT_WORKOUTS)
                 val overlayDp = intent.getIntExtra(INTENT_OVERLAY_DP, 100)
                 val totalTimerColor = intent.getStringExtra(INTENT_TOTAL_TIMER_COLOR_VALUE)
+                val coolDownTimerColor = intent.getStringExtra(INTENT_COOL_DOWN_TIMER_COLOR_VALUE)
                 val isTTSUsed = intent.getBooleanExtra(INTENT_IS_TTS_USED, false)
 
-                if(program == null || parcelableWorkouts == null || totalTimerColor == null) {
+                if(program == null
+                    || parcelableWorkouts == null
+                    || totalTimerColor == null
+                    || coolDownTimerColor == null
+                ) {
                     stopService()
                     //TODO 예외처리
                     return START_STICKY
@@ -80,6 +86,7 @@ class FloatingService: Service() {
                     workouts = workouts,
                     overlayDp = overlayDp,
                     totalTimerColor = Color(totalTimerColor.toULong()),
+                    coolDownTimerColor = Color(coolDownTimerColor.toULong()),
                     isTTSUsed = isTTSUsed,
                 )
                 if(!window.isServiceRunning()) {

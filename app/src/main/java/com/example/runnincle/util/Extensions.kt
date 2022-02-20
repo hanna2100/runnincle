@@ -19,6 +19,7 @@ import com.example.runnincle.business.domain.model.Workout.Companion.getTotalWor
 import com.example.runnincle.business.domain.util.TimeAgo
 import com.example.runnincle.framework.presentation.PermissionActivity
 import com.example.runnincle.util.FloatingService
+import com.example.runnincle.util.FloatingService.Companion.INTENT_COOL_DOWN_TIMER_COLOR_VALUE
 import com.example.runnincle.util.FloatingService.Companion.INTENT_IS_TTS_USED
 import com.example.runnincle.util.FloatingService.Companion.INTENT_OVERLAY_DP
 import com.example.runnincle.util.FloatingService.Companion.INTENT_TOTAL_TIMER_COLOR_VALUE
@@ -34,7 +35,8 @@ fun Context.openOverlayWindowWithFloatingService(
     workouts: ArrayList<ParcelableWorkout>,
     overlayDp: Int,
     isTTSUsed: Boolean,
-    totalTimerColor: Color
+    totalTimerColor: Color,
+    coolDownTimerColor: Color,
 ) {
     val intent = Intent(this, FloatingService::class.java)
     intent.putExtra(COMMAND_NAME, FloatingServiceCommand.OPEN.name)
@@ -43,6 +45,7 @@ fun Context.openOverlayWindowWithFloatingService(
     intent.putExtra(INTENT_WORKOUTS, workouts)
     intent.putExtra(INTENT_IS_TTS_USED, isTTSUsed)
     intent.putExtra(INTENT_TOTAL_TIMER_COLOR_VALUE, totalTimerColor.value.toString())
+    intent.putExtra(INTENT_COOL_DOWN_TIMER_COLOR_VALUE, coolDownTimerColor.value.toString())
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         this.startForegroundService(intent)

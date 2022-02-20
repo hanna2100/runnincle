@@ -32,7 +32,8 @@ constructor(
 
     // Setting
     var overlaySize = mutableStateOf(3)
-    var totalTimerColor = mutableStateOf(TimerColorPalette[0])
+    var totalTimerColor = mutableStateOf(TimerColorPalette.last())
+    var coolDownTimerColor = mutableStateOf(TimerColorPalette.last())
     var isTTSUsed = mutableStateOf(false)
     var searchChipList = mutableStateOf(mutableListOf<String>())
 
@@ -97,6 +98,7 @@ constructor(
     suspend fun getSettingValue() {
         overlaySize.value = programListInteractors.getOverlaySize()
         totalTimerColor.value = programListInteractors.getTotalTimerColor()
+        coolDownTimerColor.value = programListInteractors.getCoolDownTimerColor()
         isTTSUsed.value = programListInteractors.isTTSUsed()
     }
 
@@ -112,6 +114,7 @@ constructor(
         programListInteractors.saveSettingProperty(
             overlaySize.value,
             totalTimerColor.value,
+            coolDownTimerColor.value,
             isTTSUsed.value
         )
     }

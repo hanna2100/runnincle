@@ -49,9 +49,10 @@ class ProgramListInteractors (
     suspend fun saveSettingProperty(
         overlaySize: Int,
         totalTimerColor: Color,
+        coolDownTimerColor: Color,
         isTTSUsed: Boolean
     ) {
-        sharedPreferencesService.saveSettingProperty(overlaySize, totalTimerColor, isTTSUsed)
+        sharedPreferencesService.saveSettingProperty(overlaySize, totalTimerColor, coolDownTimerColor, isTTSUsed)
     }
 
     suspend fun saveSearchWord(text: String) {
@@ -62,4 +63,7 @@ class ProgramListInteractors (
         sharedPreferencesService.removeSearchWord(text)
     }
 
+    suspend fun getCoolDownTimerColor(): Color {
+        return sharedPreferencesService.getCoolDownTimerColor()
+    }
 }

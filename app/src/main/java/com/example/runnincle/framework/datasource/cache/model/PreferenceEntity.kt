@@ -14,6 +14,10 @@ class PreferenceEntity {
     @Expose
     var totalTimerColor: Color = TimerColorPalette.last()
 
+    @SerializedName("coolDownTimerColor")
+    @Expose
+    var coolDownTimerColor: Color = TimerColorPalette.last()
+
     @SerializedName("isTTSUsed")
     @Expose
     var isTTSUsed: Boolean = false

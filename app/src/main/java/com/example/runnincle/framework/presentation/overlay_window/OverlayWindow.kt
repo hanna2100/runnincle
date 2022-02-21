@@ -56,6 +56,7 @@ import com.example.runnincle.business.domain.model.Program
 import com.example.runnincle.business.domain.model.Workout
 import com.example.runnincle.ui.theme.NanumSquareFamily
 import com.example.runnincle.util.MyLifecycleOwner
+import com.example.runnincle.util.SoundPlayer
 import com.siddroid.holi.colors.MaterialColor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -112,8 +113,13 @@ class OverlayWindow (
         initWindowManager()
         initViewParams(overlayDp)
         initVariableTimeValue()
+        initSoundPlayer(context)
         initComposeView(overlayDp, totalTimerColor)
         initHandler()
+    }
+
+    private fun initSoundPlayer(context: Context) {
+        SoundPlayer.initSounds(context)
     }
 
     private fun initVariableTimeValue() {
@@ -262,15 +268,25 @@ class OverlayWindow (
                 if (remainingTimeOfCurrentWork > 0) {
                     remainingTimeOfCurrentWork -= 1
                     progressedTotalWorkTime += 1
+
+                    // 2초 전일 경우 사운드음향 재생
+                    if (remainingTimeOfCurrentWork <= 2) {
+                       SoundPlayer.play(R.raw.count_sound)
+                    }
+
                     sendEmptyMessageDelayed(0, 1000)
+
                 } else { //  현재 진행중인 work 의 시간이 끝난 경우
                     if (currentIndex < schedule.lastIndex) { // 남은 work 가 있을 경우
+                        // 시작 사운드음향 재생
+                        SoundPlayer.play(R.raw.start_sound)
                         currentIndex += 1
                         remainingTimeOfCurrentWork = schedule[currentIndex].time
                         originalTimeOfCurrentWork = schedule[currentIndex].time
                         currentTimerColor = schedule[currentIndex].timerColor
                         sendEmptyMessageDelayed(0, 1000)
                     } else { // 남은 work 가 없을 경우 (프로그램 종료)
+                        SoundPlayer.play(R.raw.end_sound)
                         overlayStatus = OverlayWindowStatus.END
                         return
                     }
@@ -476,15 +492,24 @@ fun TimerCircle(
                 }
             },
         ) {
-            Icon (
-                painter = painterResource(R.drawable.ic_baseline_play),
-                contentDescription = null,
-                tint = Color.White,
-                modifier = Modifier
-                    .size(sizeDp.times(0.5f))
+            Box(
+                contentAlignment = Center
+            ) {
+                Spacer(modifier = Modifier
+                    .size(sizeDp.times(0.45f))
                     .clip(RoundedCornerShape(sizeDp.times(0.5f)))
-                    .background(Color.Black)
-            )
+                    .background(
+                        brush = Brush.linearGradient(listOf(Color.Black, MaterialColor.GREY_800))
+                    )
+                )
+                Icon (
+                    painter = painterResource(R.drawable.ic_baseline_play),
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier
+                        .size(sizeDp.times(0.5f))
+                )
+            }
         }
         val workNameTextSize = sizeDp.value.times(0.08f).dp()
         Text(

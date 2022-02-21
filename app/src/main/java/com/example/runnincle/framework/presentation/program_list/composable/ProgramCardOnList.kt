@@ -71,7 +71,7 @@ fun ProgramList(
                             top = if (index == 0) 25.dp else 6.dp,
                             start = 10.dp,
                             end = 10.dp,
-                            bottom = 20.dp
+                            bottom = if (index == p.lastIndex) 60.dp else 20.dp,
                         )
                         .fillMaxWidth()
                         .heightIn(min = 130.dp)

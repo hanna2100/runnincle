@@ -12,18 +12,18 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import com.example.runnincle.business.domain.model.ParcelableWorkout
 import com.example.runnincle.util.FloatingService.Companion.COMMAND_NAME
-import com.example.runnincle.util.FloatingService.Companion.INTENT_PROGRAM
+import com.example.runnincle.util.FloatingService.Companion.ARGUMENT_PROGRAM
 import com.example.runnincle.business.domain.model.Program
 import com.example.runnincle.business.domain.model.Workout
 import com.example.runnincle.business.domain.model.Workout.Companion.getTotalWorkoutTime
 import com.example.runnincle.business.domain.util.TimeAgo
 import com.example.runnincle.framework.presentation.PermissionActivity
 import com.example.runnincle.util.FloatingService
-import com.example.runnincle.util.FloatingService.Companion.INTENT_COOL_DOWN_TIMER_COLOR_VALUE
-import com.example.runnincle.util.FloatingService.Companion.INTENT_IS_TTS_USED
-import com.example.runnincle.util.FloatingService.Companion.INTENT_OVERLAY_DP
-import com.example.runnincle.util.FloatingService.Companion.INTENT_TOTAL_TIMER_COLOR_VALUE
-import com.example.runnincle.util.FloatingService.Companion.INTENT_WORKOUTS
+import com.example.runnincle.util.FloatingService.Companion.ARGUMENT_COOL_DOWN_TIMER_COLOR_VALUE
+import com.example.runnincle.util.FloatingService.Companion.ARGUMENT_IS_TTS_USED
+import com.example.runnincle.util.FloatingService.Companion.ARGUMENT_OVERLAY_DP
+import com.example.runnincle.util.FloatingService.Companion.ARGUMENT_TOTAL_TIMER_COLOR_VALUE
+import com.example.runnincle.util.FloatingService.Companion.ARGUMENT_WORKOUTS
 import com.example.runnincle.util.FloatingServiceCommand
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -40,12 +40,12 @@ fun Context.openOverlayWindowWithFloatingService(
 ) {
     val intent = Intent(this, FloatingService::class.java)
     intent.putExtra(COMMAND_NAME, FloatingServiceCommand.OPEN.name)
-    intent.putExtra(INTENT_OVERLAY_DP, overlayDp)
-    intent.putExtra(INTENT_PROGRAM, program)
-    intent.putExtra(INTENT_WORKOUTS, workouts)
-    intent.putExtra(INTENT_IS_TTS_USED, isTTSUsed)
-    intent.putExtra(INTENT_TOTAL_TIMER_COLOR_VALUE, totalTimerColor.value.toString())
-    intent.putExtra(INTENT_COOL_DOWN_TIMER_COLOR_VALUE, coolDownTimerColor.value.toString())
+    intent.putExtra(ARGUMENT_OVERLAY_DP, overlayDp)
+    intent.putExtra(ARGUMENT_PROGRAM, program)
+    intent.putExtra(ARGUMENT_WORKOUTS, workouts)
+    intent.putExtra(ARGUMENT_IS_TTS_USED, isTTSUsed)
+    intent.putExtra(ARGUMENT_TOTAL_TIMER_COLOR_VALUE, totalTimerColor.value.toString())
+    intent.putExtra(ARGUMENT_COOL_DOWN_TIMER_COLOR_VALUE, coolDownTimerColor.value.toString())
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         this.startForegroundService(intent)

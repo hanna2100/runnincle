@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">runnincle</string>
     <string name="notification_channel_id">runnincle_channel</string>
+    <string name="admop_interstitial_unit_id">ca-app-pub-3940256099942544/1033173712</string>
+    <string name="admop_rewarded_unit_id">ca-app-pub-3940256099942544/5224354917</string>
+<!--    <string name="admop_interstitial_unit_id">ca-app-pub-2332326582125862/8570627140</string>-->
+<!--    <string name="admop_rewarded_unit_id">ca-app-pub-2332326582125862/4929753278</string>-->
     <string name="confirm">확인</string>
     <string name="cancel">취소</string>
     <string name="permission_error_title">권한설정 오류</string>
@@ -42,5 +46,6 @@
     <string name="total_timer_color">타이머 전체 진행도 색상</string>
     <string name="cool_down_timer_color">타이머 쿨다운 색상</string>
     <string name="is_used_tts">TTS 사용여부</string>
+    <string name="already_active">이미 실행중이에요</string>
 
 </resources>

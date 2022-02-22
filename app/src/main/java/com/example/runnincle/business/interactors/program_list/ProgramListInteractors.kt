@@ -6,6 +6,7 @@ import com.example.runnincle.business.data.cache.abstraction.WorkoutCacheDataSou
 import com.example.runnincle.business.domain.model.Program
 import com.example.runnincle.business.domain.model.Workout
 import com.example.runnincle.framework.datasource.cache.abstraction.SharedPreferencesService
+import java.time.LocalDate
 
 class ProgramListInteractors (
     private val programCacheDataSource: ProgramCacheDataSource,
@@ -66,4 +67,13 @@ class ProgramListInteractors (
     suspend fun getCoolDownTimerColor(): Color {
         return sharedPreferencesService.getCoolDownTimerColor()
     }
+
+    suspend fun saveAdRemovalPeriod(localDate: LocalDate) {
+        sharedPreferencesService.saveAdRemovalPeriod(localDate)
+    }
+
+    suspend fun getAdRemovalPeriod(): LocalDate {
+        return sharedPreferencesService.getAdRemovalPeriod()
+    }
+
 }

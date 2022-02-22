@@ -1,9 +1,10 @@
 package com.example.runnincle.framework.presentation.program_list
 
+import android.os.Build
 import android.view.View
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.MutableLiveData
 import androidx.navigation.findNavController
 import com.example.runnincle.business.domain.model.ParcelableWorkout
 import com.example.runnincle.business.domain.model.Program
@@ -15,6 +16,7 @@ import com.example.runnincle.util.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.time.LocalDate
 import javax.inject.Inject
 
 
@@ -127,4 +129,12 @@ constructor(
         programListInteractors.removeSearchWord(text)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    suspend fun saveAdRemovalPeriod(localDate: LocalDate) {
+        programListInteractors.saveAdRemovalPeriod(localDate)
+    }
+
+    suspend fun getAdRemovalPeriod(): LocalDate {
+        return programListInteractors.getAdRemovalPeriod()
+    }
 }

@@ -3,6 +3,7 @@ package com.example.runnincle.framework.presentation
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.runnincle.R
+import com.google.android.gms.ads.MobileAds
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -16,8 +17,5 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
     }
 
-    private fun setSharedPreference() {
-
-    }
 
 }

@@ -1,9 +1,12 @@
 package com.example.runnincle.framework.datasource.cache.implementation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.ui.graphics.Color
 import com.example.runnincle.framework.datasource.cache.abstraction.GsonSharedPreferenceService
 import com.example.runnincle.framework.datasource.cache.abstraction.SharedPreferencesService
 import com.example.runnincle.framework.datasource.cache.model.PreferenceEntity
+import java.time.LocalDate
 
 class SharedPreferencesServiceImpl(
     private val gsonSharedPreferenceService: GsonSharedPreferenceService
@@ -72,6 +75,18 @@ class SharedPreferencesServiceImpl(
 
     override suspend fun getCoolDownTimerColor(): Color {
         return getPreferenceEntity().coolDownTimerColor
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override suspend fun getAdRemovalPeriod(): LocalDate {
+        return LocalDate.parse(getPreferenceEntity().adRemovalPeriod)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override suspend fun saveAdRemovalPeriod(date: LocalDate) {
+        val sharedPreferenceEntity = getPreferenceEntity()
+        sharedPreferenceEntity.adRemovalPeriod = date.toString()
+        gsonSharedPreferenceService.saveObject(sharedPreferenceEntity)
     }
 
 }

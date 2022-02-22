@@ -28,12 +28,12 @@ class FloatingService: Service() {
     companion object {
         const val NOTIFICATION_ID = 10
         const val COMMAND_NAME = "COMMAND"
-        const val INTENT_PROGRAM = "INTENT_PROGRAM"
-        const val INTENT_OVERLAY_DP = "INTENT_OVERLAY_DP"
-        const val INTENT_TOTAL_TIMER_COLOR_VALUE = "INTENT_TOTAL_TIMER_COLOR_VALUE"
-        const val INTENT_COOL_DOWN_TIMER_COLOR_VALUE = "INTENT_COOL_DOWN_TIMER_COLOR_VALUE"
-        const val INTENT_IS_TTS_USED = "INTENT_IS_TTS_USED"
-        const val INTENT_WORKOUTS = "INTENT_WORKOUTS"
+        const val ARGUMENT_PROGRAM = "ARGUMENT_PROGRAM"
+        const val ARGUMENT_OVERLAY_DP = "ARGUMENT_OVERLAY_DP"
+        const val ARGUMENT_TOTAL_TIMER_COLOR_VALUE = "ARGUMENT_TOTAL_TIMER_COLOR_VALUE"
+        const val ARGUMENT_COOL_DOWN_TIMER_COLOR_VALUE = "ARGUMENT_COOL_DOWN_TIMER_COLOR_VALUE"
+        const val ARGUMENT_IS_TTS_USED = "ARGUMENT_IS_TTS_USED"
+        const val ARGUMENT_WORKOUTS = "ARGUMENT_WORKOUTS"
     }
 
     override fun onBind(p0: Intent?): IBinder? {
@@ -58,12 +58,12 @@ class FloatingService: Service() {
 
         if (command == FloatingServiceCommand.OPEN.name) {
             if (drawOverOtherAppsEnabled()) {
-                val program = intent.getParcelableExtra<Program>(INTENT_PROGRAM)
-                val parcelableWorkouts = intent.getParcelableArrayListExtra<ParcelableWorkout>(INTENT_WORKOUTS)
-                val overlayDp = intent.getIntExtra(INTENT_OVERLAY_DP, 100)
-                val totalTimerColor = intent.getStringExtra(INTENT_TOTAL_TIMER_COLOR_VALUE)
-                val coolDownTimerColor = intent.getStringExtra(INTENT_COOL_DOWN_TIMER_COLOR_VALUE)
-                val isTTSUsed = intent.getBooleanExtra(INTENT_IS_TTS_USED, false)
+                val program = intent.getParcelableExtra<Program>(ARGUMENT_PROGRAM)
+                val parcelableWorkouts = intent.getParcelableArrayListExtra<ParcelableWorkout>(ARGUMENT_WORKOUTS)
+                val overlayDp = intent.getIntExtra(ARGUMENT_OVERLAY_DP, 100)
+                val totalTimerColor = intent.getStringExtra(ARGUMENT_TOTAL_TIMER_COLOR_VALUE)
+                val coolDownTimerColor = intent.getStringExtra(ARGUMENT_COOL_DOWN_TIMER_COLOR_VALUE)
+                val isTTSUsed = intent.getBooleanExtra(ARGUMENT_IS_TTS_USED, false)
 
                 if(program == null
                     || parcelableWorkouts == null
@@ -92,7 +92,7 @@ class FloatingService: Service() {
                 if(!window.isServiceRunning()) {
                     window.showOverlay()
                 } else {
-                    Toast.makeText(this, "이미 실행중이에요", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, R.string.already_active, Toast.LENGTH_SHORT).show()
                 }
             } else {
                 println("debug startPermissionActivity")

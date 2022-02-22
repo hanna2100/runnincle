@@ -2,6 +2,7 @@ package com.example.runnincle.framework.datasource.cache.abstraction
 
 import androidx.compose.ui.graphics.Color
 import com.example.runnincle.framework.datasource.cache.model.PreferenceEntity
+import java.time.LocalDate
 
 interface SharedPreferencesService {
 
@@ -27,4 +28,8 @@ interface SharedPreferencesService {
     suspend fun removeSearchWord(text: String)
 
     suspend fun getCoolDownTimerColor(): Color
+
+    suspend fun getAdRemovalPeriod(): LocalDate
+
+    suspend fun saveAdRemovalPeriod(date: LocalDate)
 }

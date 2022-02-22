@@ -15,7 +15,7 @@ android {
         minSdk 23
         targetSdk 32
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -47,6 +47,25 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
+
+    flavorDimensions "versionCode"
+    productFlavors {
+        free {
+            applicationIdSuffix ".free"
+            versionCode 1
+            versionName "1.0.0"
+            buildConfigField 'boolean', 'IS_PAID', "false"
+            manifestPlaceholders = [ appLabel: "Runnincle(무료)" ]
+        }
+        paid {
+            applicationIdSuffix ".paid"
+            versionCode 1
+            versionName "1.0.0"
+            buildConfigField 'boolean', 'IS_PAID', "true"
+            manifestPlaceholders = [ appLabel: "Runnincle(무료)" ]
+        }
+    }
+
 }
 
 dependencies {
@@ -75,6 +94,8 @@ dependencies {
     implementation "io.github.vanpra.compose-material-dialogs:color:$vanpra_dialog_version"
 
     implementation "com.google.code.gson:gson:$gson_version"
+
+    implementation "com.google.android.gms:play-services-ads:$ad_mop_version"
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

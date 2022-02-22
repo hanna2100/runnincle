@@ -1,9 +1,12 @@
 package com.example.runnincle.framework.datasource.cache.model
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.ui.graphics.Color
 import com.example.runnincle.ui.theme.TimerColorPalette
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import java.time.LocalDate
 
 class PreferenceEntity {
     @SerializedName("overlaySize")
@@ -25,4 +28,9 @@ class PreferenceEntity {
     @SerializedName("searchWords")
     @Expose
     var searchWords: List<String> = listOf()
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    @SerializedName("adRemovalPeriod")
+    @Expose
+    var adRemovalPeriod: String = LocalDate.MIN.toString()
 }

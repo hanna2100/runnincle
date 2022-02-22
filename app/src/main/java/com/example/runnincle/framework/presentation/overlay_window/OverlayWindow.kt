@@ -129,7 +129,6 @@ class OverlayWindow (
             currentTimerColor = schedule[currentIndex].timerColor
             schedule.forEach { scheduleData ->
                 originalTotalWorkTime += scheduleData.time
-                println("debug totalWorkTime = $originalTotalWorkTime")
             }
         } else {
             //TODO schedule 이 비었을 경우 예외처리

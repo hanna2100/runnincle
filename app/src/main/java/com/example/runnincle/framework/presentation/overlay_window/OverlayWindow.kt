@@ -55,6 +55,9 @@ import androidx.savedstate.ViewTreeSavedStateRegistryOwner
 import com.example.runnincle.business.domain.model.Program
 import com.example.runnincle.business.domain.model.Workout
 import com.example.runnincle.ui.theme.NanumSquareFamily
+import com.example.runnincle.ui.theme.RunnincleTheme
+import com.example.runnincle.ui.theme.TimerColorPalette
+import com.example.runnincle.ui.theme.YankeesBlue
 import com.example.runnincle.util.MyLifecycleOwner
 import com.example.runnincle.util.SoundPlayer
 import com.siddroid.holi.colors.MaterialColor
@@ -72,6 +75,7 @@ enum class OverlayWindowStatus {
 
 data class ScheduleData(
     val workoutName: String,
+    val set: Int,
     val time: Int,
     val type: ScheduleType,
     val timerColor: Color,
@@ -102,12 +106,10 @@ class OverlayWindow (
 
     private var schedule: List<ScheduleData> = setSchedule(workouts, coolDownTimerColor)
     private var currentIndex = 0
-    private var originalTimeOfCurrentWork by mutableStateOf(0)
-    private var remainingTimeOfCurrentWork by mutableStateOf(0)
     private var originalTotalWorkTime = 0
+    private var currentSetIndex by mutableStateOf(1)
+    private var remainingTimeOfCurrentWork by mutableStateOf(0)
     private var progressedTotalWorkTime by mutableStateOf(0)
-
-    private var currentTimerColor = MaterialColor.GREY_200
 
     init {
         initWindowManager()
@@ -125,8 +127,6 @@ class OverlayWindow (
     private fun initVariableTimeValue() {
         if (schedule.isNotEmpty()) {
             remainingTimeOfCurrentWork = schedule[currentIndex].time
-            originalTimeOfCurrentWork = remainingTimeOfCurrentWork
-            currentTimerColor = schedule[currentIndex].timerColor
             schedule.forEach { scheduleData ->
                 originalTotalWorkTime += scheduleData.time
             }
@@ -144,7 +144,8 @@ class OverlayWindow (
                     workoutName = workout.name,
                     time = workout.work,
                     type = ScheduleType.WORK,
-                    timerColor = workout.timerColor
+                    timerColor = workout.timerColor,
+                    set = workout.set
                 )
                 schedules.add(newWorkSchedule)
                 if (workout.coolDown > 0) {
@@ -155,7 +156,8 @@ class OverlayWindow (
                         workoutName = workout.name,
                         time = workout.coolDown,
                         type = ScheduleType.COOL_DOWN,
-                        timerColor = coolDownTimerColor
+                        timerColor = coolDownTimerColor,
+                        set = workout.set
                     )
                     schedules.add(newCoolDownSchedule)
                 }
@@ -235,10 +237,9 @@ class OverlayWindow (
         composeView.setContent {
             OverlayComposeView(
                 sizeDp = overlayDp.dp,
-                workoutName = schedule[currentIndex].workoutName,
-                currentTimerColor = currentTimerColor,
+                scheduleData = schedule[currentIndex],
                 totalTimerColor = totalTimerColor,
-                originalTimeOfCurrentWork = originalTimeOfCurrentWork,
+                currentSetIndex = currentSetIndex,
                 remainingTimeOfCurrentWork = remainingTimeOfCurrentWork,
                 progressedTotalWorkTime = progressedTotalWorkTime,
                 originalTotalWorkTime = originalTotalWorkTime,
@@ -279,10 +280,19 @@ class OverlayWindow (
                     if (currentIndex < schedule.lastIndex) { // 남은 work 가 있을 경우
                         // 시작 사운드음향 재생
                         SoundPlayer.play(R.raw.start_sound)
+
+                        // set index 계산
+                        val totalSet = schedule[currentIndex].set
+                        val isNextScheduleWork = schedule[currentIndex + 1].type == ScheduleType.WORK
+                        if (currentSetIndex == totalSet && isNextScheduleWork) {
+                            currentSetIndex = 1
+                        } else if (currentSetIndex < totalSet && isNextScheduleWork) {
+                            currentSetIndex += 1
+                        }
+                        // schedule index 업데이트
                         currentIndex += 1
                         remainingTimeOfCurrentWork = schedule[currentIndex].time
-                        originalTimeOfCurrentWork = schedule[currentIndex].time
-                        currentTimerColor = schedule[currentIndex].timerColor
+
                         sendEmptyMessageDelayed(0, 1000)
                     } else { // 남은 work 가 없을 경우 (프로그램 종료)
                         SoundPlayer.play(R.raw.end_sound)
@@ -342,10 +352,9 @@ class OverlayWindow (
 @Composable
 private fun OverlayComposeView(
     sizeDp: Dp,
-    workoutName: String,
-    currentTimerColor: Color,
+    scheduleData: ScheduleData,
+    currentSetIndex: Int,
     totalTimerColor: Color,
-    originalTimeOfCurrentWork: Int,
     remainingTimeOfCurrentWork: Int,
     originalTotalWorkTime: Int,
     progressedTotalWorkTime: Int,
@@ -353,7 +362,7 @@ private fun OverlayComposeView(
     onCloseBtnClicked: ()-> Unit,
     onPlayBtnClick: (overlayStatus: OverlayWindowStatus) ->Unit
 ) {
-    val animatedCurrentTimerColor by animateColorAsState(currentTimerColor)
+    val animatedCurrentTimerColor by animateColorAsState(scheduleData.timerColor)
 
     Column(
         modifier = Modifier
@@ -388,14 +397,14 @@ private fun OverlayComposeView(
             }
             TimerCircle(
                 modifier = Modifier.align(BottomCenter),
-                workoutName = workoutName,
+                scheduleData = scheduleData,
+                currentSetIndex = currentSetIndex,
+                animatedCurrentTimerColor = animatedCurrentTimerColor,
                 remainingTimeOfCurrentWork = remainingTimeOfCurrentWork,
-                originalTimeOfCurrentWork = originalTimeOfCurrentWork,
-                remainingTotalWorkTime = progressedTotalWorkTime,
                 originalTotalWorkTime = originalTotalWorkTime,
+                progressedTotalWorkTime = progressedTotalWorkTime,
                 sizeDp = sizeDp.times(0.95f),
                 overlayStatus = overlayStatus,
-                currentTimerColor = animatedCurrentTimerColor,
                 totalTimerColor = totalTimerColor,
                 onPlayBtnClick = onPlayBtnClick
             )
@@ -407,13 +416,13 @@ private fun OverlayComposeView(
 @Composable
 fun TimerCircle(
     modifier: Modifier,
-    workoutName: String,
+    scheduleData: ScheduleData,
+    currentSetIndex: Int,
+    animatedCurrentTimerColor: Color,
     remainingTimeOfCurrentWork: Int,
-    originalTimeOfCurrentWork: Int,
-    remainingTotalWorkTime: Int,
+    progressedTotalWorkTime: Int,
     originalTotalWorkTime: Int,
     sizeDp: Dp,
-    currentTimerColor: Color,
     totalTimerColor: Color,
     overlayStatus: OverlayWindowStatus,
     onPlayBtnClick: (overlayStatus: OverlayWindowStatus)->Unit,
@@ -424,16 +433,16 @@ fun TimerCircle(
         targetValue = if (remainingTimeOfCurrentWork <= 0) {
             1f
         } else {
-            1 - remainingTimeOfCurrentWork.toFloat().div(originalTimeOfCurrentWork)
+            1 - remainingTimeOfCurrentWork.toFloat().div(scheduleData.time)
         },
         animationSpec = tween(durationMillis = 1000, easing = LinearEasing)
     )
 
     val animatedTotalWorkProgress = animateFloatAsState(
-        targetValue = if (remainingTotalWorkTime >= originalTotalWorkTime) {
+        targetValue = if (progressedTotalWorkTime >= originalTotalWorkTime) {
             1f
         } else {
-            remainingTotalWorkTime.toFloat().div(originalTotalWorkTime)
+            progressedTotalWorkTime.toFloat().div(originalTotalWorkTime)
         },
         animationSpec = tween(durationMillis = 1000, easing = LinearEasing)
     )
@@ -447,13 +456,14 @@ fun TimerCircle(
                 .size(sizeDp)
                 .align(Center)
                 .graphicsLayer {
-                    if (remainingTimeOfCurrentWork == originalTimeOfCurrentWork) {
+                    if (remainingTimeOfCurrentWork == scheduleData.time) {
                         rotationY = 180f
                     }
                 },
-            color = currentTimerColor,
+            color = animatedCurrentTimerColor,
             strokeWidth = strokeWith
         )
+
         CircularProgressIndicator(
             progress = animatedTotalWorkProgress.value,
             modifier = Modifier
@@ -462,18 +472,66 @@ fun TimerCircle(
             color = totalTimerColor,
             strokeWidth = strokeWith
         )
-        OutlineText(
+
+        Spacer(
+            modifier = Modifier
+                .size(sizeDp.times(0.72f))
+                .align(Center)
+                .clip(RoundedCornerShape(sizeDp.times(0.72f)))
+                .background(Color.Black.copy(alpha = 0.1f))
+            ,
+        )
+
+        val setTextSize = sizeDp.value.times(0.08f).dp()
+        Text(
+            text = if (overlayStatus != OverlayWindowStatus.END) {
+                "$currentSetIndex / ${scheduleData.set}"
+            } else {
+                ""
+            },
+            style = TextStyle(
+                color = Color.White,
+                fontSize = setTextSize,
+                fontFamily = NanumSquareFamily,
+                shadow = Shadow(
+                    color = Color.DarkGray,
+                    offset = Offset(0f, 0f),
+                    blurRadius = 1f
+                ),
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold
+            ),
             modifier = Modifier
                 .align(Center)
-                .alpha(if (isPaused) 0f else 1f),
-            text = if (overlayStatus == OverlayWindowStatus.END) {
-                        "END"
-                    } else {
-                        remainingTimeOfCurrentWork.toTimeClock()
-                    },
-            fontSize = sizeDp.times(0.6f).value,
-            fontWeight = FontWeight.Bold
+                .offset(y = -(sizeDp.times(0.18f)))
+                .alpha(if (isPaused) 0f else 1f)
+            ,
         )
+
+        val timeTextSize = sizeDp.value.times(0.21f).dp()
+        Text(
+            text = if (overlayStatus == OverlayWindowStatus.END) {
+                "END"
+            } else {
+                remainingTimeOfCurrentWork.toTimeClock()
+            },
+            style = TextStyle(
+                color = Color.White,
+                fontSize = timeTextSize,
+                fontFamily = NanumSquareFamily,
+                shadow = Shadow(
+                    color = Color.DarkGray,
+                    offset = Offset(0f, 0f),
+                    blurRadius = 1f
+                ),
+                fontWeight = FontWeight.Bold
+            ),
+            modifier = Modifier
+                .align(Center)
+                .alpha(if (isPaused) 0f else 1f)
+            ,
+        )
+
         IconButton(
             modifier = Modifier
                 .size(sizeDp.times(0.5f))
@@ -498,7 +556,8 @@ fun TimerCircle(
                     .size(sizeDp.times(0.45f))
                     .clip(RoundedCornerShape(sizeDp.times(0.5f)))
                     .background(
-                        brush = Brush.linearGradient(listOf(Color.Black, MaterialColor.GREY_800))
+                        brush = Brush.linearGradient(listOf(Color.Black, MaterialColor.GREY_800)),
+                        alpha = 0.3f
                     )
                 )
                 Icon (
@@ -510,9 +569,11 @@ fun TimerCircle(
                 )
             }
         }
+
         val workNameTextSize = sizeDp.value.times(0.08f).dp()
+
         Text(
-            text = if (overlayStatus != OverlayWindowStatus.END) workoutName else "",
+            text = if (overlayStatus != OverlayWindowStatus.END) scheduleData.workoutName else "",
             style = TextStyle(
                 color = Color.White,
                 fontSize = workNameTextSize,
@@ -522,6 +583,7 @@ fun TimerCircle(
                     offset = Offset(0f, 0f),
                     blurRadius = 1f
                 ),
+                fontWeight = FontWeight.Bold
             ),
             textAlign = TextAlign.Center,
             maxLines = 1,
@@ -533,61 +595,6 @@ fun TimerCircle(
                 .alpha(if (isPaused) 0f else 1f),
         )
     }
-}
-@RequiresApi(Build.VERSION_CODES.O)
-@Composable
-fun OutlineText(
-    modifier: Modifier,
-    text: String,
-    fontSize: Float,
-    fontWeight: FontWeight = FontWeight.Normal
-) {
-    val typeFace = if(fontWeight == FontWeight.Bold) {
-        LocalContext.current.resources.getFont(R.font.minsans_medium)
-    } else {
-        LocalContext.current.resources.getFont(R.font.minsans_medium)
-    }
-
-    val textPaintStroke = Paint().asFrameworkPaint().apply {
-        isAntiAlias = true
-        style = android.graphics.Paint.Style.STROKE
-        textSize = fontSize
-        textAlign = android.graphics.Paint.Align.CENTER
-        color = android.graphics.Color.BLACK
-        strokeWidth = fontSize/10
-        strokeMiter= 10f
-        strokeJoin = android.graphics.Paint.Join.ROUND
-        typeface = typeFace
-    }
-
-    val textPaint = Paint().asFrameworkPaint().apply {
-        isAntiAlias = true
-        textAlign = android.graphics.Paint.Align.CENTER
-        style = android.graphics.Paint.Style.FILL
-        textSize = fontSize
-        color = android.graphics.Color.WHITE
-        typeface = typeFace
-    }
-
-    Canvas(
-        modifier = modifier,
-        onDraw = {
-            drawIntoCanvas {
-                it.nativeCanvas.drawText(
-                    text,
-                    center.x,
-                    center.y + fontSize/3,
-                    textPaintStroke
-                )
-                it.nativeCanvas.drawText(
-                    text,
-                    center.x,
-                    center.y + fontSize/3,
-                    textPaint
-                )
-            }
-        }
-    )
 }
 
 @Composable
@@ -629,13 +636,18 @@ fun CircularProgressIndicator(
 private fun UITest() {
     OverlayComposeView(
         sizeDp =200.dp,
-        workoutName = "자전거자전거자전거",
-        currentTimerColor = Color.Blue,
-        totalTimerColor = Color.Red,
-        originalTimeOfCurrentWork = 60,
-        remainingTimeOfCurrentWork =10,
+        currentSetIndex = 1,
+        scheduleData = ScheduleData(
+            workoutName = "Runnincle",
+            time = 60,
+            type = ScheduleType.WORK,
+            timerColor = TimerColorPalette[10],
+            set = 3,
+        ),
+        totalTimerColor = TimerColorPalette[6],
+        remainingTimeOfCurrentWork = 20,
         originalTotalWorkTime = 100,
-        progressedTotalWorkTime = 90,
+        progressedTotalWorkTime = 30,
         overlayStatus = OverlayWindowStatus.PLAY,
         onCloseBtnClicked = {},
         onPlayBtnClick = {}

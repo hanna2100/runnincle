@@ -19,7 +19,7 @@ class PreferenceEntity {
 
     @SerializedName("coolDownTimerColor")
     @Expose
-    var coolDownTimerColor: Color = TimerColorPalette.last()
+    var coolDownTimerColor: Color = TimerColorPalette[TimerColorPalette.lastIndex - 1]
 
     @SerializedName("isTTSUsed")
     @Expose

@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/programListFragment"
-        android:name="com.example.runnincle.framework.presentation.program_list.ProgramListFragment"
+        android:name="com.devhanna91.runnincle.framework.presentation.program_list.ProgramListFragment"
         android:label="WorkoutListFragment">
         <action
             android:id="@+id/action_programListFragment_to_createProgramFragment"
@@ -17,7 +17,7 @@
 
     <fragment
         android:id="@+id/createProgramFragment"
-        android:name="com.example.runnincle.framework.presentation.create_program.CreateProgramFragment"
+        android:name="com.devhanna91.runnincle.framework.presentation.create_program.CreateProgramFragment"
         android:label="CreateWorkoutFragment">
         <action
             android:id="@+id/action_createProgramFragment_to_programListFragment"
@@ -26,11 +26,11 @@
             app:exitAnim="@anim/slide_out_left"/>
         <argument
             android:name="program"
-            app:argType="com.example.runnincle.business.domain.model.Program"
+            app:argType="com.devhanna91.runnincle.business.domain.model.Program"
             app:nullable="true" />
         <argument
             android:name="workouts"
-            app:argType="com.example.runnincle.business.domain.model.ParcelableWorkout[]"
+            app:argType="com.devhanna91.runnincle.business.domain.model.ParcelableWorkout[]"
             app:nullable="true" />
     </fragment>
 

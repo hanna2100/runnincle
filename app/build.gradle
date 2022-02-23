@@ -11,7 +11,7 @@ android {
     compileSdk 32
 
     defaultConfig {
-        applicationId "com.example.runnincle"
+        applicationId 'com.devhanna91.runnincle'
         minSdk 23
         targetSdk 32
         versionCode 1
@@ -55,14 +55,14 @@ android {
             versionCode 1
             versionName "1.0.0"
             buildConfigField 'boolean', 'IS_PAID', "false"
-            manifestPlaceholders = [ appLabel: "Runnincle(무료)" ]
+            manifestPlaceholders = [ appLabel: "@string/app_label_free" ]
         }
         paid {
             applicationIdSuffix ".paid"
             versionCode 1
             versionName "1.0.0"
             buildConfigField 'boolean', 'IS_PAID', "true"
-            manifestPlaceholders = [ appLabel: "Runnincle(무료)" ]
+            manifestPlaceholders = [ appLabel: "@string/app_label_paid" ]
         }
     }
 

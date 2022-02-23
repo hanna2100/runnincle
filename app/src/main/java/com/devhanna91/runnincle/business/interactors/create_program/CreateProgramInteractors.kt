@@ -1,0 +1,54 @@
+package com.devhanna91.runnincle.business.interactors.create_program
+
+import com.devhanna91.runnincle.business.data.cache.abstraction.ProgramCacheDataSource
+import com.devhanna91.runnincle.business.data.cache.abstraction.WorkoutCacheDataSource
+import com.devhanna91.runnincle.business.data.util.getRandomUUID
+import com.devhanna91.runnincle.business.domain.model.Program
+import com.devhanna91.runnincle.business.domain.model.Workout
+import com.devhanna91.runnincle.business.domain.util.DateUtil
+
+// use cases 정의
+class CreateProgramInteractors(
+    private val programCacheDataSource: ProgramCacheDataSource,
+    private val workoutCacheDataSource: WorkoutCacheDataSource,
+    private val dateUtil: DateUtil
+) {
+    suspend fun insertNewProgram (
+        name: String,
+        workouts: List<Workout>
+    ): Long {
+
+        val programId = getRandomUUID()
+
+        val program = Program(
+            id = programId,
+            name = name,
+            updatedAt = dateUtil.getCurrentTimestamp()
+        )
+
+        for(i in 0..workouts.lastIndex) {
+            val workoutId = getRandomUUID()
+            val w = workouts[i].copy(
+                id = workoutId,
+                programId = programId,
+                order = i
+            )
+            workoutCacheDataSource.insertWorkout(w)
+        }
+
+        return programCacheDataSource.insertProgram(program)
+    }
+
+    suspend fun updateProgram(
+        programId: String,
+        name: String,
+        workouts: List<Workout>
+    ) {
+        // 원래 프로그램 지우기
+        programCacheDataSource.deleteProgram(programId)
+        workoutCacheDataSource.deleteWorkoutsWithProgramId(programId)
+
+        // 수정된 프로그램 추가
+        insertNewProgram(name, workouts)
+    }
+}

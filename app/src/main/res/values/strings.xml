@@ -1,5 +1,7 @@
 <resources>
-    <string name="app_name">runnincle</string>
+    <string name="app_name">러닝클</string>
+    <string name="app_label_free">러닝클 LITE</string>
+    <string name="app_label_paid">러닝클</string>
     <string name="notification_channel_id">runnincle_channel</string>
     <string name="admop_interstitial_unit_id">ca-app-pub-3940256099942544/1033173712</string>
     <string name="admop_rewarded_unit_id">ca-app-pub-3940256099942544/5224354917</string>

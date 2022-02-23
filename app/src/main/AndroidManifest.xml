@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.runnincle">
+    package="com.devhanna91.runnincle">
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <application
-        android:name=".framework.presentation.BaseApplication"
+        android:name="com.devhanna91.runnincle.framework.presentation.BaseApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="${appLabel}"
@@ -15,11 +15,11 @@
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-2332326582125862~2997067966"/>
         <service
-            android:name="com.example.runnincle.util.FloatingService"
+            android:name="com.devhanna91.runnincle.util.FloatingService"
             android:enabled="true">
         </service>
         <activity
-            android:name="com.example.runnincle.framework.presentation.MainActivity"
+            android:name="com.devhanna91.runnincle.framework.presentation.MainActivity"
             android:exported="true"
             android:label="@string/app_name">
             <intent-filter>
@@ -28,7 +28,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.example.runnincle.framework.presentation.PermissionActivity" />
+        <activity android:name="com.devhanna91.runnincle.framework.presentation.PermissionActivity" />
     </application>
 
 </manifest>

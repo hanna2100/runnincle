@@ -1,5 +1,7 @@
 package com.devhanna91.runnincle.framework.presentation.program_list
 
+import android.content.Intent
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -15,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -26,6 +29,7 @@ import com.devhanna91.runnincle.business.domain.model.Program
 import com.devhanna91.runnincle.business.domain.model.Workout
 import com.devhanna91.runnincle.business.domain.model.Workout.Companion.toParcelableWorkout
 import com.devhanna91.runnincle.drawOverOtherAppsEnabled
+import com.devhanna91.runnincle.framework.datasource.cache.model.Language
 import com.devhanna91.runnincle.framework.presentation.program_list.composable.AdRemoveDialog
 import com.devhanna91.runnincle.framework.presentation.program_list.composable.ProgramListWithSearchBar
 import com.devhanna91.runnincle.framework.presentation.program_list.composable.SettingModalBottomSheet
@@ -37,7 +41,10 @@ import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
+import com.vanpra.composematerialdialogs.MaterialDialog
+import com.vanpra.composematerialdialogs.message
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
+import com.vanpra.composematerialdialogs.title
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -68,23 +75,27 @@ class ProgramListFragment: Fragment() {
         val isTTSUsed = viewModel.isTTSUsed
         val searchChipList = viewModel.searchChipList
         var programToBeDeleted = viewModel.programToBeDeleted
+        var language = viewModel.language
+        // SettingModalBottomSheet 의 defaultLanguage 에 viewModel.language 를 넣었더니 dropDownBox 선택시 텍스트가 바뀌지 않는 버그가있어 별도의 변수룰 만듦
+        var defaultLanguage: Language = Language.EN
 
         viewModel.launch {
             viewModel.setMapOfProgram()
             viewModel.setSavedSearchWords()
             viewModel.getSettingValue()
+            defaultLanguage = viewModel.getLanguage()
         }
 
         initializeAdMop()
         loadInterstitialAd()
         loadRewardedAd()
-
         return ComposeView(requireContext()).apply {
             setContent {
                 RunnincleTheme(darkSystemBar = true) {
                     val scope = rememberCoroutineScope()
                     val modalBottomSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
                     val adRemoveDialogState = rememberMaterialDialogState()
+                    val restartDialogState = rememberMaterialDialogState()
                     val deleteProgramDialogState = rememberMaterialDialogState()
 
                     setOnBackPressedCallback(scope, modalBottomSheetState)
@@ -96,17 +107,28 @@ class ProgramListFragment: Fragment() {
                         sheetState = modalBottomSheetState,
                         sheetShape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp),
                         sheetContent = {
+
+
                             SettingModalBottomSheet(
                                 overlaySize = viewModel.overlaySize,
                                 totalTimerColor = totalTimerColor,
                                 coolDownTimerColor = coolDownTimerColor,
                                 isTtsUsed = isTTSUsed,
+                                defaultLanguage = defaultLanguage,
+                                onLanguageSelected = {
+                                    language.value = it
+                                },
                                 onAdRemoveClick = {
                                     adRemoveDialogState.show()
                                 },
                                 onSaveClick = {
                                     scope.launch {
-                                        viewModel.saveSettingProperty()
+                                        if(viewModel.isLanguageChanged()) {
+                                            restartDialogState.show()
+                                            viewModel.saveSettingProperty()
+                                        } else {
+                                            viewModel.saveSettingProperty()
+                                        }
                                         modalBottomSheetState.hide()
                                     }
                                 }
@@ -208,6 +230,27 @@ class ProgramListFragment: Fragment() {
 
                         }
                     )
+                    MaterialDialog(
+                        dialogState = restartDialogState,
+                        buttons = {
+                            positiveButton(
+                                text = stringResource(id = R.string.confirm),
+                                onClick = {
+                                    restartDialogState.hide()
+                                    restartApp(language.value)
+                                }
+                            )
+                            negativeButton(
+                                text = stringResource(id = R.string.cancel),
+                                onClick = {
+                                    restartDialogState.hide()
+                                }
+                            )
+                        }
+                    ) {
+                        title(stringResource(id = R.string.restart_app))
+                        message(res = R.string.restart_app_description)
+                    }
                 }
             }
         }
@@ -377,6 +420,22 @@ class ProgramListFragment: Fragment() {
                 }
             }
         }
+    }
+
+
+    private fun restartApp(language: Language) {
+        val config = Configuration()
+        config.locale = language.locale
+        resources.updateConfiguration(config, resources.displayMetrics)
+
+        activity?.let {
+            val intent = it.packageManager.getLaunchIntentForPackage(it.packageName)!!
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            it.finish()
+            startActivity(intent)
+        }
+
     }
 }
 

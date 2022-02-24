@@ -5,6 +5,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.ui.graphics.Color
 import com.devhanna91.runnincle.framework.datasource.cache.abstraction.GsonSharedPreferenceService
 import com.devhanna91.runnincle.framework.datasource.cache.abstraction.SharedPreferencesService
+import com.devhanna91.runnincle.framework.datasource.cache.model.Language
 import com.devhanna91.runnincle.framework.datasource.cache.model.PreferenceEntity
 import java.time.LocalDate
 
@@ -42,13 +43,15 @@ class SharedPreferencesServiceImpl(
         overlaySize: Int,
         totalTimerColor: Color,
         coolDownTimerColor: Color,
-        isTTSUsed: Boolean
+        isTTSUsed: Boolean,
+        language: Language
     ) {
         val sharedPreferenceEntity = getPreferenceEntity()
         sharedPreferenceEntity.overlaySize = overlaySize
         sharedPreferenceEntity.totalTimerColor = totalTimerColor
         sharedPreferenceEntity.coolDownTimerColor = coolDownTimerColor
         sharedPreferenceEntity.isTTSUsed = isTTSUsed
+        sharedPreferenceEntity.language = language
 
         gsonSharedPreferenceService.saveObject(sharedPreferenceEntity)
     }
@@ -87,6 +90,28 @@ class SharedPreferencesServiceImpl(
         val sharedPreferenceEntity = getPreferenceEntity()
         sharedPreferenceEntity.adRemovalPeriod = date.toString()
         gsonSharedPreferenceService.saveObject(sharedPreferenceEntity)
+    }
+
+    override suspend fun isFirstRun(): Boolean {
+        val sharedPreferenceEntity = getPreferenceEntity()
+        return sharedPreferenceEntity.isFirstRun
+    }
+
+    override suspend fun setFirstRunFalse() {
+        val sharedPreferenceEntity = getPreferenceEntity()
+        sharedPreferenceEntity.isFirstRun = false
+        gsonSharedPreferenceService.saveObject(sharedPreferenceEntity)
+    }
+
+    override suspend fun saveLanguage(language: Language) {
+        val sharedPreferenceEntity = getPreferenceEntity()
+        sharedPreferenceEntity.language = language
+        gsonSharedPreferenceService.saveObject(sharedPreferenceEntity)
+    }
+
+    override suspend fun getLanguage(): Language {
+        val sharedPreferenceEntity = getPreferenceEntity()
+        return sharedPreferenceEntity.language
     }
 
 }

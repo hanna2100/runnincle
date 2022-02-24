@@ -49,5 +49,8 @@
     <string name="cool_down_timer_color">타이머 쿨다운 색상</string>
     <string name="is_used_tts">TTS 사용여부</string>
     <string name="already_active">이미 실행중이에요</string>
+    <string name="language">언어</string>
+    <string name="restart_app">앱 다시시작</string>
+    <string name="restart_app_description">언어설정이 변경되어 앱을 다시 시작해야 합니다.\n재실행 하시겠습니까?</string>
 
 </resources>

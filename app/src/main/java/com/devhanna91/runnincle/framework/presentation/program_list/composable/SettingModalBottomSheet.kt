@@ -1,23 +1,26 @@
 package com.devhanna91.runnincle.framework.presentation.program_list.composable
 
+import androidx.compose.animation.defaultDecayAnimationSpec
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.ripple.LocalRippleTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.devhanna91.runnincle.R
+import com.devhanna91.runnincle.framework.datasource.cache.model.Language
 import com.devhanna91.runnincle.framework.presentation.composable.CustomMaterialDialog
 import com.devhanna91.runnincle.framework.presentation.create_program.composable.LastCoolDownSkipOptionField
 import com.devhanna91.runnincle.framework.presentation.create_program.composable.NumberPickerOutlineTextField
@@ -33,6 +36,8 @@ fun SettingModalBottomSheet(
     totalTimerColor: MutableState<Color>,
     coolDownTimerColor: MutableState<Color>,
     isTtsUsed: MutableState<Boolean>,
+    defaultLanguage: Language,
+    onLanguageSelected: (Language) -> Unit,
     onAdRemoveClick: ()->Unit,
     onSaveClick: ()->Unit
 ) {
@@ -61,6 +66,11 @@ fun SettingModalBottomSheet(
         TimerColorPickerField(
             leadingText = stringResource(id = R.string.cool_down_timer_color),
             timerColor = coolDownTimerColor,
+        )
+        LanguagePickerField(
+            leadingText = stringResource(id = R.string.language),
+            defaultLanguage = defaultLanguage,
+            onLanguageSelected = onLanguageSelected,
         )
 //        LastCoolDownSkipOptionField(
 //            leadingText = stringResource(id = R.string.is_used_tts),
@@ -113,6 +123,75 @@ fun BottomSheetButton(
             )
         }
     }
+}
+
+
+@Composable
+fun LanguagePickerField(
+    leadingText: String,
+    defaultLanguage: Language,
+    onLanguageSelected: (Language) -> Unit,
+) {
+    val focusRequester = FocusRequester()
+    var expanded by remember { mutableStateOf(false) }
+    var selectedLanguage = remember { defaultLanguage }
+    val suggestions = listOf(Language.KO, Language.EN)
+    OutlinedTextField(
+        modifier = Modifier
+            .focusRequester(focusRequester)
+            .onFocusEvent {
+                if (it.hasFocus) {
+                    expanded = true
+                }
+            }
+            .fillMaxWidth()
+            .padding(bottom = 15.dp),
+        leadingIcon = {
+            Text(
+                modifier = Modifier.padding(start = 20.dp),
+                text = leadingText,
+                color = MaterialTheme.colors.onSecondary,
+            )
+        },
+        trailingIcon = {
+            Column(modifier = Modifier.padding(end = 20.dp)) {
+                Button(
+                    onClick = { expanded = !expanded },
+                ){
+                    Text (selectedLanguage.value)
+                }
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false },
+                ) {
+                    suggestions.forEach { language ->
+                        DropdownMenuItem(onClick = {
+                            expanded = false
+                            selectedLanguage = language
+                            onLanguageSelected(language)
+                        }) {
+                            Text(text = language.value)
+                        }
+                    }
+                }
+            }
+        },
+        value = "",
+        onValueChange = { },
+        colors = TextFieldDefaults.textFieldColors(
+            textColor = MaterialTheme.colors.onPrimary,
+            disabledTextColor = MaterialTheme.colors.onSecondary,
+            backgroundColor = Color.Transparent,
+            cursorColor =  Color.Transparent,
+            errorCursorColor =  MaterialTheme.colors.onPrimary,
+            focusedIndicatorColor = MaterialTheme.colors.onPrimary,
+            unfocusedIndicatorColor = MaterialTheme.colors.onSecondary,
+        ),
+        shape = RoundedCornerShape(20.dp),
+        textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
+        singleLine = true,
+        readOnly = true
+    )
 }
 
 @Composable

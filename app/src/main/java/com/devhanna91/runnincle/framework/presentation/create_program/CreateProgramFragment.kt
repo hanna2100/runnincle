@@ -53,7 +53,7 @@ class CreateProgramFragment: Fragment() {
 
         val workouts = viewModel.workouts.value
         val programName = viewModel.programName
-
+        programName.value = this.getString(R.string.enter_name)
         val name = viewModel.name
         val workMin = viewModel.workMin
         val workSec = viewModel.workSec

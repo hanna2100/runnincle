@@ -8,6 +8,7 @@ import com.devhanna91.runnincle.business.data.cache.implementation.WorkoutCacheD
 import com.devhanna91.runnincle.business.domain.util.DateUtil
 import com.devhanna91.runnincle.business.domain.util.ResourcesProvider
 import com.devhanna91.runnincle.business.domain.util.ResourcesProviderImpl
+import com.devhanna91.runnincle.business.interactors.MainActivityInteractors
 import com.devhanna91.runnincle.business.interactors.create_program.CreateProgramInteractors
 import com.devhanna91.runnincle.business.interactors.program_list.ProgramListInteractors
 import com.devhanna91.runnincle.framework.datasource.cache.abstraction.GsonSharedPreferenceService
@@ -87,6 +88,14 @@ object AppModule {
         sharedPreferencesService: SharedPreferencesService
     ): ProgramListInteractors {
         return ProgramListInteractors (programCacheDataSource, workoutCacheDataSource, sharedPreferencesService)
+    }
+
+    @Singleton
+    @Provides
+    fun provideMainActivityInteractors(
+        sharedPreferencesService: SharedPreferencesService
+    ): MainActivityInteractors {
+        return MainActivityInteractors (sharedPreferencesService)
     }
 
     @Singleton

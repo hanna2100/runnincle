@@ -6,6 +6,7 @@ import com.devhanna91.runnincle.business.data.cache.abstraction.WorkoutCacheData
 import com.devhanna91.runnincle.business.domain.model.Program
 import com.devhanna91.runnincle.business.domain.model.Workout
 import com.devhanna91.runnincle.framework.datasource.cache.abstraction.SharedPreferencesService
+import com.devhanna91.runnincle.framework.datasource.cache.model.Language
 import java.time.LocalDate
 
 class ProgramListInteractors (
@@ -51,9 +52,16 @@ class ProgramListInteractors (
         overlaySize: Int,
         totalTimerColor: Color,
         coolDownTimerColor: Color,
-        isTTSUsed: Boolean
+        isTTSUsed: Boolean,
+        language: Language
     ) {
-        sharedPreferencesService.saveSettingProperty(overlaySize, totalTimerColor, coolDownTimerColor, isTTSUsed)
+        sharedPreferencesService.saveSettingProperty(
+            overlaySize,
+            totalTimerColor,
+            coolDownTimerColor,
+            isTTSUsed,
+            language
+        )
     }
 
     suspend fun saveSearchWord(text: String) {
@@ -76,4 +84,7 @@ class ProgramListInteractors (
         return sharedPreferencesService.getAdRemovalPeriod()
     }
 
+    suspend fun getLanguage():Language {
+        return sharedPreferencesService.getLanguage()
+    }
 }

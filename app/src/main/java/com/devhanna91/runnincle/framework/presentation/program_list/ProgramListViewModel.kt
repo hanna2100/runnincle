@@ -11,6 +11,7 @@ import com.devhanna91.runnincle.business.domain.model.Program
 import com.devhanna91.runnincle.business.domain.model.Workout
 import com.devhanna91.runnincle.business.domain.model.Workout.Companion.toParcelableWorkout
 import com.devhanna91.runnincle.business.interactors.program_list.ProgramListInteractors
+import com.devhanna91.runnincle.framework.datasource.cache.model.Language
 import com.devhanna91.runnincle.ui.theme.TimerColorPalette
 import com.devhanna91.runnincle.util.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -37,6 +38,7 @@ constructor(
     var totalTimerColor = mutableStateOf(TimerColorPalette.last())
     var coolDownTimerColor = mutableStateOf(TimerColorPalette.last())
     var isTTSUsed = mutableStateOf(false)
+    var language = mutableStateOf(Language.EN)
     var searchChipList = mutableStateOf(mutableListOf<String>())
 
     fun setMapOfProgram() {
@@ -102,6 +104,7 @@ constructor(
         totalTimerColor.value = programListInteractors.getTotalTimerColor()
         coolDownTimerColor.value = programListInteractors.getCoolDownTimerColor()
         isTTSUsed.value = programListInteractors.isTTSUsed()
+        language.value = programListInteractors.getLanguage()
     }
 
     fun setSavedSearchWords() {
@@ -112,12 +115,19 @@ constructor(
         }
     }
 
+    suspend fun isLanguageChanged():Boolean {
+        val changedLanguage = language.value
+        val originLanguage = programListInteractors.getLanguage()
+        return !changedLanguage.equals(originLanguage)
+    }
+
     suspend fun saveSettingProperty() {
         programListInteractors.saveSettingProperty(
             overlaySize.value,
             totalTimerColor.value,
             coolDownTimerColor.value,
-            isTTSUsed.value
+            isTTSUsed.value,
+            language.value
         )
     }
 
@@ -136,5 +146,9 @@ constructor(
 
     suspend fun getAdRemovalPeriod(): LocalDate {
         return programListInteractors.getAdRemovalPeriod()
+    }
+
+    suspend fun getLanguage():Language {
+        return programListInteractors.getLanguage()
     }
 }

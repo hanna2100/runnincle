@@ -33,4 +33,12 @@ class PreferenceEntity {
     @SerializedName("adRemovalPeriod")
     @Expose
     var adRemovalPeriod: String = LocalDate.MIN.toString()
+
+    @SerializedName("language")
+    @Expose
+    var language: Language = Language.EN
+
+    @SerializedName("isFirstRun")
+    @Expose
+    var isFirstRun: Boolean = true
 }

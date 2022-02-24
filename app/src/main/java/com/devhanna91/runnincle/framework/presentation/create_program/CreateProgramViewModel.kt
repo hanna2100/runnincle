@@ -40,7 +40,7 @@ constructor(
 
     val workouts = mutableStateOf<MutableList<Workout>>(mutableListOf())
 
-    val programName = mutableStateOf(resourcesProvider.getString(R.string.enter_name))
+    val programName = mutableStateOf("")
     val isShowingEditProgramNameDialog = mutableStateOf(false)
 
     val errorStatus = MutableLiveData<CreateProgramErrorStatus?>()

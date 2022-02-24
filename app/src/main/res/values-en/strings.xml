@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Runnincle</string>
+    <string name="app_label_free">Runnincle LITE</string>
+    <string name="app_label_paid">Runnincle</string>
+    <string name="notification_channel_id">runnincle_channel</string>
+    <string name="admop_interstitial_unit_id">ca-app-pub-3940256099942544/1033173712</string>
+    <string name="admop_rewarded_unit_id">ca-app-pub-3940256099942544/5224354917</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+    <string name="permission_error_title">Permission denied</string>
+    <string name="permission_error_text">Without the permission the app is unable to float timer.</string>
+    <string name="permission_required_title">Need Permission</string>
+    <string name="permission_required_text">Please activate \'Draw over other app\' to use the timer.</string>
+    <string name="permission_required_open">Allow Access</string>
+    <string name="add_new_workout">Create a new timer</string>
+    <string name="edit_workout">Edit timer</string>
+    <string name="minutes">min</string>
+    <string name="seconds">sec</string>
+    <string name="work">work</string>
+    <string name="cool_down">cool down</string>
+    <string name="save">Save</string>
+    <string name="edit">Edit</string>
+    <string name="enter_number_to_work_time">Work time field must be number.</string>
+    <string name="set_must_be_at_least_1">Set field must be at least 1.</string>
+    <string name="work_time_must_be_at_least_1">Work time must be at least 1sec.</string>
+    <string name="enter_name">Enter timer name</string>
+    <string name="program_name">Timer name</string>
+    <string name="name">Name</string>
+    <string name="work_time">Work</string>
+    <string name="cool_down_time">Cool down (rest)</string>
+    <string name="skip_last_cool_down">Skip last cool down (rest)</string>
+    <string name="set">Set</string>
+    <string name="pick_color">Select a color</string>
+    <string name="timer_color">Timer color</string>
+    <string name="delete">Delete</string>
+    <string name="program_name_must_be_entered">Please enter the timer name.</string>
+    <string name="workout_must_be_exist">Press the + button at the bottom to set workouts.</string>
+    <string name="enter_with_scrolling">Scroll to enter numbers</string>
+    <string name="no_search_result">No matching search results</string>
+    <string name="delete_timer">Delete timer</string>
+    <string name="delete_timer_confirm">Do you really want to delete the %1s?</string>
+    <string name="remove_ad">Remove Ads</string>
+    <string name="remove_ad_for_3days">Watch an ad remove ads for 3 days</string>
+    <string name="remove_ad_forever">Remove Ads forever for $3</string>
+    <string name="timer_size">Timer size</string>
+    <string name="total_timer_color">Timer color of total progress</string>
+    <string name="cool_down_timer_color">Timer color of cool down(rest)</string>
+    <string name="is_used_tts">Use TTS</string>
+    <string name="already_active">Timer\'s already being executed.</string>
+    <string name="language">Language</string>
+    <string name="restart_app">Restart App</string>
+    <string name="restart_app_description">You need to restart the app for the changes to language.\nWould you like to do it now?</string>
+
+</resources>

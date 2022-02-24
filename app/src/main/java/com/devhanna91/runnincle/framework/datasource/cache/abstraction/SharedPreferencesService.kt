@@ -1,6 +1,7 @@
 package com.devhanna91.runnincle.framework.datasource.cache.abstraction
 
 import androidx.compose.ui.graphics.Color
+import com.devhanna91.runnincle.framework.datasource.cache.model.Language
 import com.devhanna91.runnincle.framework.datasource.cache.model.PreferenceEntity
 import java.time.LocalDate
 
@@ -20,7 +21,8 @@ interface SharedPreferencesService {
         overlaySize: Int,
         totalTimerColor: Color,
         coolDownTimerColor: Color,
-        isTTSUsed: Boolean
+        isTTSUsed: Boolean,
+        language: Language
     )
 
     suspend fun saveSearchWord(text: String)
@@ -32,4 +34,12 @@ interface SharedPreferencesService {
     suspend fun getAdRemovalPeriod(): LocalDate
 
     suspend fun saveAdRemovalPeriod(date: LocalDate)
+
+    suspend fun isFirstRun(): Boolean
+
+    suspend fun setFirstRunFalse()
+
+    suspend fun saveLanguage(language: Language)
+
+    suspend fun getLanguage(): Language
 }

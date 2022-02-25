@@ -36,10 +36,6 @@ constructor(
         )
     }
 
-    override suspend fun deleteWorkout(id: Int): Int {
-        TODO("Not yet implemented")
-    }
-
     override suspend fun getWorkoutsOfProgram(programId: String): List<Workout> {
         val entityWorkouts = workoutDao.getWorkoutsOfProgram(programId)
         val domainWorkouts = mutableListOf<Workout>()

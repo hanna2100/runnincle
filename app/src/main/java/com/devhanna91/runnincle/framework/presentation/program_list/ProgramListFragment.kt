@@ -1,7 +1,5 @@
 package com.devhanna91.runnincle.framework.presentation.program_list
 
-import android.content.Intent
-import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -56,6 +54,8 @@ class ProgramListFragment: Fragment() {
     private var mInterstitialAd: InterstitialAd? = null
     private var mRewardedAd: RewardedAd? = null
     private var mAdIsLoading = false
+    private var mInterstitialAdErrorCode = ""
+    private var mRewardedAdErrorCode = ""
     private var overlayWindowDp: Int = 100
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -336,11 +336,12 @@ class ProgramListFragment: Fragment() {
                 override fun onAdShowedFullScreenContent() {
                 }
             }
-            println("debug showInterstitial")
             mInterstitialAd?.show(activity)
         } else {
-            println("debug mInterstitialAd is null")
-
+            // 광고를 로드하지 못한 경우. 그냥 타이머 실행.
+            val message = getString(R.string.admop_error, mInterstitialAdErrorCode)
+            context?.showToastMessage(message)
+            onAdDismissed()
         }
     }
 
@@ -356,7 +357,7 @@ class ProgramListFragment: Fragment() {
                 it, it.getString(R.string.admop_interstitial_unit_id), adRequest,
                 object : InterstitialAdLoadCallback() {
                     override fun onAdFailedToLoad(adError: LoadAdError) {
-                        println("debug loadInterstitialAd onAdFailedToLoad: ${adError.message}")
+                        mInterstitialAdErrorCode = adError.code.toString()
                         mAdIsLoading = false
                         mInterstitialAd = null
                     }
@@ -378,7 +379,7 @@ class ProgramListFragment: Fragment() {
                     object : RewardedAdLoadCallback() {
                         override fun onAdFailedToLoad(adError: LoadAdError) {
                             mRewardedAd = null
-                            println("debug loadRewardedAd onAdFailedToLoad: ${adError.message}")
+                            mRewardedAdErrorCode = adError.code.toString()
 
                         }
 
@@ -415,6 +416,10 @@ class ProgramListFragment: Fragment() {
                     viewModel.saveAdRemovalPeriod(LocalDate.now().plusDays(2))
                 }
             }
+        } else {
+            // 광고를 로드하지 못한경우
+            val message = getString(R.string.admop_error, mRewardedAdErrorCode)
+            context?.showToastMessage(message)
         }
     }
 }

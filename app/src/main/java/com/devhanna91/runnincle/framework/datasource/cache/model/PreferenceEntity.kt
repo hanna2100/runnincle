@@ -3,6 +3,7 @@ package com.devhanna91.runnincle.framework.datasource.cache.model
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.ui.graphics.Color
+import com.devhanna91.runnincle.BuildConfig
 import com.devhanna91.runnincle.ui.theme.TimerColorPalette
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
@@ -32,7 +33,7 @@ class PreferenceEntity {
     @RequiresApi(Build.VERSION_CODES.O)
     @SerializedName("adRemovalPeriod")
     @Expose
-    var adRemovalPeriod: String = LocalDate.MIN.toString()
+    var adRemovalPeriod: String = if (BuildConfig.IS_PAID) LocalDate.MAX.toString() else LocalDate.MIN.toString()
 
     @SerializedName("language")
     @Expose

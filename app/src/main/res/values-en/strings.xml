@@ -51,5 +51,6 @@
     <string name="language">Language</string>
     <string name="restart_app">Restart App</string>
     <string name="restart_app_description">You need to restart the app for the changes to language.\nWould you like to do it now?</string>
+    <string name="admop_error">[error: %1s]\nAd failed to load.</string>
 
 </resources>

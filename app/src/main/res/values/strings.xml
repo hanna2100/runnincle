@@ -52,5 +52,5 @@
     <string name="language">언어</string>
     <string name="restart_app">앱 다시시작</string>
     <string name="restart_app_description">언어설정이 변경되어 앱을 다시 시작해야 합니다.\n재실행 하시겠습니까?</string>
-
+    <string name="admop_error">[error: %1s]\n광고를 불러오는 데 실패했습니다.</string>
 </resources>

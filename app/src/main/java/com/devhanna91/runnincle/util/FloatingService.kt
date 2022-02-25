@@ -71,7 +71,6 @@ class FloatingService: Service() {
                     || coolDownTimerColor == null
                 ) {
                     stopService()
-                    //TODO 예외처리
                     return START_STICKY
                 }
 

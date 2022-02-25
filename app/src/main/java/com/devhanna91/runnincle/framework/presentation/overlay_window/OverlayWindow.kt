@@ -130,8 +130,6 @@ class OverlayWindow (
             schedule.forEach { scheduleData ->
                 originalTotalWorkTime += scheduleData.time
             }
-        } else {
-            //TODO schedule 이 비었을 경우 예외처리
         }
     }
 

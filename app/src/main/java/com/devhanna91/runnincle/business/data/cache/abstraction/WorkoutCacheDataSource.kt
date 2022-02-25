@@ -14,8 +14,6 @@ interface WorkoutCacheDataSource {
         order: Int
     ): Int
 
-    suspend fun deleteWorkout(id: Int): Int
-
     suspend fun getWorkoutsOfProgram(programId: String): List<Workout>
 
     suspend fun deleteWorkoutsWithProgramId(programId: String): Int

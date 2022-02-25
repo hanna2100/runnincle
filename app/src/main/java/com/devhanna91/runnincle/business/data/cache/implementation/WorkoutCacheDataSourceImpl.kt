@@ -27,10 +27,6 @@ constructor (
         return workoutDaoService.updateWorkout(id, name, set, work, rest, order)
     }
 
-    override suspend fun deleteWorkout(id: Int): Int {
-        return workoutDaoService.deleteWorkout(id)
-    }
-
     override suspend fun getWorkoutsOfProgram(programId: String): List<Workout> {
         return workoutDaoService.getWorkoutsOfProgram(programId)
     }

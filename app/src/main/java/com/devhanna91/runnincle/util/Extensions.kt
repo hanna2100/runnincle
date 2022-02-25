@@ -79,6 +79,10 @@ fun Context.startPermissionActivity() {
     startActivity(PermissionActivity::class)
 }
 
+fun Context.startMainActivity() {
+    startActivity(MainActivity::class)
+}
+
 fun Context.startActivity(kclass: KClass<out Activity>) {
     startActivity(
         Intent(this, kclass.java).apply {

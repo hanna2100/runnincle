@@ -231,7 +231,6 @@ class ProgramListFragment: Fragment() {
                             positiveButton(
                                 text = stringResource(id = R.string.confirm),
                                 onClick = {
-                                    restartDialogState.hide()
                                     activity?.restartApp()
                                 }
                             )

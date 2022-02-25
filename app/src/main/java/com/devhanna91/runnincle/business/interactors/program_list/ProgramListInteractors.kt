@@ -87,4 +87,8 @@ class ProgramListInteractors (
     suspend fun getLanguage():Language {
         return sharedPreferencesService.getLanguage()
     }
+
+    suspend fun updateUpdatedAtFieldToUpToDate(program: Program) {
+        programCacheDataSource.updateUpdatedAtFieldToUpToDate(program)
+    }
 }

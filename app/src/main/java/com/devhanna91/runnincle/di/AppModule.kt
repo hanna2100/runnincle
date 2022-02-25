@@ -101,9 +101,10 @@ object AppModule {
     @Singleton
     @Provides
     fun provideProgramCacheDataSource(
-        programDaoService: ProgramDaoService
+        programDaoService: ProgramDaoService,
+        dateUtil: DateUtil
     ): ProgramCacheDataSource {
-        return ProgramCacheDataSourceImpl(programDaoService)
+        return ProgramCacheDataSourceImpl(programDaoService,dateUtil)
     }
 
     @Singleton

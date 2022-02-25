@@ -3,6 +3,7 @@ package com.devhanna91.runnincle.business.data.cache.implementation
 import com.devhanna91.runnincle.business.data.cache.abstraction.ProgramCacheDataSource
 import com.devhanna91.runnincle.framework.datasource.cache.abstraction.ProgramDaoService
 import com.devhanna91.runnincle.business.domain.model.Program
+import com.devhanna91.runnincle.business.domain.util.DateUtil
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -10,7 +11,8 @@ import javax.inject.Singleton
 class ProgramCacheDataSourceImpl
 @Inject
 constructor(
-    private val programDaoService: ProgramDaoService
+    private val programDaoService: ProgramDaoService,
+    private val dateUtil: DateUtil
 ): ProgramCacheDataSource {
     override suspend fun insertProgram(program: Program): Long {
         return programDaoService.insertProgram(program)
@@ -34,6 +36,14 @@ constructor(
 
     override suspend fun searchProgram(searchText: String): List<Program> {
         return programDaoService.searchProgram(searchText)
+    }
+
+    override suspend fun updateUpdatedAtFieldToUpToDate(program: Program) {
+        programDaoService.updateProgram(
+            id = program.id,
+            name = program.name,
+            updateAt = dateUtil.getCurrentTimestamp()
+        )
     }
 
 }

@@ -277,6 +277,8 @@ class ProgramListFragment: Fragment() {
         totalTimerColor: Color,
         coolDownTimerColor: Color,
     ) {
+        viewModel.updateUpdatedAtFieldToUpToDate(program)
+
         val parcelableWorkouts = ArrayList<ParcelableWorkout>()
         workouts.forEach { workout ->
             parcelableWorkouts.add(workout.toParcelableWorkout())

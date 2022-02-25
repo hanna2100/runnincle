@@ -151,4 +151,10 @@ constructor(
     suspend fun getLanguage():Language {
         return programListInteractors.getLanguage()
     }
+
+    fun updateUpdatedAtFieldToUpToDate(program: Program) {
+        launch {
+            programListInteractors.updateUpdatedAtFieldToUpToDate(program)
+        }
+    }
 }

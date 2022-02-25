@@ -3,6 +3,7 @@ package com.devhanna91.runnincle
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Build
 import android.provider.Settings
 import android.widget.Toast
@@ -17,6 +18,8 @@ import com.devhanna91.runnincle.business.domain.model.Program
 import com.devhanna91.runnincle.business.domain.model.Workout
 import com.devhanna91.runnincle.business.domain.model.Workout.Companion.getTotalWorkoutTime
 import com.devhanna91.runnincle.business.domain.util.TimeAgo
+import com.devhanna91.runnincle.framework.datasource.cache.model.Language
+import com.devhanna91.runnincle.framework.presentation.MainActivity
 import com.devhanna91.runnincle.framework.presentation.PermissionActivity
 import com.devhanna91.runnincle.util.FloatingService
 import com.devhanna91.runnincle.util.FloatingService.Companion.ARGUMENT_COOL_DOWN_TIMER_COLOR_VALUE
@@ -82,6 +85,14 @@ fun Context.startActivity(kclass: KClass<out Activity>) {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK
         }
     )
+}
+
+fun Activity.restartApp() {
+    val intent = this.packageManager.getLaunchIntentForPackage(this.packageName)!!
+    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    this.finish()
+    startActivity(intent)
 }
 
 fun Int.toTimeLetters(context: Context): String {

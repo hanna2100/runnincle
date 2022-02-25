@@ -21,21 +21,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.devhanna91.runnincle.BuildConfig
+import com.devhanna91.runnincle.*
 import com.devhanna91.runnincle.R
 import com.devhanna91.runnincle.ui.theme.RunnincleTheme
 import com.devhanna91.runnincle.business.domain.model.ParcelableWorkout
 import com.devhanna91.runnincle.business.domain.model.Program
 import com.devhanna91.runnincle.business.domain.model.Workout
 import com.devhanna91.runnincle.business.domain.model.Workout.Companion.toParcelableWorkout
-import com.devhanna91.runnincle.drawOverOtherAppsEnabled
 import com.devhanna91.runnincle.framework.datasource.cache.model.Language
 import com.devhanna91.runnincle.framework.presentation.program_list.composable.AdRemoveDialog
 import com.devhanna91.runnincle.framework.presentation.program_list.composable.ProgramListWithSearchBar
 import com.devhanna91.runnincle.framework.presentation.program_list.composable.SettingModalBottomSheet
 import com.devhanna91.runnincle.framework.presentation.program_list.composable.deleteProgramDialog
-import com.devhanna91.runnincle.openOverlayWindowWithFloatingService
-import com.devhanna91.runnincle.startPermissionActivity
 import com.google.android.gms.ads.*
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
@@ -93,7 +90,7 @@ class ProgramListFragment: Fragment() {
             setContent {
                 RunnincleTheme(darkSystemBar = true) {
                     val scope = rememberCoroutineScope()
-                    val modalBottomSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
+                    val modalBottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
                     val adRemoveDialogState = rememberMaterialDialogState()
                     val restartDialogState = rememberMaterialDialogState()
                     val deleteProgramDialogState = rememberMaterialDialogState()
@@ -107,8 +104,6 @@ class ProgramListFragment: Fragment() {
                         sheetState = modalBottomSheetState,
                         sheetShape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp),
                         sheetContent = {
-
-
                             SettingModalBottomSheet(
                                 overlaySize = viewModel.overlaySize,
                                 totalTimerColor = totalTimerColor,
@@ -200,7 +195,7 @@ class ProgramListFragment: Fragment() {
                             onFloatingSettingButtonClick = {
                                 scope.launch {
                                     viewModel.getSettingValue()
-                                    modalBottomSheetState.show()
+                                    modalBottomSheetState.animateTo(ModalBottomSheetValue.Expanded)
                                 }
                             }
                         )
@@ -237,7 +232,7 @@ class ProgramListFragment: Fragment() {
                                 text = stringResource(id = R.string.confirm),
                                 onClick = {
                                     restartDialogState.hide()
-                                    restartApp(language.value)
+                                    activity?.restartApp()
                                 }
                             )
                             negativeButton(
@@ -420,22 +415,6 @@ class ProgramListFragment: Fragment() {
                 }
             }
         }
-    }
-
-
-    private fun restartApp(language: Language) {
-        val config = Configuration()
-        config.locale = language.locale
-        resources.updateConfiguration(config, resources.displayMetrics)
-
-        activity?.let {
-            val intent = it.packageManager.getLaunchIntentForPackage(it.packageName)!!
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            it.finish()
-            startActivity(intent)
-        }
-
     }
 }
 

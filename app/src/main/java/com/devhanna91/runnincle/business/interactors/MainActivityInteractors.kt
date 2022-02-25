@@ -18,7 +18,7 @@ class MainActivityInteractors(
         sharedPreferencesService.saveLanguage(language = language)
     }
 
-    suspend fun getLanguage():Language {
+    suspend fun getLanguage(): Language {
         return sharedPreferencesService.getLanguage()
     }
 }

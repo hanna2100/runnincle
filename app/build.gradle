@@ -82,6 +82,7 @@ dependencies {
     implementation "com.google.accompanist:accompanist-systemuicontroller:$accompanist_verison"
     implementation "com.google.accompanist:accompanist-flowlayout:$accompanist_verison"
     implementation "com.siddroid:holi:$material_color_version"
+    implementation "com.akexorcist:localization:$localization_version"
 
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"

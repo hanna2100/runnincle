@@ -42,4 +42,5 @@ interface SharedPreferencesService {
     suspend fun saveLanguage(language: Language)
 
     suspend fun getLanguage(): Language
+
 }

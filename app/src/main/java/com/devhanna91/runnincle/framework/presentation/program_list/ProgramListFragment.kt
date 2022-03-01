@@ -1,5 +1,8 @@
 package com.devhanna91.runnincle.framework.presentation.program_list
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
+import androidx.browser.customtabs.CustomTabsClient.getPackageName
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -21,7 +25,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.devhanna91.runnincle.*
 import com.devhanna91.runnincle.R
-import com.devhanna91.runnincle.ui.theme.RunnincleTheme
 import com.devhanna91.runnincle.business.domain.model.ParcelableWorkout
 import com.devhanna91.runnincle.business.domain.model.Program
 import com.devhanna91.runnincle.business.domain.model.Workout
@@ -31,6 +34,7 @@ import com.devhanna91.runnincle.framework.presentation.program_list.composable.A
 import com.devhanna91.runnincle.framework.presentation.program_list.composable.ProgramListWithSearchBar
 import com.devhanna91.runnincle.framework.presentation.program_list.composable.SettingModalBottomSheet
 import com.devhanna91.runnincle.framework.presentation.program_list.composable.deleteProgramDialog
+import com.devhanna91.runnincle.ui.theme.RunnincleTheme
 import com.google.android.gms.ads.*
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
@@ -44,7 +48,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import kotlin.collections.ArrayList
+
 
 @AndroidEntryPoint
 class ProgramListFragment: Fragment() {
@@ -222,7 +226,7 @@ class ProgramListFragment: Fragment() {
                             }
                         },
                         onRemoveAdForeverClick = {
-
+                            moveToGooglePlayStore()
                         }
                     )
                     MaterialDialog(
@@ -247,6 +251,27 @@ class ProgramListFragment: Fragment() {
                     }
                 }
             }
+        }
+    }
+
+    private fun moveToGooglePlayStore() {
+        var appPackageName = requireContext().packageName
+        appPackageName = appPackageName.replace("free", "paid")
+
+        try {
+            startActivity(
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("market://details?id=$appPackageName")
+                )
+            )
+        } catch (e: ActivityNotFoundException) {
+            startActivity(
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("https://play.google.com/store/apps/details?id=$appPackageName")
+                )
+            )
         }
     }
 

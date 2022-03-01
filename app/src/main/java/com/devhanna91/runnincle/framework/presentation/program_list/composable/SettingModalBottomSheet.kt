@@ -19,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.devhanna91.runnincle.BuildConfig
 import com.devhanna91.runnincle.R
 import com.devhanna91.runnincle.framework.datasource.cache.model.Language
 import com.devhanna91.runnincle.framework.presentation.composable.CustomMaterialDialog
@@ -83,14 +84,16 @@ fun SettingModalBottomSheet(
 //                isTtsUsed.value = !isTtsUsed.value
 //            }
 //        )
-        BottomSheetButton(
-            text = stringResource(id = R.string.remove_ad),
-            onButtonClick = onAdRemoveClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 15.dp)
-                .height(55.dp)
-        )
+        if (!BuildConfig.IS_PAID) {
+            BottomSheetButton(
+                text = stringResource(id = R.string.remove_ad),
+                onButtonClick = onAdRemoveClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 15.dp)
+                    .height(55.dp)
+            )
+        }
         BottomSheetButton(
             text = stringResource(id = R.string.save),
             onButtonClick = onSaveClick,

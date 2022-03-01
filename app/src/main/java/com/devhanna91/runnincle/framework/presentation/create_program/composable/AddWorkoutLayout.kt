@@ -41,7 +41,7 @@ import java.util.*
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun AddWorkLayout(
+fun AddWorkoutLayout(
     modifier: Modifier,
     name: MutableState<String>,
     workMin: MutableState<Int>,

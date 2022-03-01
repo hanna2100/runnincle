@@ -3,7 +3,7 @@ package com.devhanna91.runnincle.business.data.cache.implementation
 import com.devhanna91.runnincle.business.data.cache.abstraction.ProgramCacheDataSource
 import com.devhanna91.runnincle.framework.datasource.cache.abstraction.ProgramDaoService
 import com.devhanna91.runnincle.business.domain.model.Program
-import com.devhanna91.runnincle.business.domain.util.DateUtil
+import com.devhanna91.runnincle.business.util.DateUtil
 import javax.inject.Inject
 import javax.inject.Singleton
 

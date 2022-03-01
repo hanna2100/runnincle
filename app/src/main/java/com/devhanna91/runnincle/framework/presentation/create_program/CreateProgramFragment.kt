@@ -22,9 +22,9 @@ import com.devhanna91.runnincle.R
 import com.devhanna91.runnincle.business.domain.model.Workout.Companion.toWorkout
 import com.devhanna91.runnincle.framework.presentation.composable.*
 import com.devhanna91.runnincle.framework.presentation.create_program.composable.CreateProgramTopAppBar
-import com.devhanna91.runnincle.framework.presentation.create_program.composable.CreateProgramWorkoutCircle
-import com.devhanna91.runnincle.framework.presentation.create_program.composable.CreateProgramWorkoutList
-import com.devhanna91.runnincle.showToastMessage
+import com.devhanna91.runnincle.framework.presentation.create_program.composable.WorkoutCircle
+import com.devhanna91.runnincle.framework.presentation.create_program.composable.WorkoutList
+import com.devhanna91.runnincle.util.showToastMessage
 import com.devhanna91.runnincle.ui.theme.RunnincleTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -95,7 +95,7 @@ class CreateProgramFragment: Fragment() {
                             }
                         ) },
                         sheetContent = {
-                            CreateProgramFragmentBottomSheet(
+                            AddWorkoutBottomSheet(
                                 scaffoldState = scaffoldState,
                                 buttonStatus = viewModel.bottomSheetSaveButtonStatus.value,
                                 onSaveClick = {
@@ -132,7 +132,7 @@ class CreateProgramFragment: Fragment() {
                             Column(
                                 modifier = Modifier.fillMaxWidth()
                             ) {
-                                CreateProgramWorkoutCircle(
+                                WorkoutCircle(
                                     workouts = workouts,
                                     programName = programName.value,
                                     onProgramNameClick = {
@@ -141,7 +141,7 @@ class CreateProgramFragment: Fragment() {
                                     onAddAnimKey = onAddAnimKey.value,
                                     onEditAnimKey = onEditAnimKey.value
                                 )
-                                CreateProgramWorkoutList(
+                                WorkoutList(
                                     workouts = workouts,
                                     onItemClick = { workout ->
                                         viewModel.setUpBottomSheetForEdit(workout)

@@ -29,7 +29,7 @@ import com.devhanna91.runnincle.ui.theme.MinSansFamily
 
 
 @Composable
-fun CreateProgramWorkoutCircle(
+fun WorkoutCircle(
     workouts: List<Workout>,
     programName: String,
     onProgramNameClick: ()-> Unit,

@@ -1,12 +1,9 @@
-package com.devhanna91.runnincle.framework.presentation
+package com.devhanna91.runnincle.framework.presentation.activity
 
 import android.os.Bundle
 import android.os.Handler
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.animation.Animatable
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.AnimationVector4D
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
@@ -16,12 +13,10 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,20 +24,15 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.devhanna91.runnincle.R
-import com.devhanna91.runnincle.business.domain.model.Workout.Companion.getTotalWorkoutTime
-import com.devhanna91.runnincle.dp
-import com.devhanna91.runnincle.startMainActivity
+import com.devhanna91.runnincle.framework.presentation.composable.sp
+import com.devhanna91.runnincle.util.startMainActivity
 import com.devhanna91.runnincle.ui.theme.RunnincleTheme
 import com.devhanna91.runnincle.ui.theme.TimerColorPalette
-import java.util.*
 
 class SplashActivity: AppCompatActivity() {
 
@@ -122,7 +112,7 @@ fun SplashLogo(
                 ,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                val setTextSize = logoSize.value.times(0.2f).dp()
+                val setTextSize = logoSize.value.times(0.2f).sp()
                 Text(
                     text = logoText,
                     style = TextStyle(

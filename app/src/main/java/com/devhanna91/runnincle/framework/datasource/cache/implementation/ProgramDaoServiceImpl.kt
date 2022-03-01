@@ -2,7 +2,7 @@ package com.devhanna91.runnincle.framework.datasource.cache.implementation
 
 import com.devhanna91.runnincle.framework.datasource.cache.abstraction.ProgramDaoService
 import com.devhanna91.runnincle.business.domain.model.Program
-import com.devhanna91.runnincle.business.domain.util.DateUtil
+import com.devhanna91.runnincle.business.util.DateUtil
 import com.devhanna91.runnincle.framework.datasource.cache.database.ProgramDao
 import com.devhanna91.runnincle.framework.datasource.cache.mappers.ProgramCacheMapper
 

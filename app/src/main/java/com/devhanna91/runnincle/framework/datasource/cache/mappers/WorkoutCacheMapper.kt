@@ -3,9 +3,9 @@ package com.devhanna91.runnincle.framework.datasource.cache.mappers
 import androidx.compose.ui.graphics.Color
 import com.devhanna91.runnincle.framework.datasource.cache.model.WorkoutCacheEntity
 import com.devhanna91.runnincle.business.domain.model.Workout
-import com.devhanna91.runnincle.business.domain.util.EntityMapper
+import com.devhanna91.runnincle.business.util.EntityMapper
 
-class WorkoutCacheMapper: EntityMapper<WorkoutCacheEntity, Workout>{
+class WorkoutCacheMapper: EntityMapper<WorkoutCacheEntity, Workout> {
     override fun mapFromEntity(entity: WorkoutCacheEntity): Workout {
         return Workout(
             id = entity.id,

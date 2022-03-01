@@ -17,8 +17,6 @@ import com.devhanna91.runnincle.business.domain.model.ParcelableWorkout
 import com.devhanna91.runnincle.business.domain.model.Program
 import com.devhanna91.runnincle.business.domain.model.Workout
 import com.devhanna91.runnincle.business.domain.model.Workout.Companion.toWorkout
-import com.devhanna91.runnincle.drawOverOtherAppsEnabled
-import com.devhanna91.runnincle.startPermissionActivity
 
 enum class FloatingServiceCommand {
     CLOSE, OPEN

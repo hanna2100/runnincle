@@ -35,7 +35,7 @@ import java.lang.StringBuilder
 
 
 @Composable
-fun CreateProgramWorkoutList(
+fun WorkoutList(
     workouts: List<Workout>,
     onItemClick: (workout: Workout)->Unit
 ) {

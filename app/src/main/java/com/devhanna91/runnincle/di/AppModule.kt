@@ -5,10 +5,10 @@ import com.devhanna91.runnincle.business.data.cache.abstraction.ProgramCacheData
 import com.devhanna91.runnincle.business.data.cache.abstraction.WorkoutCacheDataSource
 import com.devhanna91.runnincle.business.data.cache.implementation.ProgramCacheDataSourceImpl
 import com.devhanna91.runnincle.business.data.cache.implementation.WorkoutCacheDataSourceImpl
-import com.devhanna91.runnincle.business.domain.util.DateUtil
+import com.devhanna91.runnincle.business.util.DateUtil
 import com.devhanna91.runnincle.business.domain.util.ResourcesProvider
 import com.devhanna91.runnincle.business.domain.util.ResourcesProviderImpl
-import com.devhanna91.runnincle.business.interactors.MainActivityInteractors
+import com.devhanna91.runnincle.business.interactors.activity.MainActivityInteractors
 import com.devhanna91.runnincle.business.interactors.create_program.CreateProgramInteractors
 import com.devhanna91.runnincle.business.interactors.program_list.ProgramListInteractors
 import com.devhanna91.runnincle.framework.datasource.cache.abstraction.GsonSharedPreferenceService

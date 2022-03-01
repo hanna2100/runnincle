@@ -2,7 +2,7 @@ package com.devhanna91.runnincle.framework.datasource.cache.mappers
 
 import com.devhanna91.runnincle.framework.datasource.cache.model.ProgramCacheEntity
 import com.devhanna91.runnincle.business.domain.model.Program
-import com.devhanna91.runnincle.business.domain.util.EntityMapper
+import com.devhanna91.runnincle.business.util.EntityMapper
 
 class ProgramCacheMapper: EntityMapper<ProgramCacheEntity, Program> {
     override fun mapFromEntity(entity: ProgramCacheEntity): Program {

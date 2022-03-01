@@ -1,6 +1,6 @@
-package com.devhanna91.runnincle.framework.presentation
+package com.devhanna91.runnincle.framework.presentation.activity
 
-import com.devhanna91.runnincle.business.interactors.MainActivityInteractors
+import com.devhanna91.runnincle.business.interactors.activity.MainActivityInteractors
 import com.devhanna91.runnincle.framework.datasource.cache.model.Language
 import com.devhanna91.runnincle.util.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel

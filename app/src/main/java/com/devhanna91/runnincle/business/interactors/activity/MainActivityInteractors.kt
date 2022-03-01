@@ -1,4 +1,4 @@
-package com.devhanna91.runnincle.business.interactors
+package com.devhanna91.runnincle.business.interactors.activity
 
 import com.devhanna91.runnincle.framework.datasource.cache.abstraction.SharedPreferencesService
 import com.devhanna91.runnincle.framework.datasource.cache.model.Language

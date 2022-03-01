@@ -19,7 +19,7 @@
             android:enabled="true">
         </service>
         <activity
-            android:name="com.devhanna91.runnincle.framework.presentation.SplashActivity"
+            android:name="com.devhanna91.runnincle.framework.presentation.activity.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,11 +27,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.devhanna91.runnincle.framework.presentation.MainActivity"
+            android:name="com.devhanna91.runnincle.framework.presentation.activity.MainActivity"
             android:exported="true"
             android:label="@string/app_name">
         </activity>
-        <activity android:name="com.devhanna91.runnincle.framework.presentation.PermissionActivity" />
+        <activity android:name="com.devhanna91.runnincle.framework.presentation.activity.PermissionActivity" />
     </application>
 
 </manifest>

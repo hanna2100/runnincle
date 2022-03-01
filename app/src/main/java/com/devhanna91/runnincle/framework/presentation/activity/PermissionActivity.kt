@@ -1,4 +1,4 @@
-package com.devhanna91.runnincle.framework.presentation
+package com.devhanna91.runnincle.framework.presentation.activity
 
 import android.annotation.TargetApi
 import android.content.Intent

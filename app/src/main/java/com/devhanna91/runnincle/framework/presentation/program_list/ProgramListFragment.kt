@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
-import androidx.browser.customtabs.CustomTabsClient.getPackageName
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -35,6 +34,7 @@ import com.devhanna91.runnincle.framework.presentation.program_list.composable.P
 import com.devhanna91.runnincle.framework.presentation.program_list.composable.SettingModalBottomSheet
 import com.devhanna91.runnincle.framework.presentation.program_list.composable.deleteProgramDialog
 import com.devhanna91.runnincle.ui.theme.RunnincleTheme
+import com.devhanna91.runnincle.util.*
 import com.google.android.gms.ads.*
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback

@@ -37,7 +37,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.platform.*
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -54,12 +53,12 @@ import androidx.lifecycle.ViewTreeViewModelStoreOwner
 import androidx.savedstate.ViewTreeSavedStateRegistryOwner
 import com.devhanna91.runnincle.business.domain.model.Program
 import com.devhanna91.runnincle.business.domain.model.Workout
+import com.devhanna91.runnincle.framework.presentation.composable.sp
 import com.devhanna91.runnincle.ui.theme.NanumSquareFamily
-import com.devhanna91.runnincle.ui.theme.RunnincleTheme
 import com.devhanna91.runnincle.ui.theme.TimerColorPalette
-import com.devhanna91.runnincle.ui.theme.YankeesBlue
 import com.devhanna91.runnincle.util.MyLifecycleOwner
 import com.devhanna91.runnincle.util.SoundPlayer
+import com.devhanna91.runnincle.util.closeOverlayWindowWithFloatingService
 import com.siddroid.holi.colors.MaterialColor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -480,7 +479,7 @@ fun TimerCircle(
             ,
         )
 
-        val setTextSize = sizeDp.value.times(0.08f).dp()
+        val setTextSize = sizeDp.value.times(0.08f).sp()
         Text(
             text = if (overlayStatus != OverlayWindowStatus.END) {
                 "$currentSetIndex / ${scheduleData.set}"
@@ -506,7 +505,7 @@ fun TimerCircle(
             ,
         )
 
-        val timeTextSize = sizeDp.value.times(0.21f).dp()
+        val timeTextSize = sizeDp.value.times(0.21f).sp()
         Text(
             text = if (overlayStatus == OverlayWindowStatus.END) {
                 "END"
@@ -568,7 +567,7 @@ fun TimerCircle(
             }
         }
 
-        val workNameTextSize = sizeDp.value.times(0.08f).dp()
+        val workNameTextSize = sizeDp.value.times(0.08f).sp()
 
         Text(
             text = if (overlayStatus != OverlayWindowStatus.END) scheduleData.workoutName else "",

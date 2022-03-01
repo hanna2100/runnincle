@@ -1,10 +1,11 @@
-package com.devhanna91.runnincle.framework.presentation
+package com.devhanna91.runnincle.framework.presentation.activity
 
 import android.os.Bundle
 import androidx.activity.viewModels
 import com.akexorcist.localizationactivity.ui.LocalizationActivity
 import com.devhanna91.runnincle.R
 import com.devhanna91.runnincle.framework.datasource.cache.model.Language
+import com.devhanna91.runnincle.framework.presentation.BaseApplication
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 import javax.inject.Inject

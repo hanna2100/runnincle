@@ -5,7 +5,7 @@ import com.devhanna91.runnincle.business.data.cache.abstraction.WorkoutCacheData
 import com.devhanna91.runnincle.business.data.util.getRandomUUID
 import com.devhanna91.runnincle.business.domain.model.Program
 import com.devhanna91.runnincle.business.domain.model.Workout
-import com.devhanna91.runnincle.business.domain.util.DateUtil
+import com.devhanna91.runnincle.business.util.DateUtil
 
 // use cases 정의
 class CreateProgramInteractors(

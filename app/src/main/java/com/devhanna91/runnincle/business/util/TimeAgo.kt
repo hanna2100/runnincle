@@ -1,4 +1,4 @@
-package com.devhanna91.runnincle.business.domain.util
+package com.devhanna91.runnincle.business.util
 
 import java.util.*
 import java.util.concurrent.TimeUnit

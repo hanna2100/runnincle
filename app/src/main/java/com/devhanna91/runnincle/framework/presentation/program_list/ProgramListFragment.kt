@@ -226,7 +226,11 @@ class ProgramListFragment: Fragment() {
                             }
                         },
                         onRemoveAdForeverClick = {
-                            moveToGooglePlayStore()
+                            scope.launch {
+                                adRemoveDialogState.hide()
+                                modalBottomSheetState.hide()
+                                moveToGooglePlayStore()
+                            }
                         }
                     )
                     MaterialDialog(
